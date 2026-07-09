@@ -1,88 +1,104 @@
 ---
 name: software-philosophy
-description: Use for non-trivial software design judgment during planning, implementation, refactoring, or code review. Avoid for simple mechanical tasks.
+description: Use when writing code, implementing features, fixing bugs, refactoring, planning changes, or reviewing code where design and maintainability matter. Avoid only for mechanical tasks.
 ---
+
 # Software Philosophy
-Use when the task needs judgment about design, maintainability, refactoring, or review risk. The goal is software that is easier to change without making the current task larger than necessary.
 
-Do not use when the task is a simple one-file fix, mechanical formatting, dependency installation, a straightforward command, or already governed by a more specific skill.
+Use when writing code from scratch, implementing a feature, fixing a bug, refactoring, planning a change, or reviewing code where design and maintainability matter. The goal is software that is easier to change without making the current task larger than necessary.
 
-Core ideas:
-- Good design reduces change amplification, cognitive load, and unknown unknowns.
-- Important knowledge should have one authoritative representation.
-- Useful boundaries hide real decisions behind simple interfaces.
-- Coupling raises the cost of change; cohesion lowers it.
-- Refactoring preserves behavior and happens in small safe steps.
-- Comments should preserve design reasoning, not narrate mechanics.
-- Do not rely on behavior that merely seems to work; prove risky assumptions with code, tests, tools, measurements, or focused clarification.
-- AI-generated work must be checked for impressive-looking complexity that makes future human changes harder.
-- Before changing structure, name the complexity symptom: change amplification, cognitive load, unknown unknowns, duplicated knowledge, leaked data shape, temporal coupling, or behavior drift.
+Do not use for mechanical formatting, dependency installation, straightforward commands, or work already governed by a more specific skill.
 
-This skill does not replace product research, domain research, testing strategy, deployment design, performance benchmarking, or security review. It may identify when those are needed. Do not claim verification, test results, benchmarks, or safety checks unless a tool or another skill actually performed them.
+## Routing
 
-## Choose One Mode
-Pick one primary mode before applying advice. Use a secondary mode only when the task clearly crosses boundaries.
+Pick exactly one primary mode. Before acting, load exactly one matching reference:
 
-### Planning
-Use when deciding what to build, comparing approaches, designing a change, decomposing work, or planning a refactor.
-Primary question: Which approach makes the next change safer and easier without inventing architecture before it is needed?
-Do:
-- Understand the problem and existing code before proposing structure.
-- For non-trivial choices, compare two plausible approaches before recommending one.
-- Prefer a tracer-bullet slice when uncertainty is high.
-- Identify which knowledge each module or boundary should own.
-- Keep decisions reversible unless current requirements justify commitment.
-- Name the validation path and assumptions that must be proven.
-Avoid:
-- Architecture from vague future possibilities.
-- Plans that require broad rewrites before feedback.
-- Moving complexity to callers through flags, ordering rules, or leaked data shapes.
-Load: primary [references/planning.md](references/planning.md); optional [references/abstraction-decisions.md](references/abstraction-decisions.md). Examples: [examples/planning-tradeoffs.md](examples/planning-tradeoffs.md), [examples/abstraction-decisions.md](examples/abstraction-decisions.md).
+- Planning, approach comparison, decomposition, or refactor design: [references/planning.md](references/planning.md).
+- Code edits, implementation, local refactoring, or comments: [references/writing-code.md](references/writing-code.md).
+- Code review, diff review, implementation review, or AI patch evaluation: [references/reviewing-code.md](references/reviewing-code.md).
 
-### Implementation
-Use when writing code, editing existing code, refactoring as part of a change, or outputting code snippets intended to be used directly.
-Primary question: What is the smallest clear change that satisfies the requested behavior without avoidable accidental complexity?
-Do:
-- Build context from existing code before editing.
-- Keep the change as narrow as the requested behavior allows.
-- Put logic where the relevant knowledge already lives.
-- Represent business rules once and convert external data shapes at boundaries.
-- Separate behavior changes from structure changes when practical.
-- Run available tests, type checks, or linters when feasible; if not run, say what remains unverified.
-Avoid:
-- Creating abstractions without current pressure.
-- Splitting code into shallow modules that hide no knowledge.
-- Boolean flags that create hidden modes.
-- Unrelated cleanup, broad rewrites, style-only churn, or performance work without evidence.
-Load: primary [references/writing-code.md](references/writing-code.md); optional [references/stop-rules.md](references/stop-rules.md). Examples: [examples/refactoring-small-steps.md](examples/refactoring-small-steps.md), [examples/abstraction-decisions.md](examples/abstraction-decisions.md), [examples/ai-failure-modes.md](examples/ai-failure-modes.md).
+Use a secondary mode only when the task clearly crosses boundaries.
 
-### Review
-Use when evaluating code, a diff, an implementation plan, an AI-generated patch, or a proposed refactor.
-Primary question: What risks, regressions, coupling, hidden knowledge, or needless complexity should be fixed or called out before accepting this work?
-Do:
-- Lead with findings, ordered by severity.
-- Distinguish behavior changes from structure changes.
-- Treat refactors as suspicious if ordering, errors, defaults, data shapes, side effects, or public behavior changed.
-- Tie each finding to correctness, safety, maintainability, or future change.
-- Prefer concrete local fixes over broad redesign advice.
-- If no findings are found, say so and name residual risk or unverified areas.
-Avoid:
-- Rewriting code inside the review unless asked.
-- Treating preference, naming taste, or style churn as a defect.
-- Asking for tests generically without tying them to a specific risk.
-Load: primary [references/reviewing-code.md](references/reviewing-code.md); optional [references/abstraction-decisions.md](references/abstraction-decisions.md). Examples: [examples/review-findings.md](examples/review-findings.md), [examples/ai-failure-modes.md](examples/ai-failure-modes.md).
+## Source Map
 
-## Progressive Disclosure
-Load the smallest relevant reference for the primary mode. Load the optional reference only when the decision depends on boundaries, complexity, stopping, or validation risk. Use examples only when the decision is subtle, ambiguous, or matches the example name.
+- Ousterhout: fight complexity from dependencies and obscurity; watch change amplification, cognitive load, and unknown unknowns; prefer deep modules, obvious code, precise names, strategic design, and errors defined out of existence.
+- Fowler: refactor by changing structure without changing observable behavior; use small safe steps, validation, and code smells as signals, not commands.
+- Beck: separate behavior from structure; tidy only when it helps current or near-future work; keep tidyings small, reversible, and economically justified.
+- Hunt/Thomas: keep knowledge DRY, components orthogonal, assumptions proven, decisions reversible, and feedback early through tracer bullets when uncertainty is high.
 
-Reference routing:
-- Planning, approach comparison, or decomposition: [references/planning.md](references/planning.md).
-- Code edit, local implementation, comments, or small refactor: [references/writing-code.md](references/writing-code.md).
-- Function, module, class, hook, component, or boundary decision: [references/abstraction-decisions.md](references/abstraction-decisions.md).
-- Review, diff evaluation, or AI patch evaluation: [references/reviewing-code.md](references/reviewing-code.md).
-- Scope is expanding, cleanup is spreading, or polish is tempting: [references/stop-rules.md](references/stop-rules.md).
+## Core Principles
 
-Changed-code gate: before finalizing code you touched, check only that touched code for fake abstractions, duplicated rules, behavior drift, comment noise, and scope creep.
+- Complexity is anything that makes software hard to understand or modify; reduce change amplification, cognitive load, and unknown unknowns.
+- Complexity comes from dependencies and obscurity; prefer orthogonal components, obvious code, precise names, and explicit contracts.
+- Important knowledge has one authoritative owner; DRY knowledge, not repeated text.
+- Prefer deep modules: simple interfaces hiding meaningful complexity and owned decisions.
+- Pull complexity downward when the module owns it; keep related knowledge together when splitting would leak assumptions.
+- Design strategically for current pressure: design non-trivial structure twice, keep decisions reversible, and define avoidable errors out of existence where practical.
+- Refactoring preserves behavior and moves in small safe steps with concrete validation when feasible.
+- Comments preserve non-obvious design knowledge, not mechanics.
+- Risky assumptions must be proven with code, tests, tools, measurements, tracer bullets, or focused clarification.
+
+## Abstraction Gate
+
+Bad abstractions make code look clean while spreading knowledge, increasing jumps, hiding behavior, or supporting imaginary future needs. Before changing structure, name the complexity symptom: change amplification, cognitive load, unknown unknowns, duplicated knowledge, leaked data shape, information leakage, temporal coupling, scattered special cases, repeated conditionals, behavior drift, or unsupported future flexibility.
+
+Create an abstraction only when it does at least one real job:
+
+- creates a deep module: simple interface, meaningful hidden complexity
+- hides domain, policy, lifecycle, validation, formatting, mapping, caching, authorization, retry, ordering, or external-system knowledge
+- represents duplicated business, data-shape, formatting, validation, or lifecycle knowledge once
+- reduces caller cognitive load, makes the common path easier, or makes misuse harder
+- pulls complexity into the module that owns it
+- localizes a current or next-likely change
+- separates things that change for different reasons
+- prevents callers from knowing external quirks, internal data shapes, or ordering rules
+
+Reject an abstraction when it is a shallow module, pass-through layer, vague `manager`/`handler`/`processor`/`helper`/`utils` concept, speculative interface, one-off wrapper with no hidden knowledge, boolean mode flag, temporal decomposition that splits one cohesive workflow by execution order and makes callers remember phases, lifecycle order, or internal state, file split that fragments one idea, or cleanup that merely makes code look senior.
+
+Reject it when callers still need to understand the internals, the name is imprecise, it only forwards arguments or returns the same result, it exists only to make code look tidy, it creates more files without reducing cognitive load, or one clear function is easier to read than several tiny ones.
+
+Good fix directions: centralize duplicated business knowledge, move external data quirks to boundary code, replace real mode flags with explicit operations, encapsulate ordering rules inside one operation, rename vague concepts before extracting more code, inline shallow pass-through layers, and comment only for hidden constraints code cannot express clearly.
+
+Boundary check: Which decision lives here? Which callers stop needing to know it? Which future change becomes local? Which misuse becomes harder?
+
+## Refactor Gate
+
+Behavior change alters observable results, ordering, errors, defaults, data shapes, persistence, side effects, or external calls. Structure change reorganizes code while preserving those things.
+
+Never claim "no behavior change" after changing conditionals, ordering, error handling, defaults, return shapes, data conversion, side effects, or tests that encode behavior. Separate behavior and structure changes when practical.
+
+## Stop Gate
+
+Stop when the current plan, change, or review is clear, local, validated as far as feasible, and easy enough to change next.
+
+Generated code often looks more senior while becoming harder for the next human to change. Treat fake abstractions, pass-through layers, speculative generality, comment spam, broad rewrites, and refactors with behavior drift as stop signals unless current requirements justify them.
+
+Common stop signals:
+
+- fake abstraction: service, manager, helper, factory, interface, or strategy that hides no knowledge
+- pass-through layer: same arguments in, same result out, more names and files
+- speculative generality: imaginary providers, formats, storage engines, themes, policies, tenants, or plugin systems
+- comment spam: comments narrate obvious code to make output look careful
+- tactical patch: another special case while duplicated or hidden knowledge remains central to the task
+- broad rewrite: unrelated code changes because the model can, not because the task needs it
+- architecture theater: frameworks, registries, providers, or multi-phase designs before uncertainty has been reduced
+- review theater: style preferences, generic test requests, or broad redesign ideas not tied to risk
+- refactor with behavior drift: ordering, defaults, errors, side effects, or return shapes changed while calling it cleanup
+
+Stop planning when more detail would invent requirements, the next useful step is code exploration or validation, or extra abstraction only preserves imaginary options.
+
+Stop coding or refactoring when the behavior change is easy to make, cleanup spreads outside the changed area, unrelated behavior knowledge is needed to continue safely, validation is missing for a risky structural move, public interfaces would change without explicit need, or the next move is mostly style preference.
+
+Stop abstracting when the abstraction would support imaginary needs, cannot be given a precise name, only forwards parameters, still requires callers to know hidden details, makes the common path harder, or fragments one clear function.
+
+Stop commenting when the comment repeats code, explains mechanics instead of reasoning, would become stale as soon as implementation changes, or tries to justify confusing code instead of fixing it.
+
+Stop reviewing when remaining comments are preference-only, findings require unavailable product/domain/runtime facts, or the next useful step is validation rather than more commentary.
+
+Leave imperfect code alone when it is outside the task, stable despite ugliness, requires product, architecture, testing, or performance decisions, or has no small safe improvement.
+
+Hand off or ask when requirements are unclear, correctness cannot be judged after available validation, the architecture boundary is unclear, or performance is the issue but no measurement exists.
 
 ## Final Standard
-Use the smallest correct change. Do not invent architecture without current pressure. Validate with tools when feasible, otherwise state the limitation. If the safest action is to leave surrounding imperfect code unchanged, leave it unchanged.
+
+Use the smallest correct change. Do not invent architecture without current pressure. Validate with tools when feasible; otherwise state what remains unverified.

@@ -1,55 +1,109 @@
 # Writing Code
-Use when adding implementation code, modifying existing structure, refactoring locally, or deciding whether a comment should exist.
 
-New code often works locally but makes future changes harder by spreading knowledge, adding flags, inventing layers, or hiding simple behavior behind impressive structure. Refactoring should reduce risk for the current change, not become a redesign project.
+Use when adding implementation code, modifying existing structure, refactoring locally, deciding where logic belongs, or deciding whether a comment should exist.
 
-Do:
+New code often works locally while spreading knowledge, adding hidden modes, inventing layers, or hiding simple behavior behind impressive structure. The right change satisfies the requested behavior with the least accidental complexity.
+
+## Do
+
+- Build context from existing code before editing.
 - Put logic where the relevant knowledge already lives.
-- Keep the common path direct and readable.
-- Prefer precise names over clever compression.
+- Use precise, consistent names for real domain concepts and decisions.
+- Keep the common path obvious, direct, and readable.
+- Represent each business rule once; avoid duplicating knowledge under different text.
+- Convert external data shapes at boundaries.
+- Prefer simple data flow over hidden mutation or temporal ordering.
 - Use existing abstractions before creating new ones.
-- Keep related decisions together when splitting them would leak assumptions.
-- Represent business rules once.
-- Convert external data shapes at boundaries instead of spreading API quirks.
-- Prefer simple data flow over hidden mutation.
-- Make invalid or unsupported states hard to represent when local code can do that simply.
+- Pull complexity downward when the callee owns the rule, ordering, validation, or external quirk.
+- Keep related decisions together when splitting would leak assumptions.
+- Make avoidable errors impossible with types, explicit operations, defaults, validation, or localized construction where practical.
 - Follow nearby style unless it is actively causing complexity.
 
-Refactoring rules:
-- Behavior change means what the system does changes; structure change reorganizes code while observable behavior stays the same.
+## Refactoring
+
 - Refactor only where it supports the current change.
 - Make the smallest behavior-preserving structural move that relieves current pressure.
 - Preserve public interfaces unless changing them is part of the task.
-- Separate refactoring and feature changes in the explanation, commits, or patches when practical.
-- Never claim “no behavior change” after altering conditionals, errors, ordering, data shapes, defaults, or side effects.
+- Separate feature and refactor changes in the explanation, patch, or commits when practical.
+- Do not call it behavior-preserving if ordering, defaults, errors, data shapes, side effects, or tests changed.
 
-Comment rules:
-- First improve code, then comment.
-- Add comments for why this code exists, domain invariants, external constraints, edge cases, trade-offs, ownership, lifecycle assumptions, boundary contracts, or why a simpler-looking solution is wrong.
-- Avoid comments that repeat code, narrate mechanics, compensate for bad names, preserve stale history, or state contracts the code does not enforce.
-- Prefer a clearer name, smaller local shape, encoded invariant, type, validation, or API boundary when that removes the need for a comment.
-- Keep comments close to the decision they explain and stable across likely implementation changes.
-- Update or remove comments when modifying nearby behavior.
+## Comments
 
-Avoid:
-- Boolean flags that create hidden modes.
-- One-line wrappers that do not hide knowledge.
-- Config objects that merely avoid passing parameters explicitly.
-- Premature plugin systems, factories, base classes, interfaces, or strategies.
-- Splitting a simple sequence into many tiny functions where the reader must jump around to understand one idea.
-- Duplicating business rules because two callers need similar behavior.
-- Pushing domain decisions into UI, controllers, routes, or tests because it was convenient.
-- Broad cleanup in files unrelated to the task.
+First improve confusing code, names, or boundaries. Add a comment only for design reasoning the code cannot express clearly: invariants, boundary contracts, external constraints, lifecycle assumptions, cross-module decisions, edge cases, trade-offs, ownership, or why a simpler-looking solution is wrong.
 
-Decision checks:
+Avoid comments that repeat code, narrate mechanics, compensate for bad names, preserve stale history, or state contracts the code does not enforce. Keep comments close to the decision and update or remove them when behavior changes.
+
+## Checks
+
 1. What fact, rule, or decision does this code own?
 2. Who should not need to know that decision?
 3. Would changing this rule require edits in one place or many?
-4. Is the next likely change easier because of this shape?
-5. Would a reader understand the common path without unrelated files?
-6. Did the implementation add a concept that the task did not need?
+4. Did this add a concept the task did not need?
+5. Is one clear function easier than several tiny jumps?
+6. Are the names specific enough to make the common path obvious?
 7. What validation proves the behavior or structure is safe?
 
-Stop when the implementation is clear, local, validated as far as feasible, and easy enough to change. More extraction, generality, commenting, or cleanup must reduce a current risk, not make the patch look more polished.
+Avoid boolean flags with hidden modes, pass-through services, shallow managers/helpers, config objects that only avoid explicit parameters, premature factories/interfaces/strategies, broad cleanup, and pushing domain decisions into UI, routes, controllers, or tests because it was convenient.
 
-Examples: [examples/refactoring-small-steps.md](../examples/refactoring-small-steps.md), [examples/abstraction-decisions.md](../examples/abstraction-decisions.md), [examples/ai-failure-modes.md](../examples/ai-failure-modes.md).
+Stop when the implementation is clear, local, validated as far as feasible, and easy enough to change. More extraction, generality, commenting, or cleanup must reduce a current risk.
+
+## Examples
+
+### Boundary Hides External Shape
+
+Bad:
+
+```ts
+const name = apiUser.profile?.display_name ?? apiUser.email_address;
+const avatar = apiUser.profile?.images?.small_url ?? DEFAULT_AVATAR;
+```
+
+Better:
+
+```ts
+function toUserSummary(apiUser: ApiUser): UserSummary {
+  return {
+    name: apiUser.profile?.display_name ?? apiUser.email_address,
+    avatarUrl: apiUser.profile?.images?.small_url ?? DEFAULT_AVATAR,
+  };
+}
+```
+
+The boundary owns vendor fields and fallback rules. Do not apply for a one-off script with no reuse or risk.
+
+### Local Duplication Removal
+
+Bad:
+
+```ts
+if (user.role === "admin" || user.role === "owner") showBilling();
+if (user.role === "admin" || user.role === "owner") showTeamSettings();
+```
+
+Better:
+
+```ts
+const canManageAccount = user.role === "admin" || user.role === "owner";
+if (canManageAccount) showBilling();
+if (canManageAccount) showTeamSettings();
+```
+
+The permission rule now has one local name. If it spreads across files, move it to the module that owns authorization policy.
+
+### Comment Preserves An Invariant
+
+Bad:
+
+```ts
+// Subtract pending withdrawals from the balance.
+const availableBalance = account.balance - account.pendingWithdrawals;
+```
+
+Better:
+
+```ts
+// Pending withdrawals reduce available balance before settlement so users cannot reserve the same funds twice.
+const availableBalance = account.balance - account.pendingWithdrawals;
+```
+
+Prefer encoding the rule in a domain method when that is clearer and safe.

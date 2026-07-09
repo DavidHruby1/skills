@@ -1,42 +1,71 @@
 # Planning
+
 Use when deciding what to build, comparing approaches, designing a change, decomposing work, or planning a refactor before implementation.
 
-Planning often fails in two opposite ways: tactical patching that ignores structural pressure, or speculative architecture that solves imaginary future problems. A good plan improves optionality without delaying feedback.
+Planning fails when it either patches tactically while ignoring real pressure or invents architecture for imagined futures. A good plan improves optionality without delaying feedback.
 
-Answer:
-- What is the real change pressure?
-- Which knowledge should live behind which boundary?
-- Which design makes the next likely change easier?
-- Which decision must remain reversible?
-- What is the smallest useful slice that creates feedback?
-- What validation is needed before the plan is safe?
+## Answer
 
-Do:
-- Name the current change pressure before proposing structure.
-- Design it twice for non-trivial choices: compare at least two credible approaches before choosing.
-- Compare approaches by coupling, cohesion, change amplification, cognitive load, reversibility, and validation cost.
-- Prefer tracer bullets when uncertainty is high.
-- Put each important rule, data-shape conversion, lifecycle order, or policy in one owner.
-- Prefer deep modules with simple interfaces over shallow layers that only forward calls.
-- Sequence structure changes separately from behavior changes when practical.
-- Do not build on behavior that only seems to work; name assumptions and prove them before deeper design depends on them.
+- What is the requested behavior or design problem?
+- What current pressure makes structure relevant now?
+- Which knowledge needs one owner?
+- Which boundary hides that knowledge from callers?
+- Which avoidable error can be made impossible by the design?
+- Which approach makes the next likely change easier?
+- Which assumption must be proven before the design is safe?
 
-Avoid:
-- Architecture based on imagined future providers, formats, storage engines, tenants, or policies.
-- Plans that require a rewrite before delivering any behavior or feedback.
-- Generic abstractions when the real domain concept is unclear.
-- Moving knowledge into callers through boolean flags, ordering requirements, or leaked external data shapes.
-- Treating tidy-first as permission for a cleanup marathon.
+## Sequence
 
-Planning sequence:
-1. State the requested behavior or design problem.
-2. Identify current pressure and the next likely change.
-3. List knowledge that must have a single owner.
-4. Compare two credible approaches when the choice is non-trivial.
+1. State the real problem and current pressure.
+2. Identify knowledge that should have one owner.
+3. Design it twice for non-trivial choices: compare two credible shapes before committing.
+4. Judge them by coupling, cohesion, depth, change amplification, cognitive load, reversibility, error prevention, and validation cost.
 5. Choose the smallest coherent approach that keeps useful options open.
-6. Sequence work as small, reviewable behavior and structure steps.
+6. Sequence the work as small behavior and structure steps.
 7. Name validation and unresolved assumptions.
 
-Stop when the chosen path is clear enough to implement safely, more detail would guess unknown requirements, the next step should be code exploration/validation/clarification, or additional abstraction would only preserve imaginary options.
+## Prefer
 
-Examples: [examples/planning-tradeoffs.md](../examples/planning-tradeoffs.md), [examples/abstraction-decisions.md](../examples/abstraction-decisions.md), [examples/refactoring-small-steps.md](../examples/refactoring-small-steps.md).
+- tracer bullets when uncertainty is high
+- one owner for each rule, data-shape conversion, lifecycle order, or policy
+- deep modules with simple interfaces over shallow forwarding layers
+- designs that make invalid states, wrong ordering, or missing validation impossible where practical
+- reversible decisions until current requirements justify commitment
+- separating structure changes from behavior changes when practical
+
+## Avoid
+
+- provider, format, storage, tenant, policy, registry, or plugin abstractions for imaginary futures
+- rewrites before feedback
+- generic abstractions before the real domain concept is clear
+- moving knowledge into callers through flags, ordering rules, or leaked data shapes
+- temporal decomposition that splits one workflow into phases callers must remember
+- treating tidy-first as permission for a cleanup marathon
+
+Stop when the chosen path is safe enough to implement or validate. More detail must reduce a real risk, not make the plan look more architectural.
+
+## Examples
+
+### CSV Export
+
+Bad: create `Exporter`, `CsvExporter`, `JsonExporter`, `ExporterFactory`, and a registry when product only asked for CSV.
+
+Better: add `exportReportCsv(report)` near report formatting code. This names the real behavior and keeps a future interface possible if a second format creates real pressure.
+
+Do not apply when multiple formats must be selected at runtime now.
+
+### Billing Provider Uncertainty
+
+Bad: build the full provider interface, retry service, webhook router, reconciliation job, and test matrix before touching the provider.
+
+Better: build one tracer bullet: create a test customer, receive one webhook, map it to an internal event, and persist enough state to inspect behavior.
+
+Do not apply when the provider contract is already proven locally and the work is routine implementation.
+
+### Tidy First Without Rewrite
+
+Bad: rewrite invoices into `InvoiceCalculator`, `TaxPolicy`, `DiscountPolicy`, and visitors before adding tax.
+
+Better: extract the existing subtotal calculation only if that makes the tax change safer, then add tax in the local total path.
+
+Do not apply when the function is impossible to validate and a larger refactor has explicit scope and tests.
