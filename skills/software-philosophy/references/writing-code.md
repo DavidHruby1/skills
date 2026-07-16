@@ -29,9 +29,9 @@ New code often works locally while spreading knowledge, adding hidden modes, inv
 
 ## Comments
 
-First improve confusing code, names, or boundaries. Add a comment only for design reasoning the code cannot express clearly: invariants, boundary contracts, external constraints, lifecycle assumptions, cross-module decisions, edge cases, trade-offs, ownership, or why a simpler-looking solution is wrong.
+Comment generously when purpose or design knowledge is not obvious locally: explain why a function or abstraction exists, why it has this shape, and its invariants, boundary contracts, external constraints, lifecycle assumptions, trade-offs, ownership, or why a simpler-looking solution is wrong.
 
-Avoid comments that repeat code, narrate mechanics, compensate for bad names, preserve stale history, or state contracts the code does not enforce. Keep comments close to the decision and update or remove them when behavior changes.
+Improve confusing code, names, and boundaries, but do not assume clean code replaces design documentation. Avoid comments that repeat code, narrate mechanics, preserve stale history, or state contracts the code does not enforce; keep useful comments close to the decision and current with behavior.
 
 ## Checks
 

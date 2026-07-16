@@ -1,6 +1,6 @@
 ---
 name: software-philosophy
-description: Use when writing code, implementing features, fixing bugs, refactoring, planning changes, or reviewing code where design and maintainability matter. Avoid only for mechanical tasks.
+description: Use exclusively for writing or modifying source code, planning a concrete source-code change, or reviewing source code or a proposed code change. This includes implementation, porting, bug fixes, and refactoring. Never use for testing, documentation, research, investigation, repository navigation, configuration, CI, deployment, or other non-code tasks.
 ---
 
 # Software Philosophy
@@ -35,7 +35,7 @@ Use a secondary mode only when the task clearly crosses boundaries.
 - Pull complexity downward when the module owns it; keep related knowledge together when splitting would leak assumptions.
 - Design strategically for current pressure: design non-trivial structure twice, keep decisions reversible, and define avoidable errors out of existence where practical.
 - Refactoring preserves behavior and moves in small safe steps with concrete validation when feasible.
-- Comments preserve non-obvious design knowledge, not mechanics.
+- Comment generously to preserve purpose, design reasoning, invariants, constraints, and ownership; do not narrate mechanics.
 - Risky assumptions must be proven with code, tests, tools, measurements, tracer bullets, or focused clarification.
 
 ## Abstraction Gate
@@ -57,7 +57,7 @@ Reject an abstraction when it is a shallow module, pass-through layer, vague `ma
 
 Reject it when callers still need to understand the internals, the name is imprecise, it only forwards arguments or returns the same result, it exists only to make code look tidy, it creates more files without reducing cognitive load, or one clear function is easier to read than several tiny ones.
 
-Good fix directions: centralize duplicated business knowledge, move external data quirks to boundary code, replace real mode flags with explicit operations, encapsulate ordering rules inside one operation, rename vague concepts before extracting more code, inline shallow pass-through layers, and comment only for hidden constraints code cannot express clearly.
+Good fix directions: centralize duplicated business knowledge, move external data quirks to boundary code, replace real mode flags with explicit operations, encapsulate ordering rules inside one operation, rename vague concepts before extracting more code, inline shallow pass-through layers, and comment the purpose and reasoning that code alone does not preserve.
 
 Boundary check: Which decision lives here? Which callers stop needing to know it? Which future change becomes local? Which misuse becomes harder?
 

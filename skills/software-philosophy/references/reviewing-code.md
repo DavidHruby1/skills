@@ -11,7 +11,7 @@ Reviews should catch behavior drift, missing validation, duplicated knowledge, w
 - Does the code make future changes easier or harder?
 - Is important knowledge duplicated, leaked, or hidden in the wrong place?
 - Are new abstractions deep enough to justify their surface area?
-- Are names and comments making the design more obvious without hiding confusing code?
+- Do comments preserve the purpose and reasoning of non-obvious functions and abstractions without narrating mechanics?
 - Are findings concrete, prioritized, and actionable?
 
 ## Priority
@@ -21,7 +21,7 @@ Reviews should catch behavior drift, missing validation, duplicated knowledge, w
 3. Missing validation for risky behavior or structure changes.
 4. Change amplification, duplicated knowledge, leaked assumptions, or temporal coupling.
 5. Shallow abstractions, speculative generality, or needless indirection.
-6. Comments, names, or readability issues that affect future change.
+6. Missing purpose or design rationale, and names or readability issues that affect future change.
 
 ## Finding Shape
 
@@ -40,7 +40,7 @@ Lead with findings ordered by severity. If no findings are found, say so and nam
 - shallow modules, pass-through methods, services, managers, helpers, interfaces, or factories that hide no knowledge
 - long methods or large classes where one change touches unrelated reasons to change
 - vague names such as `manager`, `handler`, `processor`, `data`, `info`, or `result` when they hide the real decision
-- comments that repeat code, preserve stale history, or state contracts the code does not enforce
+- missing comments where a function's purpose or design rationale is not obvious locally, and comments that merely repeat code, preserve stale history, or state unenforced contracts
 - tests changed during a claimed refactor in a way that suggests behavior was not preserved
 
 Avoid approving code because it is shorter, cleaner-looking, or more pattern-shaped. Avoid broad redesign advice when a concrete local fix would address the risk.
