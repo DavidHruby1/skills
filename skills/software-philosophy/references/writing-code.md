@@ -29,9 +29,11 @@ New code often works locally while spreading knowledge, adding hidden modes, inv
 
 ## Comments
 
-Comment generously when purpose or design knowledge is not obvious locally: explain why a function or abstraction exists, why it has this shape, and its invariants, boundary contracts, external constraints, lifecycle assumptions, trade-offs, ownership, or why a simpler-looking solution is wrong.
+Treat comments as a navigation layer for fast review. Add concise comments above classes, functions, and decision blocks that primarily explain why the code exists or why a decision was made. Capture the reason behind its purpose, responsibility, important choices, invariants, boundary contracts, external constraints, lifecycle assumptions, trade-offs, and ownership. Prefer a useful one-line reason over making the reviewer reconstruct that context from the implementation.
 
-Improve confusing code, names, and boundaries, but do not assume clean code replaces design documentation. Avoid comments that repeat code, narrate mechanics, preserve stale history, or state contracts the code does not enforce; keep useful comments close to the decision and current with behavior.
+Comment an individual line when its reason or constraint is surprising. Ordinary readable statements do not need line-by-line narration. When deciding whether a class, function, decision block, or ambiguous line needs orientation, prefer adding the comment if it preserves why the code takes this approach; several useful reasons are better than too few. Keep them close to the decision and current with behavior.
+
+Improve confusing code, names, and boundaries, but do not assume clean code replaces design documentation. A comment should preserve the reason for a purpose or decision rather than merely state what the code does, translate syntax, preserve stale history, or promise a contract the code does not enforce.
 
 ## Checks
 
@@ -45,7 +47,7 @@ Improve confusing code, names, and boundaries, but do not assume clean code repl
 
 Avoid boolean flags with hidden modes, pass-through services, shallow managers/helpers, config objects that only avoid explicit parameters, premature factories/interfaces/strategies, broad cleanup, and pushing domain decisions into UI, routes, controllers, or tests because it was convenient.
 
-Stop when the implementation is clear, local, validated as far as feasible, and easy enough to change. More extraction, generality, commenting, or cleanup must reduce a current risk.
+Stop when the implementation is clear, local, validated as far as feasible, and easy enough to change. More extraction, generality, or cleanup must reduce a current risk; more comments must add a useful review signpost.
 
 ## Examples
 
@@ -62,10 +64,10 @@ Better:
 
 ```ts
 function toUserSummary(apiUser: ApiUser): UserSummary {
-  return {
-    name: apiUser.profile?.display_name ?? apiUser.email_address,
-    avatarUrl: apiUser.profile?.images?.small_url ?? DEFAULT_AVATAR,
-  };
+    return {
+        name: apiUser.profile?.display_name ?? apiUser.email_address,
+        avatarUrl: apiUser.profile?.images?.small_url ?? DEFAULT_AVATAR,
+    };
 }
 ```
 
@@ -90,20 +92,66 @@ if (canManageAccount) showTeamSettings();
 
 The permission rule now has one local name. If it spreads across files, move it to the module that owns authorization policy.
 
-### Comment Preserves An Invariant
+### Class Comment Explains Why The Boundary Exists
 
 Bad:
 
 ```ts
-// Subtract pending withdrawals from the balance.
-const availableBalance = account.balance - account.pendingWithdrawals;
+// Caches session data.
+class SessionCache {
+    // ...
+}
 ```
 
 Better:
 
 ```ts
-// Pending withdrawals reduce available balance before settlement so users cannot reserve the same funds twice.
-const availableBalance = account.balance - account.pendingWithdrawals;
+// Keep transient sessions separate so cache eviction cannot destroy durable authentication state.
+class SessionCache {
+    // ...
+}
 ```
 
-Prefer encoding the rule in a domain method when that is clearer and safe.
+The bad comment restates the class name. The better comment explains why transient and durable state have separate owners, so a reviewer can judge the boundary without reading every method.
+
+### Function Comment Explains Why Precedence Matters
+
+Bad:
+
+```ts
+// Selects the override address or falls back to the customer's default address.
+function selectDeliveryAddress(order: Order): Address {
+    return order.overrideAddress ?? order.customer.defaultAddress;
+}
+```
+
+Better:
+
+```ts
+// Honor checkout overrides because gift and temporary deliveries must not replace the saved default.
+function selectDeliveryAddress(order: Order): Address {
+    return order.overrideAddress ?? order.customer.defaultAddress;
+}
+```
+
+The bad comment translates the expression. The better comment preserves the product reason for the precedence and warns reviewers not to persist the temporary address.
+
+### Inline Comment Explains Why Ordering Is Required
+
+Bad:
+
+```ts
+// Save the account, then publish the update.
+await repository.save(account);
+await events.publish(accountUpdated(account));
+```
+
+Better:
+
+```ts
+// Publish only after persistence so consumers can immediately read the committed account.
+await repository.save(account);
+await events.publish(accountUpdated(account));
+```
+
+The bad comment narrates execution order already visible in the code. The better comment records why reordering is unsafe: event consumers expect the committed account to be readable. Do not add comments to surrounding ordinary statements merely for consistency.

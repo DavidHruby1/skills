@@ -35,7 +35,7 @@ Use a secondary mode only when the task clearly crosses boundaries.
 - Pull complexity downward when the module owns it; keep related knowledge together when splitting would leak assumptions.
 - Design strategically for current pressure: design non-trivial structure twice, keep decisions reversible, and define avoidable errors out of existence where practical.
 - Refactoring preserves behavior and moves in small safe steps with concrete validation when feasible.
-- Comment generously to preserve purpose, design reasoning, invariants, constraints, and ownership; do not narrate mechanics.
+- Use comments as a navigation layer: preserve why classes, functions, significant blocks, and ambiguous lines exist or take their chosen approach so review is fast; do not merely narrate what ordinary statements do.
 - Risky assumptions must be proven with code, tests, tools, measurements, tracer bullets, or focused clarification.
 
 ## Abstraction Gate
@@ -71,14 +71,14 @@ Never claim "no behavior change" after changing conditionals, ordering, error ha
 
 Stop when the current plan, change, or review is clear, local, validated as far as feasible, and easy enough to change next.
 
-Generated code often looks more senior while becoming harder for the next human to change. Treat fake abstractions, pass-through layers, speculative generality, comment spam, broad rewrites, and refactors with behavior drift as stop signals unless current requirements justify them.
+Generated code often looks more senior while becoming harder for the next human to change. Treat fake abstractions, pass-through layers, speculative generality, mechanical line-by-line comments, broad rewrites, and refactors with behavior drift as stop signals unless current requirements justify them.
 
 Common stop signals:
 
 - fake abstraction: service, manager, helper, factory, interface, or strategy that hides no knowledge
 - pass-through layer: same arguments in, same result out, more names and files
 - speculative generality: imaginary providers, formats, storage engines, themes, policies, tenants, or plugin systems
-- comment spam: comments narrate obvious code to make output look careful
+- mechanical comments: line-by-line syntax narration that preserves no reason, decision, or constraint
 - tactical patch: another special case while duplicated or hidden knowledge remains central to the task
 - broad rewrite: unrelated code changes because the model can, not because the task needs it
 - architecture theater: frameworks, registries, providers, or multi-phase designs before uncertainty has been reduced
@@ -91,7 +91,7 @@ Stop coding or refactoring when the behavior change is easy to make, cleanup spr
 
 Stop abstracting when the abstraction would support imaginary needs, cannot be given a precise name, only forwards parameters, still requires callers to know hidden details, makes the common path harder, or fragments one clear function.
 
-Stop commenting when the comment repeats code, explains mechanics instead of reasoning, would become stale as soon as implementation changes, or tries to justify confusing code instead of fixing it.
+Stop adding comments only when they merely translate syntax, would become stale as soon as implementation changes, or try to justify confusing code instead of fixing it. Do not remove a useful reason just because it can eventually be reconstructed from the implementation or surrounding history.
 
 Stop reviewing when remaining comments are preference-only, findings require unavailable product/domain/runtime facts, or the next useful step is validation rather than more commentary.
 
