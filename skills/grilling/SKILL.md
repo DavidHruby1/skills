@@ -7,7 +7,15 @@ argument-hint: "[task-NNN] [reason]"
 
 # Grilling
 
-Start or resume a numbered task and turn an uncertain plan or design into its authoritative `BRIEF.md` through a relentless, batch-based interview.
+Start or resume a numbered task and turn an uncertain plan or design into its authoritative `BRIEF.md` through a relentless, single-batch interview.
+
+## Interaction Contract
+
+Ask every user-facing question in normal assistant text. Never invoke the `question` tool, an `ask` tool, or any other interactive prompt tool during this workflow.
+
+Before sending questions, investigate and reason through the entire known design tree. Then send one comprehensive questionnaire containing every known material question, including dependent questions phrased conditionally. Do not split known questions across messages or hold questions back for a later round.
+
+Number the questions. Under each question, provide concrete answer choices labeled exactly `a)`, `b)`, `c)`, and add further lettered choices only when materially necessary. Mark the recommended choice and its main trade-off in the same text. Tell the user they can reply compactly, for example `1a, 2c, 3b`, and may replace any choice with their own answer.
 
 ## 1. Resolve The Task
 
@@ -21,7 +29,7 @@ Use the selected directory for the entire grill. This step is complete when exac
 
 Choose the grounding branch from the invocation:
 
-- For `/grilling` without a task ID, treat the user's current request and preceding conversation as the seed for the new task. If they do not establish a concrete problem and desired outcome, ask the smallest useful batch of opening questions needed to establish them before searching the repository. Do not invent a topic or resume the previously greatest task.
+- For `/grilling` without a task ID, treat the user's current request and preceding conversation as the seed for the new task. If they do not establish a concrete problem and desired outcome, ask all opening questions needed to establish them in one text questionnaire following the Interaction Contract before searching the repository. Do not invent a topic or resume the previously greatest task.
 - For `/grilling task-NNN <reason>`, first read the existing `BRIEF.md` in full and then every task artifact relevant to the stated reason. Use the reason as a claim to investigate, not as proof that the brief is wrong.
 
 Once the subject is known, read relevant documentation and ADRs under `docs/`. Query an existing `graphify-out/` when broad architecture, relationships, data flow, or scope narrowing is needed, then verify claims in source. Use read, glob, or grep directly for known files, names, strings, and localized questions; use `ast-grep` only when syntax-aware structure improves implementation evidence. Answer factual questions from evidence; ask the user only for product or design decisions.
@@ -30,9 +38,9 @@ Infer the narrowest reasonable scope that achieves the user's stated outcome. Tr
 
 Build the design tree from the grounded facts. This step is complete when the new or resumed subject is explicit, factual questions are answered, and the unresolved decision branches and their dependencies are known.
 
-## 3. Grill In Batches
+## 3. Grill In One Batch
 
-Resolve prerequisite decisions before dependent ones, but do not ask questions one at a time by default. First think through the grounded facts, unresolved decision branches, and dependencies. Then send the user one numbered batch containing all currently material questions they can reasonably answer together. Each question includes:
+First think through the grounded facts, every unresolved decision branch, and their dependencies. Send one comprehensive text questionnaire following the Interaction Contract. Include dependent questions in that same questionnaire using explicit conditions such as "If you choose 2a..." rather than postponing them. Each question includes:
 
 - why the decision matters,
 - a concrete scenario or edge case when useful,
@@ -40,7 +48,7 @@ Resolve prerequisite decisions before dependent ones, but do not ask questions o
 
 Challenge vague or conflicting terms and propose precise domain language. When a claim conflicts with evidence, show the evidence and ask which intended behavior governs. Probe only material branches within that scope: behavior, boundaries, failure cases, invariants, compatibility, security, operations, validation, and acceptance criteria.
 
-After each user response or discussion, re-evaluate the whole decision tree before asking anything else. If the answers are sufficient, proceed directly to crystallizing the brief. If material branches remain unresolved or the user's answers opened new dependencies, send another numbered batch containing all newly relevant questions at once. Keep batches focused: include every material question that is ready to answer, but do not include speculative questions whose prerequisites are still unresolved.
+After the user responds, re-evaluate the whole decision tree. If the answers are sufficient, proceed directly to crystallizing the brief. Ask a follow-up questionnaire only when an answer introduced a material branch that could not reasonably have been anticipated; include every newly material question in that single text message and follow the Interaction Contract again. Never use follow-ups to ask a known question that should have been included in the first questionnaire.
 
 This step is complete when every material branch is resolved.
 
@@ -59,7 +67,7 @@ As soon as every known branch is resolved and the draft `BRIEF.md` records the r
 Act on the auditor's verdict:
 
 - On `READY`, finish the grilling session.
-- On `REWORK`, process every finding by its reported kind. Fix `MECHANICAL` findings such as typos, grammar, formatting, or meaning-preserving wording directly in `BRIEF.md` without asking the user. For `DECISION` findings involving logic, behavior, scope, contradictions, invariants, or acceptance criteria, return to Step 3 and ask the user one focused batch of all unresolved decision questions that are ready to answer.
-- When `REWORK` contains both kinds, apply all mechanical fixes first, then grill the decision findings in one or more focused batches.
+- On `REWORK`, process every finding by its reported kind. Fix `MECHANICAL` findings such as typos, grammar, formatting, or meaning-preserving wording directly in `BRIEF.md` without asking the user. For `DECISION` findings involving logic, behavior, scope, contradictions, invariants, or acceptance criteria, return to Step 3 and ask all unresolved decision questions in one text questionnaire following the Interaction Contract.
+- When `REWORK` contains both kinds, apply all mechanical fixes first, then put every decision finding into one text questionnaire following the Interaction Contract.
 
 The grill is complete only when the latest auditor verdict is `READY`, and every material outcome is recorded consistently in the active task's `BRIEF.md`. Stop there; implementation belongs to a later workflow.
