@@ -62,12 +62,12 @@ Create or update `BRIEF.md` in the active task as answers crystallize. Keep it c
 - resolved decisions and important rejected alternatives,
 - concrete acceptance criteria.
 
-As soon as every known branch is resolved and the draft `BRIEF.md` records the resulting design, invoke `brief-auditor` with the active task path, full brief, resolved design tree, and relevant evidence. Do this immediately instead of performing a final self-audit or declaring the grill complete.
+As soon as every known branch is resolved and the draft `BRIEF.md` records the resulting design, invoke `brief-auditor` exactly once with the active task path, full brief, resolved design tree, and relevant evidence. Treat the auditor only as a final source of feedback, not as a workflow gate. Ignore any `READY` or `REWORK` verdict except as context for the findings.
 
-Act on the auditor's verdict:
+Use the single audit result as follows:
 
-- On `READY`, finish the grilling session.
-- On `REWORK`, process every finding by its reported kind. Fix `MECHANICAL` findings such as typos, grammar, formatting, or meaning-preserving wording directly in `BRIEF.md` without asking the user. For `DECISION` findings involving logic, behavior, scope, contradictions, invariants, or acceptance criteria, return to Step 3 and ask all unresolved decision questions in one text questionnaire following the Interaction Contract.
-- When `REWORK` contains both kinds, apply all mechanical fixes first, then put every decision finding into one text questionnaire following the Interaction Contract.
+- Fix clear `MECHANICAL` findings such as typos, grammar, formatting, or meaning-preserving wording directly in `BRIEF.md` without asking the user.
+- Present every substantive finding about logic, behavior, scope, contradictions, invariants, or acceptance criteria to the user as final audit feedback. Do not ask another questionnaire unless the user explicitly asks to continue refining the brief.
+- Never invoke `brief-auditor` again for the same grilling session, even after user answers or brief edits prompted by the audit feedback.
 
-The grill is complete only when the latest auditor verdict is `READY`, and every material outcome is recorded consistently in the active task's `BRIEF.md`. Stop there; implementation belongs to a later workflow.
+The grill is complete after the single audit result has been handled and the active task's `BRIEF.md` contains the current material outcome. Stop there; implementation belongs to a later workflow.

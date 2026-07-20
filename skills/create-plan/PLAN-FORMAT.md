@@ -62,6 +62,8 @@ Use this structure. Omit only sections marked optional and replace every placeho
 
 **Dependencies:** <Earlier PRs or `None`>
 
+**Out of scope:** <Work explicitly excluded from this PR or `None`>
+
 **Size limit:** <Estimated additions plus deletions for all logic. State target compliance, justify 501-750 lines, and disclose substantial excluded changes.>
 
 <!-- Repeat the PR section as needed. -->
@@ -81,6 +83,17 @@ Use this structure. Omit only sections marked optional and replace every placeho
 - <Non-blocking unknown, owner, and required resolution point>
 
 <!-- Omit Unresolved when empty. Blocking unknowns are not allowed in PLAN.md. -->
+
+## Published Issues
+
+- Provider: <GitHub or GitLab, as required by repository instructions>
+- Repository: `<owner/repository or group/project>`
+- Task label: `task-NNN`
+
+- [ ] PR 1: `<pending>`
+- [ ] PR 2: `<pending>`; depends on PR 1
+
+<!-- Before publication every item is pending. Publication may only check an item and replace its placeholder and PR dependency with verified issue references. -->
 ```
 
 ## Completion Checks
@@ -88,6 +101,7 @@ Use this structure. Omit only sections marked optional and replace every placeho
 - The plan matches the solution explicitly approved during solution planning and does not silently change the brief.
 - Every brief acceptance criterion has one implementation owner and a concrete validation path.
 - Every PR is independently mergeable after its dependencies and completes its stated outcome.
+- Every PR states its explicit out-of-scope work or `None`.
 - The sequence uses the fewest coherent PRs; every split has a concrete benefit beyond technical separability.
 - Tests remain with the production behavior they prove. Any separate test-infrastructure PR is independently useful, validated, and consumed by later PRs.
 - Every PR targets at most 500 changed logic lines; no PR exceeds 750; every over-target PR justifies the rejected split.
@@ -97,4 +111,5 @@ Use this structure. Omit only sections marked optional and replace every placeho
 - Validation covers relevant failure, concurrency, migration, and rollback paths in addition to the happy path.
 - Final cross-PR validation contains only checks that cannot be owned by one PR; it does not repeat every acceptance criterion.
 - No blocking product, architecture, or external-contract unknown is delegated to implementation.
+- Published Issues has exactly one item per PR in stack order, with matching dependencies and repository-instructed provider; items are pending before publication and checked only with verified issue references afterward.
 - The plan contains no implementation code, speculative work, or restatement of research that does not guide execution.

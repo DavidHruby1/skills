@@ -138,6 +138,10 @@
             "model": "openai/gpt-5.6-sol",
             "variant": "low"
         },
+        "ticket-master": {
+            "model": "openai/gpt-5.4-mini",
+            "variant": "medium"
+        },
         "worker": {
             "model": "openai/gpt-5.6-sol",
             "variant": "low"

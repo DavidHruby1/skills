@@ -41,6 +41,7 @@ Audit whether the plan:
 - defines coherent, correctly ordered PRs that are independently safe and mergeable after their declared dependencies,
 - keeps production behavior with the tests that prove it and covers relevant failure, migration, compatibility, rollback, security, concurrency, and operational paths,
 - names evidence-backed ownership boundaries and provides enough implementation order and context that a worker need not invent product or architecture decisions,
+- gives every PR explicit out-of-scope work and one matching pending issue-map item in stack order,
 - respects the plan size rules and justifies every split or over-target PR,
 - follows applicable repository principles and precedent without propagating a concrete defect, mismatched invariant, misplaced ownership, or unnecessary mechanism.
 

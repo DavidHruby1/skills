@@ -11,8 +11,11 @@ Use this structure. Omit only sections marked optional and replace every placeho
 
 ## Stack Context
 
+- Task: `task-NNN`
+- Issue: <provider-supported closing reference and published issue URL, or a plain link when automatic closure is not guaranteed>
 - Depends on: <preceding pull request or `None`>
 - Plan stage: <PR N and outcome from PLAN.md>
+- Section digest: <published PR-section SHA-256>
 
 ## Behavior
 
@@ -89,6 +92,7 @@ Use this structure. Omit only sections marked optional and replace every placeho
 
 - The description matches the final committed diff and contains no planned but unimplemented behavior.
 - The overview explains the outcome, motivation, main behavior, and reading orientation without repeating the full body.
+- Stack context matches the task's published issue and immediate PR dependency, without claiming unsupported automatic closure.
 - Detailed sections represent coherent functionality or decisions, not a symbol-by-symbol or line-by-line inventory.
 - Every non-obvious design choice states why it was selected and names a credible rejected alternative when one existed.
 - Entry points, dependencies, state, side effects, failure behavior, and invariants are covered wherever they affect understanding.

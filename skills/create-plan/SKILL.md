@@ -1,6 +1,6 @@
 ---
 name: create-plan
-description: Create PLAN.md in the active task from an authoritative brief through critical solution planning. Use when a defined problem needs competing technical approaches evaluated with the user before an implementation plan is written.
+description: Create and publish an approved PLAN.md from an authoritative brief. Use when a defined problem needs critical solution planning and tracked implementation issues.
 ---
 
 # Solution Planning
@@ -68,20 +68,28 @@ This step is complete only when one technically credible solution is explicitly 
 
 After approval, write `PLAN.md` in the same active task used throughout this workflow by following [`PLAN-FORMAT.md`](PLAN-FORMAT.md). Base it on the approved solution, repository evidence, the authoritative `BRIEF.md`, and `RESEARCH.md` from that task when present.
 
+Populate `Published Issues` before audit. Read the required GitHub or GitLab provider from repository instructions and derive its repository from the Git remote; stop on a missing, conflicting, or mismatched instruction rather than selecting a provider. Add one pending item per planned PR in stack order.
+
 Do not implement code. Do not silently alter the approved solution while translating it into steps. If planning exposes a material flaw in the selected design, stop writing, explain the flaw, and resume solution planning.
 
 This step is complete when the draft `PLAN.md` passes every completion check in `PLAN-FORMAT.md` and appears executable without requiring an implementation agent to invent product or architecture decisions. Do not declare planning complete yet.
 
 ## 5. Audit The Plan
 
-Invoke `plan-auditor` with the active task path, full `BRIEF.md`, `RESEARCH.md` when present, the explicitly approved solution and accepted trade-offs, full draft `PLAN.md`, and relevant repository and Git-history evidence. Do this immediately instead of performing another self-audit or declaring planning complete.
+Invoke `plan-auditor` exactly once with the active task path, full `BRIEF.md`, `RESEARCH.md` when present, the explicitly approved solution and accepted trade-offs, full draft `PLAN.md`, and relevant repository and Git-history evidence. Treat the auditor only as a final source of feedback, not as a workflow gate. Ignore any `READY` or `REWORK` verdict except as context for the findings.
 
-Act on the auditor's verdict:
+Use the single audit result as follows:
 
-- On `READY`, finish planning.
-- On `REWORK`, correct every `MECHANICAL` and `PLANNING` finding that preserves the brief and approved solution, then invoke `plan-auditor` again with the complete updated inputs.
-- For a `DECISION` finding within solution design, return to critical solution planning and obtain explicit user approval before updating the plan. When it exposes a defect in the authoritative brief, stop and request `/grilling task-NNN <reasons>` instead of silently changing the brief.
-- For an `EVIDENCE` finding, investigate repository evidence when it is locally resolvable. When it requires an unresolved third-party or platform contract, stop and request `/research`, naming the required evidence. Reinvoke the auditor only after the evidence and affected plan are updated.
-- When findings have multiple classifications, resolve them in dependency order: evidence and decisions before dependent planning corrections, then mechanical corrections.
+- Fix clear `MECHANICAL` findings and `PLANNING` findings that preserve the brief and explicitly approved solution directly in `PLAN.md` without asking the user.
+- Present every substantive finding about solution design, missing evidence, brief defects, scope, sequencing, risk, or acceptance alignment to the user as final audit feedback. Do not resume solution planning, request `/grilling`, request `/research`, or ask another questionnaire unless the user explicitly asks to continue refining the plan.
+- Never invoke `plan-auditor` again for the same planning session, even after user answers or plan edits prompted by the audit feedback.
 
-The workflow is complete only when the latest audit verdict is `READY` for the current `PLAN.md`. Do not implement code.
+This step is complete after the single audit result has been handled and the active task's `PLAN.md` contains the current material outcome. Do not implement code.
+
+## 6. Publish The Issues
+
+Perform a non-mutating preflight for the instructed provider covering CLI availability, authentication, repository access, issue creation, and the task label. Compute a SHA-256 digest for each complete PR section exactly as written. Invoke `ticket-master` with the active task path, provider, repository, task label, ordered complete PR sections, and their digests.
+
+After it returns, reread `PLAN.md` and fetch every listed issue. Verify that every PR has one checked item in stack order and that its remote title, verbatim PR section, label, dependency, marker, and digest match. Resume partial publication through `ticket-master`; do not repair remote issues or checklist entries by inference.
+
+The workflow is complete only when every planned PR has one verified checked issue. Do not implement code.
