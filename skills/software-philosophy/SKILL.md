@@ -1,13 +1,13 @@
 ---
 name: software-philosophy
-description: Use exclusively for writing or modifying source code, planning a concrete source-code change, or reviewing source code or a proposed code change. This includes implementation, porting, bug fixes, and refactoring. Never use for testing, documentation, research, investigation, repository navigation, configuration, CI, deployment, or other non-code tasks.
+description: Use for non-mechanical source-code planning, implementation, refactoring, bug fixes, or review when design, abstraction, ownership, or maintainability decisions are required. Do not use for testing, documentation, investigation, configuration, CI, deployment, or mechanical edits.
 ---
 
 # Software Philosophy
 
 Use when writing code from scratch, implementing a feature, fixing a bug, refactoring, planning a change, or reviewing code where design and maintainability matter. The goal is software that is easier to change without making the current task larger than necessary.
 
-Do not use for mechanical formatting, dependency installation, straightforward commands, or work already governed by a more specific skill.
+Do not use for mechanical formatting, dependency installation, or straightforward commands. When a more specific workflow invokes it, apply only its design guidance while the invoking workflow continues to govern execution.
 
 ## Routing
 
@@ -49,7 +49,7 @@ Create an abstraction only when it does at least one real job:
 - represents duplicated business, data-shape, formatting, validation, or lifecycle knowledge once
 - reduces caller cognitive load, makes the common path easier, or makes misuse harder
 - pulls complexity into the module that owns it
-- localizes a current or next-likely change
+- localizes a change required now or supported as near-term by approved requirements, repository evidence, or an established product commitment
 - separates things that change for different reasons
 - prevents callers from knowing external quirks, internal data shapes, or ordering rules
 

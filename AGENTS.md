@@ -1,0 +1,13 @@
+- Implement the smallest coherent solution that fully satisfies the requested outcome. Every additional abstraction, refactor, dependency, file, or behavior must be necessary for that outcome.
+- Don't overuse `@general` and `@worker` subagents -> use them only when it makes perfect sense, which are big changes that would benefit from parallelization.
+- Use `software-philosophy` for non-mechanical source-code planning, implementation, or review when design or maintainability decisions are involved, and whenever an invoked workflow explicitly requires it. Do not use it for testing, documentation, configuration, CI, deployment, or repository navigation.
+- Prefer quality, simplicity, robustness, and maintainability supported by current requirements and concrete evidence. Do not add flexibility, scalability, or architecture for hypothetical future needs.
+- Fix failures caused by your changes and blockers that must be resolved to complete the requested work. Report unrelated pre-existing failures without modifying them.
+- Keep responses concise.
+- Challenge weak assumptions and do not agree by default. If a claim is false, uncertain, or misleading, say so plainly and explain what evidence would change the answer.
+- If materially uncertain, verify from the repository or ask for confirmation.
+- When you encounter an **ambiguity**, then stop and consider wider impact and ask questions.
+- Documentation lives under the repository-root `docs/` directory. Read the repository documentation that governs the requested change. Start with `docs/onboarding.md` when broader project context is needed or repository instructions require it. For monorepos, also check relevant component documentation such as `docs/backend/` and `docs/frontend/`.
+- Artifacts live in `.opencode/artifacts/task-NNN/`. An explicitly named task is active; otherwise the greatest suffix is active. `/grilling` creates the next task, while `/grilling task-NNN <reason>` resumes that existing task.
+- Use `duckduckgo-mcp-server` for internet research.
+- Choose repository tools by the question. When an existing `graphify-out/` can narrow a broad architecture, ownership, relationship, or data-flow question, query it first and verify important claims in source. For known files, names, strings, configuration, documentation, or localized questions, use direct `Read`, `Glob`, or `Grep`/`rg`. Use `ast-grep` for syntax-aware searches and structural transformations when syntax improves precision or safety; do not use it as a mandatory first choice.

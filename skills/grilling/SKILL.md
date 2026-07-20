@@ -7,7 +7,7 @@ argument-hint: "[task-NNN] [reason]"
 
 # Grilling
 
-Start or resume a numbered task and turn an uncertain plan or design into its authoritative `BRIEF.md` through a relentless, decision-by-decision interview.
+Start or resume a numbered task and turn an uncertain plan or design into its authoritative `BRIEF.md` through a relentless, batch-based interview.
 
 ## 1. Resolve The Task
 
@@ -21,22 +21,26 @@ Use the selected directory for the entire grill. This step is complete when exac
 
 Choose the grounding branch from the invocation:
 
-- For `/grilling` without a task ID, treat the user's current request and preceding conversation as the seed for the new task. If they do not establish a concrete problem and desired outcome, ask exactly one opening question to establish them before searching the repository. Do not invent a topic or resume the previously greatest task.
+- For `/grilling` without a task ID, treat the user's current request and preceding conversation as the seed for the new task. If they do not establish a concrete problem and desired outcome, ask the smallest useful batch of opening questions needed to establish them before searching the repository. Do not invent a topic or resume the previously greatest task.
 - For `/grilling task-NNN <reason>`, first read the existing `BRIEF.md` in full and then every task artifact relevant to the stated reason. Use the reason as a claim to investigate, not as proof that the brief is wrong.
 
 Once the subject is known, read relevant documentation and ADRs under `docs/`. Query an existing `graphify-out/` when broad architecture, relationships, data flow, or scope narrowing is needed, then verify claims in source. Use read, glob, or grep directly for known files, names, strings, and localized questions; use `ast-grep` only when syntax-aware structure improves implementation evidence. Answer factual questions from evidence; ask the user only for product or design decisions.
 
+Infer the narrowest reasonable scope that achieves the user's stated outcome. Treat adjacent improvements discovered during investigation as outside that scope unless they are necessary to achieve the outcome; ask before expanding into them.
+
 Build the design tree from the grounded facts. This step is complete when the new or resumed subject is explicit, factual questions are answered, and the unresolved decision branches and their dependencies are known.
 
-## 3. Grill One Branch At A Time
+## 3. Grill In Batches
 
-Resolve prerequisite decisions before dependent ones. Ask exactly one question per turn and wait for the answer. Each question includes:
+Resolve prerequisite decisions before dependent ones, but do not ask questions one at a time by default. First think through the grounded facts, unresolved decision branches, and dependencies. Then send the user one numbered batch containing all currently material questions they can reasonably answer together. Each question includes:
 
 - why the decision matters,
 - a concrete scenario or edge case when useful,
 - your recommended answer and its main trade-off.
 
-Challenge vague or conflicting terms and propose precise domain language. When a claim conflicts with evidence, show the evidence and ask which intended behavior governs. Probe only material branches: scope, behavior, boundaries, failure cases, invariants, compatibility, security, operations, validation, and acceptance criteria.
+Challenge vague or conflicting terms and propose precise domain language. When a claim conflicts with evidence, show the evidence and ask which intended behavior governs. Probe only material branches within that scope: behavior, boundaries, failure cases, invariants, compatibility, security, operations, validation, and acceptance criteria.
+
+After each user response or discussion, re-evaluate the whole decision tree before asking anything else. If the answers are sufficient, proceed directly to crystallizing the brief. If material branches remain unresolved or the user's answers opened new dependencies, send another numbered batch containing all newly relevant questions at once. Keep batches focused: include every material question that is ready to answer, but do not include speculative questions whose prerequisites are still unresolved.
 
 This step is complete when every material branch is resolved.
 
@@ -55,7 +59,7 @@ As soon as every known branch is resolved and the draft `BRIEF.md` records the r
 Act on the auditor's verdict:
 
 - On `READY`, finish the grilling session.
-- On `REWORK`, process every finding by its reported kind. Fix `MECHANICAL` findings such as typos, grammar, formatting, or meaning-preserving wording directly in `BRIEF.md` without asking the user. For each `DECISION` finding involving logic, behavior, scope, contradictions, invariants, or acceptance criteria, return to Step 3 and ask exactly one question at a time until the required decisions are resolved.
-- When `REWORK` contains both kinds, apply all mechanical fixes first, then grill the decision findings one at a time.
+- On `REWORK`, process every finding by its reported kind. Fix `MECHANICAL` findings such as typos, grammar, formatting, or meaning-preserving wording directly in `BRIEF.md` without asking the user. For `DECISION` findings involving logic, behavior, scope, contradictions, invariants, or acceptance criteria, return to Step 3 and ask the user one focused batch of all unresolved decision questions that are ready to answer.
+- When `REWORK` contains both kinds, apply all mechanical fixes first, then grill the decision findings in one or more focused batches.
 
 The grill is complete only when the latest auditor verdict is `READY`, and every material outcome is recorded consistently in the active task's `BRIEF.md`. Stop there; implementation belongs to a later workflow.
