@@ -12,9 +12,9 @@ Treat the active task's `BRIEF.md` as authoritative, brainstorm the best solutio
 Gather evidence before deciding whether the task must return to grilling. Follow this order:
 
 1. Resolve the active task using the task-artifact convention in `AGENTS.md`. Inventory the task artifacts without judging their adequacy yet.
-2. Read the task's `BRIEF.md` in full when it exists, then read its `RESEARCH.md` in full when present. The brief's problem and outcome, canonical domain terms, scope, constraints, invariants, resolved decisions, rejected alternatives, and acceptance criteria are authoritative claims to verify, not assumptions that the repository already satisfies.
-3. Inspect the relevant system. Query an existing `graphify-out/` when broad architecture, relationships, ownership, data flow, or scope narrowing is needed, then verify claims in source. Use read, glob, or grep directly for known files, names, strings, and localized questions; use `ast-grep` for syntax-aware implementation searches only when structure improves precision. Trace the brief and research claims into source code, tests, documentation, and ADRs to establish what already exists, what is missing, and where either input is incorrect or inconsistent with the system.
-4. Evaluate the brief only after that investigation. Check that it is coherent, decision-complete, technically grounded, and consistent with both `RESEARCH.md` and repository evidence.
+2. Read the task's `BRIEF.md` in full when it exists, then read its `RESEARCH.md` in full when present. `RESEARCH.md` is optional and its absence never blocks planning or requires the user to run `/research`. The brief's problem and outcome, canonical domain terms, scope, constraints, invariants, resolved decisions, rejected alternatives, and acceptance criteria are authoritative claims to verify, not assumptions that the repository already satisfies.
+3. Inspect the relevant system. Query an existing `graphify-out/` when broad architecture, relationships, ownership, data flow, or scope narrowing is needed, then verify claims in source. Use read, glob, or grep directly for known files, names, strings, and localized questions; use `ast-grep` for syntax-aware implementation searches only when structure improves precision. Trace the brief and any research claims into source code, tests, documentation, and ADRs to establish what already exists, what is missing, and where either input is incorrect or inconsistent with the system.
+4. Evaluate the brief only after that investigation. Check that it is coherent, decision-complete, technically grounded, and consistent with repository evidence and `RESEARCH.md` when present.
 
 Use bounded, path-scoped Git history when it can explain a non-obvious design, prior attempt, revert, recurring regression, migration, compatibility constraint, or co-change pattern that could alter the solution or its risk. Start with recent logs for the relevant boundaries and inspect historical patches only when a commit is materially relevant. Treat history as evidence of prior intent and change risk, not proof that a decision remains correct.
 
@@ -22,10 +22,11 @@ Only after completing the available investigation may you choose an escalation:
 
 - If no task or `BRIEF.md` exists, request `/grilling` and state exactly what artifact discovery established.
 - If the brief is incomplete, contradictory, or disproven by the system, stop planning and request `/grilling task-NNN <reasons>` with concrete evidence-backed reasons. Do not correct the authoritative brief or write `PLAN.md`.
-- If material behavior depends on a third-party or platform runtime contract and `RESEARCH.md` lacks applicable authoritative external evidence, stop and request `/research`, naming the unresolved contract.
 - Otherwise, continue to solution exploration.
 
-This step is complete when every available brief and research input has been read in full, the relevant system has been inspected with tools appropriate to the questions, and the decision to continue or escalate is supported by concrete source evidence.
+If planning requires authoritative internet evidence for a concrete third-party, platform, or technical question, invoke at most one `external-researcher` subagent to investigate the specific unresolved question. Use its evidence directly in planning; do not require the user to run `/research` or create `RESEARCH.md`.
+
+This step is complete when the brief and any available research input have been read in full, the relevant system has been inspected with tools appropriate to the questions, and the decision to continue or escalate is supported by concrete source evidence.
 
 ## 2. Explore The Solution Space
 
