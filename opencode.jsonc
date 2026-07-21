@@ -149,6 +149,10 @@
         "inspector": {
             "model": "openai/gpt-5.6-sol",
             "variant": "medium"
+        },
+        "test-auditor": {
+            "model": "openai/gpt-5.6-sol",
+            "variant": "medium"
         }
     },
     "plugin": ["./plugins/graphify.js", "./plugins/codex-identity.js"],

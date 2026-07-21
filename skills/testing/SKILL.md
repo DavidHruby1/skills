@@ -1,11 +1,18 @@
 ---
 name: testing
-description: Use ONLY when the user explicitly requests an optional test contract for approved PLAN.md work and selects unit, integration, or end-to-end coverage; never invoke proactively.
+description: Use when the user explicitly requests an optional test contract for approved PLAN.md work, or when an implementation worker is assigned approved GHERKIN.md scenarios and must write their unit, integration, or end-to-end tests; never invoke proactively otherwise.
 ---
 
 # Testing
 
-Turn approved behavior into a human-reviewed test contract that supplements, but never rewrites, the published `PLAN.md`. The active task's `BRIEF.md` is the behavioral authority, `PLAN.md` owns implementation and PR boundaries, and `GHERKIN.md` owns only the test behavior the user explicitly selected. The implementation workflow writes the resulting production and test code in the owning planned PR.
+Turn approved behavior into a human-reviewed test contract, then route an implementation worker to the exact test-writing rules for that approved contract. The active task's `BRIEF.md` is the behavioral authority, `PLAN.md` owns implementation and PR boundaries, and `GHERKIN.md` owns only the test behavior the user explicitly selected. The implementation workflow writes the resulting production and test code in the owning planned PR.
+
+## Invocation Router
+
+Choose the route from the caller and artifact state; never mix contract authoring with test implementation.
+
+- **Contract route**: use when the user directly invokes `/testing`. Continue with Step 1 to select one test level, draft and audit its Gherkin section, and obtain explicit approval. Do not edit test or production files on this route.
+- **Worker route**: use only when an implementation worker receives one or more scenarios from an existing `GHERKIN.md` section that contains both `Status: Approved` and `Approved: YYYY-MM-DD`. Skip Steps 1-3 and continue directly to **Worker Test Routing**. If the assigned section is draft, lacks its approval date, has an invalid execution mode, or contains no scenarios assigned to the worker's current `PLAN.md` PR, stop as blocked without editing tests.
 
 ## 1. Establish The Branch
 
@@ -40,9 +47,11 @@ Write English Gherkin unless the repository establishes another specification la
 - Cover every applicable acceptance criterion and material invariant, including representative success, rejection, boundary, and failure behavior. Add scenarios because they protect a concrete risk, not to maximize their count.
 - The traceability line must name at least one relevant `BRIEF.md` criterion and exactly one owning `PLAN.md` PR.
 
-End this run after presenting the draft and requesting explicit approval. Test files remain unchanged. Approval applies only to the exact scenario text reviewed by the user; any substantive scenario change returns the section to `Status: Draft` and requires approval again.
+After completing the first draft of the file, check for the file-level marker `Test-Audit: Completed YYYY-MM-DD`. When it is absent, invoke `test-auditor` exactly once, supplying the active task path, full `BRIEF.md`, full `PLAN.md`, full first-draft `GHERKIN.md`, and the full applicable branch reference. Require it to check whether the selected scope is complete and non-duplicative, including every applicable acceptance criterion and material invariant, representative success, rejection, boundary, and failure behavior, the selected test boundary, execution mode, observable outcomes, unique IDs, and exactly one correct owning PR per scenario. Correct valid findings yourself, then add `Test-Audit: Completed YYYY-MM-DD` once at the top of `GHERKIN.md` before its first section.
 
-This step is complete only when `GHERKIN.md` contains a complete, non-duplicative draft for the approved scope, every scenario has exactly one planned PR owner, and no plan, test, or production file has changed.
+When the marker is already present, never invoke `test-auditor`; preserve the marker through every correction, approval, implementation, and later `/testing` run. Make final contract acceptance yourself and stop on a substantive artifact conflict or unresolved decision instead of guessing. Then end this run after presenting the draft and requesting explicit approval. Test files remain unchanged. Approval applies only to the exact scenario text reviewed by the user; any substantive scenario change returns the section to `Status: Draft` and requires approval again without another audit.
+
+This step is complete only when `GHERKIN.md` contains a complete, non-duplicative draft for the approved scope, every scenario has exactly one planned PR owner, the permanent file-level audit marker records the single completed audit, and no plan, test, or production file has changed.
 
 ## 3. Confirm Approval
 
@@ -52,24 +61,36 @@ This step is complete when the selected section and execution mode are explicitl
 
 ## 4. Hand Off To Implementation
 
-Treat approved `GHERKIN.md` as a supplemental test contract, not as a reason to edit or republish `PLAN.md`. The implementation orchestrator groups every approved scenario by its traceability PR and supplies each worker the full relevant approved scenario blocks plus the full corresponding [`UNIT.md`](UNIT.md), [`INTEGRATION.md`](INTEGRATION.md), or [`E2E.md`](E2E.md) reference. Existing test requirements in `PLAN.md` remain authoritative even when no Gherkin section exists; this workflow adds rigor only for the levels the user explicitly selected.
+Treat approved `GHERKIN.md` as a supplemental test contract, not as a reason to edit or republish `PLAN.md`. The implementation orchestrator groups every approved scenario by its traceability PR and instructs the worker to invoke this skill before writing those tests. Existing test requirements in `PLAN.md` remain authoritative even when no Gherkin section exists; this workflow adds rigor only for the levels the user explicitly selected.
+
+### Worker Test Routing
+
+For every approved Gherkin section supplied in the worker assignment, route by the section heading and read exactly the corresponding test-writing reference in full before editing tests:
+
+- `## Unit` routes to [`UNIT.md`](UNIT.md).
+- `## Integration` routes to [`INTEGRATION.md`](INTEGRATION.md).
+- `## End-to-End` routes to [`E2E.md`](E2E.md).
+
+The worker does not choose, infer, or reclassify the level. The approved section heading is the routing decision. When one PR is assigned approved scenarios from more than one section, apply each corresponding route only to that section's scenarios. Stop as blocked if a heading is unknown, the requested boundary contradicts its heading, or the applicable reference cannot be read.
+
+After routing, inspect the repository's existing tests, test configuration, fixtures, helpers, and production interfaces. Write the smallest tests that faithfully prove every assigned approved scenario, keep each scenario ID in its test name or adjacent parametrization ID, and follow all rules and completion checks in the routed reference. Preserve the approved Gherkin text and its traceability. Do not create tests for unassigned scenarios or expand the selected level. The worker reports required test commands but leaves test execution to the implementation orchestrator.
 
 The implementation orchestrator applies the recorded execution mode:
 
 - **Test-first**: valid only for Unit. The worker writes the mapped tests before production implementation, the orchestrator proves a valid behavioral red state, and only then does the worker implement production behavior in the same planned PR.
 - **With implementation**: the worker writes production behavior and mapped tests together in the same planned PR. Integration and End-to-End always use this mode.
 
-After the mapped tests are written, the implementation orchestrator runs the narrowest relevant command and then the selected suite. A red unit result is valid only when new behavior reaches the intended production boundary and fails for the expected missing or incorrect behavior; collection, import, syntax, fixture, and environment failures are invalid. Integration and E2E tests must pass against their intended real boundaries.
+After the mapped tests are written, the implementation orchestrator first inspects the worker's complete test diff against every assigned scenario and the routed reference. It returns incomplete or incorrect work to the worker before executing tests. Once the code inspection is satisfactory, the orchestrator runs the narrowest relevant command and then the selected suite. A red unit result is valid only during the test-first precursor, when new behavior reaches the intended production boundary and fails for the expected missing or incorrect behavior; collection, import, syntax, fixture, and environment failures are invalid. After production implementation, Unit, Integration, and E2E tests must all pass against their intended boundaries. The orchestrator never invokes `test-auditor` during implementation.
 
-The implementation orchestrator invokes `test-auditor` exactly once for the approved scenarios assigned to that PR, supplying the active task path, full `BRIEF.md`, full `PLAN.md`, full relevant approved sections of `GHERKIN.md`, full applicable branch references, complete test diff and test-only fixtures, relevant production interfaces, and fresh run evidence. It verifies and corrects valid findings, reruns invalidated tests, and makes final acceptance without a second audit. Substantive contract conflicts return the affected section to `Status: Draft` for explicit user approval.
-
-This workflow is complete when the approved supplemental contract is stable, uniquely assigned to planned PRs, and ready for `/implement`; no plan, production, test, fixture, configuration, branch, or issue has changed.
+The contract route is complete when the approved supplemental contract is stable, uniquely assigned to planned PRs, and ready for `/implement`; no plan, production, test, fixture, configuration, branch, or issue has changed on that route. The worker route is complete when every assigned approved scenario has a traceable test written according to its routed reference and the worker has reported the orchestrator-owned validation.
 
 ## Gherkin Example
 
 Good:
 
 ```markdown
+Test-Audit: Completed 2026-07-21
+
 ## Unit
 Status: Draft
 Execution: Test-first
