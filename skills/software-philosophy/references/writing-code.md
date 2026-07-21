@@ -10,6 +10,7 @@ New code often works locally while spreading knowledge, adding hidden modes, inv
 - Put logic where the relevant knowledge already lives.
 - Use precise, consistent names for real domain concepts and decisions.
 - Keep the common path obvious, direct, and readable.
+- Use guard clauses and early `return`, `continue`, or `throw` for invalid states, failed preconditions, exceptional cases, and branches that can finish immediately. Do not nest `if` blocks when handling a condition up front can leave the main path flat and linear. Preserve nesting only when the alternatives genuinely belong together or an early exit would obscure lifecycle, cleanup, transaction, or control-flow semantics.
 - Represent each business rule once; avoid duplicating knowledge under different text.
 - Convert external data shapes at boundaries.
 - Prefer simple data flow over hidden mutation or temporal ordering.
@@ -29,11 +30,13 @@ New code often works locally while spreading knowledge, adding hidden modes, inv
 
 ## Comments
 
-Treat comments as a navigation layer for fast review. Add concise comments above classes, functions, and decision blocks that primarily explain why the code exists or why a decision was made. Capture the reason behind its purpose, responsibility, important choices, invariants, boundary contracts, external constraints, lifecycle assumptions, trade-offs, and ownership. Prefer a useful one-line reason over making the reviewer reconstruct that context from the implementation.
+Treat comments as a required navigation layer, not an optional finishing touch. Comment every new or materially changed class and every new or materially changed function unless it is genuinely trivial. A genuinely trivial function has an immediately obvious purpose and implementation, contains no meaningful branch, transformation, ordering, side effect, boundary interaction, invariant, or non-obvious failure behavior, and can be understood completely from its name and a single simple expression. When uncertain, add the comment.
 
-Comment an individual line when its reason or constraint is surprising. Ordinary readable statements do not need line-by-line narration. When deciding whether a class, function, decision block, or ambiguous line needs orientation, prefer adding the comment if it preserves why the code takes this approach; several useful reasons are better than too few. Keep them close to the decision and current with behavior.
+Place the comment directly above the class or function using the language's normal documentation-comment form when available. For each non-trivial function, explain all three of these points that apply: what responsibility and observable result the function provides; why the function exists and why this approach, ownership, ordering, or boundary was chosen; and how the important control flow, data flow, state transition, algorithm, fallback, or side effect works. Include relevant invariants, contracts, external constraints, lifecycle assumptions, trade-offs, and failure behavior. Use enough detail that a reviewer can understand the function's role and design before reading its body; do not force this into one line when several concise sentences are needed.
 
-Improve confusing code, names, and boundaries, but do not assume clean code replaces design documentation. A comment should preserve the reason for a purpose or decision rather than merely state what the code does, translate syntax, preserve stale history, or promise a contract the code does not enforce.
+Also comment classes, decision blocks, and individual lines whenever their purpose, reason, constraint, ordering, or behavior is not immediately obvious. Prefer too many useful explanatory comments over too few. Keep comments close to the code and update them whenever behavior changes.
+
+Do not use comments as a substitute for fixing confusing code, names, or boundaries. Avoid comments that only translate syntax or narrate obvious statements line by line, but do not use that rule as a reason to omit a function-level explanation of purpose, rationale, and operation. Never preserve stale history or promise a contract the code does not enforce.
 
 ## Checks
 
