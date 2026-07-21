@@ -47,11 +47,11 @@ Write English Gherkin unless the repository establishes another specification la
 - Cover every applicable acceptance criterion and material invariant, including representative success, rejection, boundary, and failure behavior. Add scenarios because they protect a concrete risk, not to maximize their count.
 - The traceability line must name at least one relevant `BRIEF.md` criterion and exactly one owning `PLAN.md` PR.
 
-After completing the first draft of the file, check for the file-level marker `Test-Audit: Completed YYYY-MM-DD`. When it is absent, invoke `test-auditor` exactly once, supplying the active task path, full `BRIEF.md`, full `PLAN.md`, full first-draft `GHERKIN.md`, and the full applicable branch reference. Require it to check whether the selected scope is complete and non-duplicative, including every applicable acceptance criterion and material invariant, representative success, rejection, boundary, and failure behavior, the selected test boundary, execution mode, observable outcomes, unique IDs, and exactly one correct owning PR per scenario. Correct valid findings yourself, then add `Test-Audit: Completed YYYY-MM-DD` once at the top of `GHERKIN.md` before its first section.
+After completing the first draft of the file, invoke `test-auditor` exactly once, supplying the active task path, full `BRIEF.md`, full `PLAN.md`, full first-draft `GHERKIN.md`, and the full applicable branch reference. Require it to check whether the selected scope is complete and non-duplicative, including every applicable acceptance criterion and material invariant, representative success, rejection, boundary, and failure behavior, the selected test boundary, execution mode, observable outcomes, unique IDs, and exactly one correct owning PR per scenario. Correct valid findings yourself without invoking `test-auditor` again. The audit writes no status or marker into `GHERKIN.md`.
 
-When the marker is already present, never invoke `test-auditor`; preserve the marker through every correction, approval, implementation, and later `/testing` run. Make final contract acceptance yourself and stop on a substantive artifact conflict or unresolved decision instead of guessing. Then end this run after presenting the draft and requesting explicit approval. Test files remain unchanged. Approval applies only to the exact scenario text reviewed by the user; any substantive scenario change returns the section to `Status: Draft` and requires approval again without another audit.
+On later corrections, approvals, implementation, and later `/testing` runs for that existing contract, never invoke `test-auditor` again. Make final contract acceptance yourself and stop on a substantive artifact conflict or unresolved decision instead of guessing. Then end this run after presenting the draft and requesting explicit user approval. Test files remain unchanged. Approval applies only to the exact scenario text reviewed by the user; only the user can authorize changing the section from `Status: Draft` to `Status: Approved`. Any substantive scenario change returns the section to `Status: Draft` and requires user approval again without another audit.
 
-This step is complete only when `GHERKIN.md` contains a complete, non-duplicative draft for the approved scope, every scenario has exactly one planned PR owner, the permanent file-level audit marker records the single completed audit, and no plan, test, or production file has changed.
+This step is complete only when `GHERKIN.md` contains a complete, non-duplicative draft for the selected scope, every scenario has exactly one planned PR owner, the one-time first-draft audit has been handled without changing Gherkin status, and no plan, test, or production file has changed.
 
 ## 3. Confirm Approval
 
@@ -61,7 +61,7 @@ This step is complete when the selected section and execution mode are explicitl
 
 ## 4. Hand Off To Implementation
 
-Treat approved `GHERKIN.md` as a supplemental test contract, not as a reason to edit or republish `PLAN.md`. The implementation orchestrator groups every approved scenario by its traceability PR and instructs the worker to invoke this skill before writing those tests. Existing test requirements in `PLAN.md` remain authoritative even when no Gherkin section exists; this workflow adds rigor only for the levels the user explicitly selected.
+Treat approved `GHERKIN.md` as a supplemental test contract, not as a reason to edit or republish `PLAN.md`. The implementation orchestrator groups every approved scenario by its traceability PR and instructs the worker to invoke this skill before writing those tests. When no approved Gherkin section exists, this workflow creates no test requirement; it applies only to levels the user explicitly selected and approved.
 
 ### Worker Test Routing
 
@@ -89,8 +89,6 @@ The contract route is complete when the approved supplemental contract is stable
 Good:
 
 ```markdown
-Test-Audit: Completed 2026-07-21
-
 ## Unit
 Status: Draft
 Execution: Test-first
