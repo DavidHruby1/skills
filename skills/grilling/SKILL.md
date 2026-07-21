@@ -1,13 +1,13 @@
 ---
 name: grilling
-description: Start or resume a relentless grill that crystallizes a plan or design into BRIEF.md.
+description: Start or resume a relentless grill that crystallizes a plan or design into BRIEF.md, classifies its delivery size, and recommends the next workflow.
 disable-model-invocation: true
 argument-hint: "[task-NNN] [reason]"
 ---
 
 # Grilling
 
-Start or resume a numbered task and turn an uncertain plan or design into its authoritative `BRIEF.md` through a relentless, single-batch interview.
+Start or resume a numbered task and turn an uncertain plan or design into its authoritative `BRIEF.md` through a relentless, single-batch interview. Classify the resolved work as small, medium, or large so the user knows whether it warrants `/create-plan`.
 
 ## Interaction Contract
 
@@ -32,7 +32,7 @@ Choose the grounding branch from the invocation:
 - For `/grilling` without a task ID, treat the user's current request and preceding conversation as the seed for the new task. If they do not establish a concrete problem and desired outcome, ask all opening questions needed to establish them in one text questionnaire following the Interaction Contract before searching the repository. Do not invent a topic or resume the previously greatest task.
 - For `/grilling task-NNN <reason>`, first read the existing `BRIEF.md` in full and then every task artifact relevant to the stated reason. Use the reason as a claim to investigate, not as proof that the brief is wrong.
 
-Once the subject is known, read relevant documentation and ADRs under `docs/`. Query an existing `graphify-out/` when broad architecture, relationships, data flow, or scope narrowing is needed, then verify claims in source. Use read, glob, or grep directly for known files, names, strings, and localized questions; use `ast-grep` only when syntax-aware structure improves implementation evidence. Answer factual questions from evidence; ask the user only for product or design decisions.
+Once the subject is known, read relevant documentation, ADRs, source, and tests. Answer factual questions from evidence; ask the user only for product or design decisions.
 
 Infer the narrowest reasonable scope that achieves the user's stated outcome. Treat adjacent improvements discovered during investigation as outside that scope unless they are necessary to achieve the outcome; ask before expanding into them.
 
@@ -40,19 +40,23 @@ Build the design tree from the grounded facts. This step is complete when the ne
 
 ## 3. Grill In One Batch
 
-First think through the grounded facts, every unresolved decision branch, and their dependencies. Send one comprehensive text questionnaire following the Interaction Contract. Include dependent questions in that same questionnaire using explicit conditions such as "If you choose 2a..." rather than postponing them. Each question includes:
-
-- why the decision matters,
-- a concrete scenario or edge case when useful,
-- your recommended answer and its main trade-off.
-
-Challenge vague or conflicting terms and propose precise domain language. When a claim conflicts with evidence, show the evidence and ask which intended behavior governs. Probe only material branches within that scope: behavior, boundaries, failure cases, invariants, compatibility, security, operations, validation, and acceptance criteria.
+Use the grounded design tree to send the questionnaire defined by the Interaction Contract. Explain why each decision matters and add a concrete scenario when useful. Challenge vague or conflicting terms, propose precise domain language, and show contrary evidence. Probe only material behavior, boundaries, failures, invariants, compatibility, security, operations, validation, and acceptance criteria within scope.
 
 After the user responds, re-evaluate the whole decision tree. If the answers are sufficient, proceed directly to crystallizing the brief. Ask a follow-up questionnaire only when an answer introduced a material branch that could not reasonably have been anticipated; include every newly material question in that single text message and follow the Interaction Contract again. Never use follow-ups to ask a known question that should have been included in the first questionnaire.
 
 This step is complete when every material branch is resolved.
 
-## 4. Crystallize The Brief
+## 4. Assess Delivery Size
+
+Classify the resolved work from the initial request, decisions, and repository evidence; do not ask the user or rely on line count alone:
+
+- **Small:** one narrow owner or boundary; one focused implementation. Recommend direct implementation.
+- **Medium:** coordinated symbols, callers, or one component boundary. Recommend `/create-plan`.
+- **Large:** multiple ownership or component boundaries, migration, public contracts, rollout, or dependent stages. Recommend `/create-plan`.
+
+Record the size, concise evidence, and next workflow in `BRIEF.md`. Use the highest category supported by a concrete coordination risk, not a hypothetical one.
+
+## 5. Crystallize The Brief
 
 Create or update `BRIEF.md` in the active task as answers crystallize. Keep it concise and implementation-neutral, recording:
 
@@ -60,14 +64,9 @@ Create or update `BRIEF.md` in the active task as answers crystallize. Keep it c
 - canonical domain terms,
 - scope, constraints, and invariants,
 - resolved decisions and important rejected alternatives,
-- concrete acceptance criteria.
+- concrete acceptance criteria,
+- a `Delivery Assessment` containing `Size: Small | Medium | Large`, concise evidence, and `Next workflow: Direct implementation | /create-plan`.
 
-As soon as every known branch is resolved and the draft `BRIEF.md` records the resulting design, invoke `brief-auditor` exactly once with the active task path, full brief, resolved design tree, and relevant evidence. Treat the auditor only as a final source of feedback, not as a workflow gate. Ignore any `READY` or `REWORK` verdict except as context for the findings.
+When every known branch is resolved and recorded, invoke `brief-auditor` exactly once with the active task, full brief, design tree, and evidence. Treat its findings as feedback, not a gate: fix meaning-preserving `MECHANICAL` findings, present substantive findings to the user, and never rerun the auditor or questionnaire unless the user explicitly resumes refinement.
 
-Use the single audit result as follows:
-
-- Fix clear `MECHANICAL` findings such as typos, grammar, formatting, or meaning-preserving wording directly in `BRIEF.md` without asking the user.
-- Present every substantive finding about logic, behavior, scope, contradictions, invariants, or acceptance criteria to the user as final audit feedback. Do not ask another questionnaire unless the user explicitly asks to continue refining the brief.
-- Never invoke `brief-auditor` again for the same grilling session, even after user answers or brief edits prompted by the audit feedback.
-
-The grill is complete after the single audit result has been handled and the active task's `BRIEF.md` contains the current material outcome. Stop there; implementation belongs to a later workflow.
+The grill is complete after the single audit result has been handled and the active task's `BRIEF.md` contains the current material outcome and evidence-backed delivery assessment. Report the size and next workflow to the user, then stop; implementation belongs to a later workflow.

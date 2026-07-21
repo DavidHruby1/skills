@@ -10,7 +10,7 @@ Turn the active task's `BRIEF.md` into an evidence-backed `RESEARCH.md` for tech
 
 ## 1. Frame The Investigation
 
-Resolve the active task using the task-artifact convention in `AGENTS.md` -> first find the active task, `cd` into it, and then read its `BRIEF.md` in full. Stop and request `/grilling` when no task directory or `BRIEF.md` exists. Extract the questions that must be answered to understand the current system, constraints, relevant precedent, validation paths, and risks behind every material requirement and acceptance criterion.
+Resolve the active task using `AGENTS.md` and read its `BRIEF.md` in full. Stop and request `/grilling` when no task or brief exists. Extract the questions needed to understand the current system, constraints, precedent, validation paths, and risks behind every material requirement and acceptance criterion.
 
 Classify two independent axes:
 
@@ -37,8 +37,6 @@ For localized impact, invoke one `internal-researcher`. For broad impact, divide
 - one explicit assigned scope,
 - the investigation questions it owns.
 
-Require detailed, source-cited reports of current behavior, ownership, data and control flow, dependencies, failure paths, invariants, extension points, tests and validation, relevant docs and ADRs, planning constraints, conflicts, and unknowns. A researcher may follow evidence outside its assignment but must identify the boundary crossing rather than silently expanding ownership. Researchers report facts, constraints, risks, and unknowns; they do not recommend, rank, select, or prescribe solutions.
-
 Check each report against its assignment. Resume a researcher when an owned question lacks a supported answer or explicit unknown, a material claim lacks a repository source, or reported behavior and cited evidence conflict.
 
 This step is complete when every investigation question has one internal owner, every owned question has a supported finding or explicit unknown, and overlaps or contradictions between reports are reconciled or recorded.
@@ -55,6 +53,6 @@ This step is complete when every externally dependent planning fact is supported
 
 ## 5. Synthesize The Research
 
-Read [`RESEARCH-FORMAT.md`](RESEARCH-FORMAT.md) which is skill reference file, then write `RESEARCH.md` yourself in the same active task used throughout this workflow. Synthesize accepted reports instead of concatenating them. Repository evidence outranks inference about repository behavior; authoritative version-matched external evidence governs external contracts. Preserve material conflicts and unknowns. Exclude solution recommendations, rankings, and implementation prescriptions; those belong to the planning workshop.
+Read [`RESEARCH-FORMAT.md`](RESEARCH-FORMAT.md), then synthesize accepted reports into the active task's `RESEARCH.md` instead of concatenating them. Repository evidence governs repository behavior; authoritative version-matched evidence governs external contracts. Preserve material conflicts and unknowns.
 
 The research is complete only when the artifact passes every completion check in `RESEARCH-FORMAT.md`, every material brief item is traceable to findings or an explicit unknown, and no subagent has written the artifact.

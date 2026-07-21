@@ -11,7 +11,7 @@ Reviews should catch behavior drift, missing validation, duplicated knowledge, w
 - Does the code make future changes easier or harder?
 - Is important knowledge duplicated, leaked, or hidden in the wrong place?
 - Are new abstractions deep enough to justify their surface area?
-- Do comments preserve the purpose and reasoning of non-obvious functions and abstractions without narrating mechanics?
+- Does every new or materially changed non-trivial class, function, and method have an accurate interface comment that preserves responsibility, rationale, contract, and important constraints?
 - Are findings concrete, prioritized, and actionable?
 
 ## Priority
@@ -40,10 +40,12 @@ Lead with findings ordered by severity. If no findings are found, say so and nam
 - shallow modules, pass-through methods, services, managers, helpers, interfaces, or factories that hide no knowledge
 - long methods or large classes where one change touches unrelated reasons to change
 - vague names such as `manager`, `handler`, `processor`, `data`, `info`, or `result` when they hide the real decision
-- missing comments where a function's purpose or design rationale is not obvious locally, and comments that merely repeat code, preserve stale history, or state unenforced contracts
+- every added or materially changed declaration: require an interface comment unless it is one precise, obvious expression with no meaningful branch, transformation, ordering, side effect, boundary interaction, invariant, fallback, or failure behavior
+- missing design comments for non-obvious state, algorithms, decision blocks, ordering, side effects, or cross-module constraints
+- comments that repeat syntax, preserve stale history, contradict behavior, or state unenforced contracts
 - tests changed during a claimed refactor in a way that suggests behavior was not preserved
 
-Avoid approving code because it is shorter, cleaner-looking, or more pattern-shaped. Avoid broad redesign advice when a concrete local fix would address the risk.
+Treat missing required comment coverage as a concrete maintainability defect, not a preference-only observation. Avoid approving code because it is shorter, cleaner-looking, or more pattern-shaped. Avoid broad redesign advice when a concrete local fix would address the risk.
 
 Stop when remaining comments are preference-only, further review needs unavailable facts, the next useful step is validation, or no findings remain and residual risk is stated.
 

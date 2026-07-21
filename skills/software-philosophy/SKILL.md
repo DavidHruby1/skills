@@ -5,19 +5,17 @@ description: Use for non-mechanical source-code planning, implementation, refact
 
 # Software Philosophy
 
-Use when writing code from scratch, implementing a feature, fixing a bug, refactoring, planning a change, or reviewing code where design and maintainability matter. The goal is software that is easier to change without making the current task larger than necessary.
-
-Do not use for mechanical formatting, dependency installation, or straightforward commands. When a more specific workflow invokes it, apply only its design guidance while the invoking workflow continues to govern execution.
+When a more specific workflow invokes this skill, apply only its design guidance while that workflow continues to govern execution.
 
 ## Routing
 
-Pick exactly one primary mode. Before acting, load exactly one matching reference:
+Pick exactly one primary mode and read its matching reference in full before acting:
 
 - Planning, approach comparison, decomposition, or refactor design: [references/planning.md](references/planning.md).
 - Code edits, implementation, local refactoring, or comments: [references/writing-code.md](references/writing-code.md).
 - Code review, diff review, implementation review, or AI patch evaluation: [references/reviewing-code.md](references/reviewing-code.md).
 
-Use a secondary mode only when the task clearly crosses boundaries.
+Use a secondary mode only when the task clearly crosses boundaries. Reading each selected reference in full is mandatory on every invocation; never act from this summary, a prior invocation, or memory. Stop as blocked if a selected reference cannot be read.
 
 ## Source Map
 
@@ -34,13 +32,12 @@ Use a secondary mode only when the task clearly crosses boundaries.
 - Prefer deep modules: simple interfaces hiding meaningful complexity and owned decisions.
 - Pull complexity downward when the module owns it; keep related knowledge together when splitting would leak assumptions.
 - Design strategically for current pressure: design non-trivial structure twice, keep decisions reversible, and define avoidable errors out of existence where practical.
-- Refactoring preserves behavior and moves in small safe steps with concrete validation when feasible.
-- Use comments as a navigation layer: preserve why classes, functions, significant blocks, and ambiguous lines exist or take their chosen approach so review is fast; do not merely narrate what ordinary statements do.
+- Use comments as a required navigation layer. Write or update an interface comment before implementing every new or materially changed non-trivial class, function, or method, then keep it accurate as the body changes. Preserve the abstraction's responsibility, why it exists here, and the constraints, invariants, side effects, ordering, or failure behavior a caller or maintainer must know; do not merely narrate ordinary statements.
 - Risky assumptions must be proven with code, tests, tools, measurements, tracer bullets, or focused clarification.
 
 ## Abstraction Gate
 
-Bad abstractions make code look clean while spreading knowledge, increasing jumps, hiding behavior, or supporting imaginary future needs. Before changing structure, name the complexity symptom: change amplification, cognitive load, unknown unknowns, duplicated knowledge, leaked data shape, information leakage, temporal coupling, scattered special cases, repeated conditionals, behavior drift, or unsupported future flexibility.
+Before changing structure, name the complexity symptom: change amplification, cognitive load, unknown unknowns, duplicated knowledge, leaked data shape, information leakage, temporal coupling, scattered special cases, repeated conditionals, behavior drift, or unsupported future flexibility.
 
 Create an abstraction only when it does at least one real job:
 
@@ -71,34 +68,22 @@ Never claim "no behavior change" after changing conditionals, ordering, error ha
 
 Stop when the current plan, change, or review is clear, local, validated as far as feasible, and easy enough to change next.
 
-Generated code often looks more senior while becoming harder for the next human to change. Treat fake abstractions, pass-through layers, speculative generality, mechanical line-by-line comments, broad rewrites, and refactors with behavior drift as stop signals unless current requirements justify them.
+Treat fake abstractions, pass-through layers, speculative generality, mechanical line-by-line comments, broad rewrites, and refactors with behavior drift as stop signals unless current requirements justify them.
 
 Common stop signals:
 
 - fake abstraction: service, manager, helper, factory, interface, or strategy that hides no knowledge
-- pass-through layer: same arguments in, same result out, more names and files
 - speculative generality: imaginary providers, formats, storage engines, themes, policies, tenants, or plugin systems
-- mechanical comments: line-by-line syntax narration that preserves no reason, decision, or constraint
 - tactical patch: another special case while duplicated or hidden knowledge remains central to the task
 - broad rewrite: unrelated code changes because the model can, not because the task needs it
 - architecture theater: frameworks, registries, providers, or multi-phase designs before uncertainty has been reduced
-- review theater: style preferences, generic test requests, or broad redesign ideas not tied to risk
-- refactor with behavior drift: ordering, defaults, errors, side effects, or return shapes changed while calling it cleanup
-
-Stop planning when more detail would invent requirements, the next useful step is code exploration or validation, or extra abstraction only preserves imaginary options.
 
 Stop coding or refactoring when the behavior change is easy to make, cleanup spreads outside the changed area, unrelated behavior knowledge is needed to continue safely, validation is missing for a risky structural move, public interfaces would change without explicit need, or the next move is mostly style preference.
 
 Stop abstracting when the abstraction would support imaginary needs, cannot be given a precise name, only forwards parameters, still requires callers to know hidden details, makes the common path harder, or fragments one clear function.
 
-Stop adding comments only when they merely translate syntax, would become stale as soon as implementation changes, or try to justify confusing code instead of fixing it. Do not remove a useful reason just because it can eventually be reconstructed from the implementation or surrounding history.
-
-Stop reviewing when remaining comments are preference-only, findings require unavailable product/domain/runtime facts, or the next useful step is validation rather than more commentary.
+Comment coverage is part of implementation completeness, not a preference. Omit a function-level comment only for a genuinely trivial, self-explanatory operation with no meaningful branch, transformation, side effect, boundary interaction, invariant, ordering rule, or failure behavior. Stop adding comments only when they merely translate syntax, would become stale as soon as implementation changes, or try to justify confusing code instead of fixing it. Do not remove a useful reason just because it can eventually be reconstructed from the implementation or surrounding history.
 
 Leave imperfect code alone when it is outside the task, stable despite ugliness, requires product, architecture, testing, or performance decisions, or has no small safe improvement.
 
 Hand off or ask when requirements are unclear, correctness cannot be judged after available validation, the architecture boundary is unclear, or performance is the issue but no measurement exists.
-
-## Final Standard
-
-Use the smallest correct change. Do not invent architecture without current pressure. Validate with tools when feasible; otherwise state what remains unverified.

@@ -47,14 +47,20 @@ Use this structure. Omit only sections marked optional and replace every placeho
 
 **Outcome:** <Observable, independently mergeable result>
 
+**Source evidence and reuse contract:**
+
+- `<path:symbol or searched boundary>`: <Authoritative current responsibility, relevant callers, and evidence. Direct the worker to `call`, `extend`, `modify`, `move`, or `remove` this exact symbol; when no owner exists, record the searched boundary and concrete mismatch.>
+- Parallel implementation guard: <Behavior that must remain owned by the existing symbol, or by the one justified new owner, and the duplicate helper, rule, transformation, or call path that must not be created.>
+- New behavioral symbols: <`None`, or each proposed symbol and the concrete mismatch that prevents every credible existing owner from satisfying its responsibility.>
+
 **Work:**
 
-- `<path or boundary>`: <Concrete production and test changes>
+- `<path or boundary>`: <Concrete production and test changes, including how callers reach the exact existing symbols that remain authoritative>
 
 **Steps:**
 
-1. <First concrete assignment and why it must precede dependent work>
-2. <Next safely ordered assignment with enough context for an implementation agent>
+1. <First concrete assignment naming the exact existing symbols to call, extend, modify, move, or remove and why it precedes dependent work>
+2. <Next safely ordered assignment; preserve the reuse contract and justify any new behavioral symbol against the source evidence>
 
 **Traceability and validation:**
 
@@ -106,10 +112,14 @@ Use this structure. Omit only sections marked optional and replace every placeho
 - Tests remain with the production behavior they prove. Any separate test-infrastructure PR is independently useful, validated, and consumed by later PRs.
 - Every PR targets at most 500 changed logic lines; no PR exceeds 750; every over-target PR justifies the rejected split.
 - Work items name evidence-backed boundaries, and steps give a concrete safe implementation order rather than vague phases or repeated requirements.
+- Every materially likely affected source file was read in full; each PR inventories existing behavioral owners, callers, and tests at symbol level.
+- Every changed behavior names its exact authoritative existing symbol when one exists, directs how implementation will reuse it, and states which parallel implementation must not be created.
+- Every new behavioral symbol is justified by concrete mismatches that prevent credible existing owners from satisfying the responsibility cleanly; similar existing behavior is explicitly reused or rejected.
+- No PR creates a parallel implementation of an existing rule, transformation, side effect, or call path.
 - Behavior and structural preparation are separated only when both remain coherent and safe alone.
 - Risky premises are supported by repository or authoritative external evidence before irreversible dependent work.
 - Validation covers relevant failure, concurrency, migration, and rollback paths in addition to the happy path.
 - Final cross-PR validation contains only checks that cannot be owned by one PR; it does not repeat every acceptance criterion.
 - No blocking product, architecture, or external-contract unknown is delegated to implementation.
 - Published Issues has exactly one item per PR in stack order, with matching dependencies and repository-instructed provider; items are pending before publication and checked only with verified issue references afterward.
-- The plan contains no implementation code, speculative work, or restatement of research that does not guide execution.
+- The plan contains no implementation code, speculative work, local coding prescription without a concrete risk, or restatement of research that does not guide execution.

@@ -30,13 +30,22 @@ New code often works locally while spreading knowledge, adding hidden modes, inv
 
 ## Comments
 
-Treat comments as a required navigation layer, not an optional finishing touch. Comment every new or materially changed class and every new or materially changed function unless it is genuinely trivial. A genuinely trivial function has an immediately obvious purpose and implementation, contains no meaningful branch, transformation, ordering, side effect, boundary interaction, invariant, or non-obvious failure behavior, and can be understood completely from its name and a single simple expression. When uncertain, add the comment.
+Treat comments as part of the design, not polish added after coding. Before writing the body of every new non-trivial class, function, or method, write its interface comment. Update the comment first when materially changing an existing abstraction. This comments-first step forces the responsibility and contract to become clear before implementation grows around a weak boundary.
 
-Place the comment directly above the class or function using the language's normal documentation-comment form when available. For each non-trivial function, explain all three of these points that apply: what responsibility and observable result the function provides; why the function exists and why this approach, ownership, ordering, or boundary was chosen; and how the important control flow, data flow, state transition, algorithm, fallback, or side effect works. Include relevant invariants, contracts, external constraints, lifecycle assumptions, trade-offs, and failure behavior. Use enough detail that a reviewer can understand the function's role and design before reading its body; do not force this into one line when several concise sentences are needed.
+Comment every new or materially changed class, function, and method unless it is genuinely trivial. A trivial operation is completely explained by its precise name and one obvious expression and has no meaningful branch, transformation, ordering, side effect, boundary interaction, invariant, fallback, or failure behavior. Constructors, lifecycle hooks, callbacks, parsers, validators, mappers, orchestration functions, and functions with side effects are rarely trivial. When uncertain, comment it.
 
-Also comment classes, decision blocks, and individual lines whenever their purpose, reason, constraint, ordering, or behavior is not immediately obvious. Prefer too many useful explanatory comments over too few. Keep comments close to the code and update them whenever behavior changes.
+Place interface comments directly above the declaration using the language's documentation-comment form. Explain the abstraction, not the syntax:
+
+- its responsibility and observable result,
+- why it exists, belongs here, or uses this approach,
+- the contract callers must respect, including important inputs, outputs, invariants, side effects, ownership, ordering, failure behavior, and external constraints,
+- the important internal strategy when a maintainer cannot safely infer it from the body.
+
+Use several concise sentences when needed. A reviewer should understand the role and design before reading the body. Also document non-obvious fields, state transitions, algorithms, decision blocks, ordering constraints, and cross-module dependencies close to the relevant code. Prefer an extra useful design comment over leaving reasoning implicit.
 
 Do not use comments as a substitute for fixing confusing code, names, or boundaries. Avoid comments that only translate syntax or narrate obvious statements line by line, but do not use that rule as a reason to omit a function-level explanation of purpose, rationale, and operation. Never preserve stale history or promise a contract the code does not enforce.
+
+Before declaring the change complete, inventory every added or materially changed declaration and verify that each has an accurate interface comment or clearly meets the strict triviality exception. Missing coverage is an implementation defect.
 
 ## Checks
 
@@ -47,6 +56,7 @@ Do not use comments as a substitute for fixing confusing code, names, or boundar
 5. Is one clear function easier than several tiny jumps?
 6. Are the names specific enough to make the common path obvious?
 7. What validation proves the behavior or structure is safe?
+8. Does every added or materially changed non-trivial declaration have an accurate interface comment?
 
 Avoid boolean flags with hidden modes, pass-through services, shallow managers/helpers, config objects that only avoid explicit parameters, premature factories/interfaces/strategies, broad cleanup, and pushing domain decisions into UI, routes, controllers, or tests because it was convenient.
 

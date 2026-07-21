@@ -137,7 +137,7 @@ Several behaviors and mutable shared state produce ambiguous failures and order 
 
 ## Completion Check
 
-Every approved unit scenario has a traceable test; each test reaches real production code through a public contract; controlled dependencies are restored; and the focused suite collects. Test-first cases fail because new behavior is absent or wrong rather than because the harness is broken; cases written with implementation pass.
+Every approved unit scenario has a traceable test; each test reaches real production code through a public contract; controlled dependencies are restored; and the focused command is reported for orchestrator validation. The orchestrator must verify that test-first cases fail because new behavior is absent or wrong rather than because the harness is broken, and that cases written with implementation pass.
 
 ## Sources
 

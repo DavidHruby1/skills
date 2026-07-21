@@ -18,16 +18,19 @@ Planning fails when it either patches tactically while ignoring real pressure or
 
 1. State the real problem and current pressure.
 2. Identify knowledge that should have one owner.
-3. Design it twice for non-trivial choices: compare two credible shapes before committing.
-4. Judge them by coupling, cohesion, depth, change amplification, cognitive load, reversibility, error prevention, and validation cost.
-5. Choose the smallest coherent approach that keeps useful options open.
-6. Sequence the work as small behavior and structure steps.
-7. Name validation and unresolved assumptions.
+3. Read the likely affected files in full and inventory existing symbols, callers, and tests that already own all or part of that knowledge.
+4. Prove why each existing owner should be reused, modified, moved, or removed before proposing a new one.
+5. Design it twice for non-trivial choices: compare two credible shapes before committing.
+6. Judge them by reuse, coupling, cohesion, depth, change amplification, cognitive load, reversibility, error prevention, and validation cost.
+7. Choose the smallest coherent approach that keeps useful options open.
+8. Sequence the work as small behavior and structure steps with exact symbol ownership.
+9. Name validation and unresolved assumptions.
 
 ## Prefer
 
 - tracer bullets when uncertainty is high
 - one owner for each rule, data-shape conversion, lifecycle order, or policy
+- reusing or deepening an existing behavioral owner before introducing another symbol or path
 - deep modules with simple interfaces over shallow forwarding layers
 - designs that make invalid states, wrong ordering, or missing validation impossible where practical
 - reversible decisions until current requirements justify commitment

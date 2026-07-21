@@ -41,6 +41,9 @@ Audit whether the plan:
 - defines coherent, correctly ordered PRs that are independently safe and mergeable after their declared dependencies,
 - keeps production behavior with the tests that prove it and covers relevant failure, migration, compatibility, rollback, security, concurrency, and operational paths,
 - names evidence-backed ownership boundaries and provides enough implementation order and context that a worker need not invent product or architecture decisions,
+- inventories materially affected files and existing symbols deeply enough to prove reuse decisions, including callers and tests,
+- gives every changed behavior an explicit reuse contract naming the exact authoritative existing symbol, relevant callers, how implementation will call, extend, modify, move, or remove it, and which parallel implementation is forbidden; when no owner exists, records the searched boundaries and concrete mismatches before naming one new owner,
+- reuses or modifies existing behavioral owners instead of creating parallel functions, rules, transformations, side effects, or call paths, and justifies every new behavioral symbol with concrete source-backed mismatches against credible existing owners,
 - gives every PR explicit out-of-scope work and one matching pending issue-map item in stack order,
 - respects the plan size rules and justifies every split or over-target PR,
 - follows applicable repository principles and precedent without propagating a concrete defect, mismatched invariant, misplaced ownership, or unnecessary mechanism.
@@ -54,7 +57,7 @@ Classify every finding by the action required:
 - `DECISION`: a missing or contradictory product or architecture decision, or a correction that would materially change the brief, approved solution, or accepted trade-offs and therefore requires renewed user decision-making or grilling.
 - `EVIDENCE`: a material repository or external-contract claim cannot be established from the supplied evidence and must be resolved through further investigation or research before the plan is ready.
 
-Never classify a meaning-changing correction as `MECHANICAL` or `PLANNING`. Group symptoms with one root cause, apply a strict materiality gate, and prefer `READY` over speculative, preference-only, or generic-advice findings.
+Never classify a meaning-changing correction as `MECHANICAL` or `PLANNING`. A plan that mentions an existing owner without directing its reuse, or permits the worker to invent a parallel behavioral owner, is not `READY`. Group symptoms with one root cause, apply a strict materiality gate, and prefer `READY` over speculative, preference-only, or generic-advice findings.
 
 Return only:
 

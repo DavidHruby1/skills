@@ -107,7 +107,7 @@ The assertion can pass because of leaked data and does not identify the created 
 
 ## Completion Check
 
-Every approved integration scenario names and exercises one real seam; external substitutions sit outside that seam; test data is isolated; Vue tests use public rendered behavior; Python tests use public adapters or clients and production-faithful dependencies; and the selected integration suite passes or reports a specific production defect.
+Every approved integration scenario names and exercises one real seam; external substitutions sit outside that seam; test data is isolated; Vue tests use public rendered behavior; Python tests use public adapters or clients and production-faithful dependencies; and the selected integration command is reported for orchestrator validation. The orchestrator must verify that the suite passes or report a specific production or environment blocker.
 
 ## Sources
 

@@ -81,7 +81,7 @@ Exhaustive rule examples belong in unit or integration tests. E2E should keep on
 
 ## Completion Check
 
-Every approved E2E scenario protects a consequential cross-system journey; tests interact only through user-visible or intentional external contracts; first-party layers in scope are real; third-party boundaries and data are controlled; tests are isolated and use resilient auto-waiting locators and assertions; and the selected E2E suite passes or reports a specific production or environment blocker.
+Every approved E2E scenario protects a consequential cross-system journey; tests interact only through user-visible or intentional external contracts; first-party layers in scope are real; third-party boundaries and data are controlled; tests are isolated and use resilient auto-waiting locators and assertions; and the selected E2E command is reported for orchestrator validation. The orchestrator must verify that the suite passes or report a specific production or environment blocker.
 
 ## Sources
 
