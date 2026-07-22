@@ -6,11 +6,11 @@ disable-model-invocation: true
 
 # Research
 
-Turn the active task's `BRIEF.md` into an evidence-backed `RESEARCH.md` for technical planning. Research establishes what is true and unknown; solution selection belongs to planning.
+Turn the active task's `BRIEF.md` into an evidence-backed `RESEARCH.md` for technical planning. Treat the brief as imported context: research records only new evidence, material qualifications or contradictions, and unresolved facts that affect planning. Solution selection belongs to planning.
 
 ## 1. Frame The Investigation
 
-Resolve the active task using `AGENTS.md` and read its `BRIEF.md` in full. Stop and request `/grilling` when no task or brief exists. Extract the questions needed to understand the current system, constraints, precedent, validation paths, and risks behind every material requirement and acceptance criterion.
+Resolve the active task using `AGENTS.md` and read its `BRIEF.md` in full. Stop and request `/grilling` when no task or brief exists. Extract only questions whose answers the brief does not already establish and that could materially affect planning: unknown current behavior, constraints, precedent, validation paths, risks, or external contracts. Include a resolved requirement or acceptance criterion only when evidence could qualify or contradict it.
 
 Classify two independent axes:
 
@@ -18,7 +18,7 @@ Classify two independent axes:
 - **Repository impact is broad** otherwise. Broad research may use several `internal-researcher` subagents, each assigned one independently researchable ownership boundary or cross-cutting concern.
 - **External evidence is required** whenever material behavior depends on a third-party or platform runtime contract that repository evidence cannot establish. This includes version-specific transaction, isolation, retry, locking, concurrency, consistency, lifecycle, serialization, security, and failure semantics, as well as standards, protocols, current guidance, or conflicting external claims. Repository usage and tests can prove local behavior but do not define an external contract.
 
-Record the classification and its evidence. This step is complete when every material brief item has at least one investigation question and both routing decisions have an explicit rationale.
+Record the classification and its evidence. This step is complete when every material research gap has an investigation question and both routing decisions have an explicit rationale.
 
 ## 2. Map Before Depth
 
@@ -53,6 +53,6 @@ This step is complete when every externally dependent planning fact is supported
 
 ## 5. Synthesize The Research
 
-Read [`RESEARCH-FORMAT.md`](RESEARCH-FORMAT.md), then synthesize accepted reports into the active task's `RESEARCH.md` instead of concatenating them. Repository evidence governs repository behavior; authoritative version-matched evidence governs external contracts. Preserve material conflicts and unknowns.
+Read [`RESEARCH-FORMAT.md`](RESEARCH-FORMAT.md), then synthesize accepted reports into the active task's `RESEARCH.md` instead of concatenating them. Write the delta from `BRIEF.md`: cite the brief rather than restating its scope, rules, acceptance criteria, or repository evidence, and state each finding once where it is most useful. Repository evidence governs repository behavior; authoritative version-matched evidence governs external contracts. Preserve material conflicts and unknowns.
 
-The research is complete only when the artifact passes every completion check in `RESEARCH-FORMAT.md`, every material brief item is traceable to findings or an explicit unknown, and no subagent has written the artifact.
+The research is complete only when the artifact passes every completion check in `RESEARCH-FORMAT.md`, every investigation question is answered or remains an explicit unknown, every included finding adds planning-relevant information beyond the brief, and no subagent has written the artifact.

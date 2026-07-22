@@ -1,13 +1,13 @@
 ---
 name: grilling
-description: Start or resume a relentless grill that crystallizes a plan or design into BRIEF.md, classifies its delivery size, and recommends the next workflow.
+description: Start or resume a relentless grill that crystallizes a plan or design into BRIEF.md, determines whether research is needed, classifies delivery size, and recommends the next workflow.
 disable-model-invocation: true
 argument-hint: "[task-NNN] [reason]"
 ---
 
 # Grilling
 
-Start or resume a numbered task and turn an uncertain plan or design into its authoritative `BRIEF.md` through a relentless, single-batch interview. Classify the resolved work as small, medium, or large so the user knows whether it warrants `/create-plan`.
+Start or resume a numbered task and turn an uncertain plan or design into its authoritative `BRIEF.md` through a relentless, single-batch interview. Determine whether technical research is needed, then classify the resolved work as small, medium, or large so the user knows the next workflow.
 
 ## Interaction Contract
 
@@ -42,11 +42,20 @@ Build the design tree from the grounded facts. This step is complete when the ne
 
 Use the grounded design tree to send the questionnaire defined by the Interaction Contract. Explain why each decision matters and add a concrete scenario when useful. Challenge vague or conflicting terms, propose precise domain language, and show contrary evidence. Probe only material behavior, boundaries, failures, invariants, compatibility, security, operations, validation, and acceptance criteria within scope.
 
-After the user responds, re-evaluate the whole decision tree. If the answers are sufficient, proceed directly to crystallizing the brief. Ask a follow-up questionnaire only when an answer introduced a material branch that could not reasonably have been anticipated; include every newly material question in that single text message and follow the Interaction Contract again. Never use follow-ups to ask a known question that should have been included in the first questionnaire.
+After the user responds, re-evaluate the whole decision tree. If the answers are sufficient, proceed to the assessments and crystallize the brief. Ask a follow-up questionnaire only when an answer introduced a material branch that could not reasonably have been anticipated; include every newly material question in that single text message and follow the Interaction Contract again. Never use follow-ups to ask a known question that should have been included in the first questionnaire.
 
 This step is complete when every material branch is resolved.
 
-## 4. Assess Delivery Size
+## 4. Assess Research Need
+
+Determine whether `/research` is required from the brief and grounding evidence; do not ask the user:
+
+- **Required:** material planning or implementation facts remain unresolved and need mapped repository investigation or authoritative external evidence. This includes uncertain ownership or cross-boundary flows and third-party or platform contracts that repository evidence cannot establish.
+- **Not required:** repository evidence already establishes the relevant system behavior, ownership, constraints, validation paths, and any external contracts well enough for the delivery workflow to proceed without a separate research artifact.
+
+Record the decision and concise evidence in `BRIEF.md`. Research need is independent of delivery size. When research is required, make `/research` the next workflow and retain the delivery-size workflow as the step that follows research.
+
+## 5. Assess Delivery Size
 
 Classify the resolved work from the initial request, decisions, and repository evidence; do not ask the user or rely on line count alone:
 
@@ -54,9 +63,9 @@ Classify the resolved work from the initial request, decisions, and repository e
 - **Medium:** coordinated symbols, callers, or one component boundary. Recommend `/create-plan`.
 - **Large:** multiple ownership or component boundaries, migration, public contracts, rollout, or dependent stages. Recommend `/create-plan`.
 
-Record the size, concise evidence, and next workflow in `BRIEF.md`. Use the highest category supported by a concrete coordination risk, not a hypothetical one.
+Record the size, concise evidence, and delivery workflow in `BRIEF.md`. Use the highest category supported by a concrete coordination risk, not a hypothetical one.
 
-## 5. Crystallize The Brief
+## 6. Crystallize The Brief
 
 Create or update `BRIEF.md` in the active task as answers crystallize. Keep it concise and implementation-neutral, recording:
 
@@ -65,8 +74,10 @@ Create or update `BRIEF.md` in the active task as answers crystallize. Keep it c
 - scope, constraints, and invariants,
 - resolved decisions and important rejected alternatives,
 - concrete acceptance criteria,
-- a `Delivery Assessment` containing `Size: Small | Medium | Large`, concise evidence, and `Next workflow: Direct implementation | /create-plan`.
+- a `Research Assessment` containing `Research: Required | Not required` and concise evidence,
+- a `Delivery Assessment` containing `Size: Small | Medium | Large`, concise evidence, and `Delivery workflow: Direct implementation | /create-plan`,
+- `Next workflow: /research | Direct implementation | /create-plan`, with `/research` selected whenever research is required.
 
 When every known branch is resolved and recorded, invoke `brief-auditor` exactly once with the active task, full brief, design tree, and evidence. Treat its findings as feedback, not a gate: fix meaning-preserving `MECHANICAL` findings, present substantive findings to the user, and never rerun the auditor or questionnaire unless the user explicitly resumes refinement.
 
-The grill is complete after the single audit result has been handled and the active task's `BRIEF.md` contains the current material outcome and evidence-backed delivery assessment. Report the size and next workflow to the user, then stop; implementation belongs to a later workflow.
+The grill is complete after the single audit result has been handled and the active task's `BRIEF.md` contains the current material outcome and evidence-backed research and delivery assessments. Report the research decision, size, and next workflow to the user, then stop; research, planning, and implementation belong to later workflows.
