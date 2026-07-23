@@ -30,22 +30,26 @@ New code often works locally while spreading knowledge, adding hidden modes, inv
 
 ## Comments
 
-Treat comments as part of the design, not polish added after coding. Before writing the body of every new non-trivial class, function, or method, write its interface comment. Update the comment first when materially changing an existing abstraction. This comments-first step forces the responsibility and contract to become clear before implementation grows around a weak boundary.
+Treat comments as part of the design and implementation, not polish added after coding. Comment generously enough that a maintainer can first read the comments as a high-level skeleton of the code, understand what each significant abstraction or block accomplishes, and understand why the design works that way before tracing individual statements. Before writing the body of every new non-trivial class, function, or method, write its interface comment. Update the comment first when materially changing an existing abstraction. This comments-first step forces the responsibility and contract to become clear before implementation grows around a weak boundary.
 
 Comment every new or materially changed class, function, and method unless it is genuinely trivial. A trivial operation is completely explained by its precise name and one obvious expression and has no meaningful branch, transformation, ordering, side effect, boundary interaction, invariant, fallback, or failure behavior. Constructors, lifecycle hooks, callbacks, parsers, validators, mappers, orchestration functions, and functions with side effects are rarely trivial. When uncertain, comment it.
 
-Place interface comments directly above the declaration using the language's documentation-comment form. Explain the abstraction, not the syntax:
+Place interface comments directly above the declaration using the language's documentation-comment form. Explain both what the abstraction does and why it does it this way, not merely the syntax:
 
 - its responsibility and observable result,
 - why it exists, belongs here, or uses this approach,
 - the contract callers must respect, including important inputs, outputs, invariants, side effects, ownership, ordering, failure behavior, and external constraints,
 - the important internal strategy when a maintainer cannot safely infer it from the body.
 
-Use several concise sentences when needed. A reviewer should understand the role and design before reading the body. Also document non-obvious fields, state transitions, algorithms, decision blocks, ordering constraints, and cross-module dependencies close to the relevant code. Prefer an extra useful design comment over leaving reasoning implicit.
+Use several sentences or a multi-line comment whenever one line cannot preserve the full idea. Brevity is secondary to giving the next maintainer the context needed to modify the code safely. A reviewer should understand the role and design before reading the body.
 
-Do not use comments as a substitute for fixing confusing code, names, or boundaries. Avoid comments that only translate syntax or narrate obvious statements line by line, but do not use that rule as a reason to omit a function-level explanation of purpose, rationale, and operation. Never preserve stale history or promise a contract the code does not enforce.
+Inside implementations, add comments before each significant logical section, algorithm phase, policy decision, state transition, fallback, workaround, or surprising operation. Describe what the section accomplishes at a higher level than its statements, then explain why the ordering, algorithm, tradeoff, constraint, or special case is necessary. Document non-obvious fields and cross-module dependencies close to the relevant code. Prefer an extra useful comment over forcing the reader to reconstruct intent from control flow, tests, issue history, or distant modules.
 
-Before declaring the change complete, inventory every added or materially changed declaration and verify that each has an accurate interface comment or clearly meets the strict triviality exception. Missing coverage is an implementation defect.
+Write comments as durable design information. Good comments may be paragraph-length and should capture facts that remain useful even if individual statements are refactored: purpose, rationale, invariants, constraints, ownership, and the consequences of changing the code. When deciding whether to comment, default to commenting; omission requires confidence that both the operation and its reason are immediately obvious in local context.
+
+Do not use comments as a substitute for fixing confusing code, names, or boundaries. Avoid comments that only translate syntax or narrate obvious statements line by line, but apply this narrowly: it forbids low-information narration, not abundant explanation. Do not use it as a reason to omit a function-level or block-level explanation of what the code is accomplishing, how the major pieces work together, and why the chosen approach is necessary. Never preserve stale history or promise a contract the code does not enforce.
+
+Before declaring the change complete, inventory every added or materially changed declaration and every significant implementation section. Verify that each declaration has an accurate interface comment or clearly meets the strict triviality exception, and that each section whose purpose or rationale is not immediately obvious has a useful block comment. Missing coverage is an implementation defect.
 
 ## Checks
 
@@ -56,7 +60,7 @@ Before declaring the change complete, inventory every added or materially change
 5. Is one clear function easier than several tiny jumps?
 6. Are the names specific enough to make the common path obvious?
 7. What validation proves the behavior or structure is safe?
-8. Does every added or materially changed non-trivial declaration have an accurate interface comment?
+8. Do all added or materially changed non-trivial declarations and significant implementation sections explain both what they do and why?
 
 Avoid boolean flags with hidden modes, pass-through services, shallow managers/helpers, config objects that only avoid explicit parameters, premature factories/interfaces/strategies, broad cleanup, and pushing domain decisions into UI, routes, controllers, or tests because it was convenient.
 
