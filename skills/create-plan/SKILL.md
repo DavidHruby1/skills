@@ -18,25 +18,25 @@ Turn the active task's authoritative `BRIEF.md` into an explicitly approved, imp
 
 Treat repository precedent as evidence, not authority. If the brief is missing, contradictory, incomplete, or disproven by source, stop and request `/grilling task-NNN <evidence-backed reasons>` rather than correcting it in the plan. Use bounded external research only for concrete unresolved third-party questions.
 
-This step is complete only when the material affected boundaries, existing behavioral owners, relevant callers, and validation paths are known; every changed behavior has an explicit reuse direction or evidence that no owner exists, plus a parallel-implementation guard; and every proposed new behavioral symbol has a source-backed necessity.
+This step is complete only when the material affected boundaries, existing behavioral owners, relevant callers, and existing validation commands are known; every changed behavior has an explicit reuse direction or evidence that no owner exists, plus a parallel-implementation guard; and every proposed new behavioral symbol has a source-backed necessity.
 
 ## 2. Approve A Solution
 
 Invoke `software-philosophy` in planning mode. Identify the root cause and the boundary that should own each changed decision. Prefer reusing or deepening an existing owner over adding parallel behavior, helpers, wrappers, or layers.
 
-Compare different solutions only when credible alternatives materially change ownership, risk, compatibility, or operations. Judge each by brief coverage, reuse of current code, coupling, change amplification, failure behavior, validation, and concrete security, performance, compatibility, or operational consequences.
+Compare different solutions only when credible alternatives materially change ownership, risk, compatibility, or operations. Judge each by brief coverage, reuse of current code, coupling, change amplification, failure behavior, independent verifiability with existing commands, and concrete security, performance, compatibility, or operational consequences.
 
 Present the evidence, options, trade-offs, and a reasoned recommendation. Challenge the requested mechanism and your own recommendation equally. Use the question tool until the user explicitly approves one technically credible direction and no product, architecture, reuse, or external-contract decision remains for implementation.
 
 ## 3. Write The Plan
 
-Write `PLAN.md` using [`PLAN-FORMAT.md`](PLAN-FORMAT.md). Preserve the approved solution and populate one pending `Published Issues` item per PR for the repository-instructed GitHub or GitLab provider.
+Write `PLAN.md` using [`PLAN-FORMAT.md`](PLAN-FORMAT.md). Preserve the approved solution, give the user a plain-language `Human Review` of every PR, and populate one pending `Published Issues` item per PR for the repository-instructed GitHub or GitLab provider.
 
-Make each PR pass `PLAN-FORMAT.md`'s source-evidence, reuse, symbol ownership, ordering, traceability, and validation gates.
+Make each PR pass `PLAN-FORMAT.md`'s source-evidence, reuse, symbol ownership, ordering, traceability, and existing-validation gates.
 
-Use the fewest coherent PRs that remain safe, reviewable, independently mergeable after dependencies, and within size limits. Keep production behavior with tests that prove it. Do not implement code or silently alter the approved direction; return to solution approval if the design changes materially.
+Use the fewest coherent PRs that remain safe, reviewable, independently mergeable after dependencies, independently verifiable with existing commands, and within size limits. Inspect existing tests and record applicable validation commands, but do not plan new test behavior, coverage, levels, scenarios, or test implementation. Do not implement code or silently alter the approved direction; return to solution approval if the design changes materially.
 
-The draft is complete when every `PLAN-FORMAT.md` check passes and a worker can implement it without inventing material product, architecture, ownership, reuse, or external-contract decisions. Do not prescribe local coding mechanics unless that detail prevents a concrete ownership, ordering, compatibility, or safety risk.
+The draft is complete when every `PLAN-FORMAT.md` check passes, the user can understand each PR and its important connections from `Human Review`, and a worker can implement it without inventing material product, architecture, ownership, reuse, or external-contract decisions. `Human Review` is explanatory; the detailed PR sections remain the implementation authority. Do not prescribe local coding mechanics unless that detail prevents a concrete ownership, ordering, compatibility, or safety risk.
 
 ## 4. Audit Once
 
@@ -44,7 +44,13 @@ Invoke `plan-auditor` exactly once with the task artifacts, approved solution an
 
 Fix meaning-preserving `MECHANICAL` and `PLANNING` findings directly. Present substantive design, evidence, scope, sequencing, or acceptance findings to the user without silently reopening planning. Never invoke the auditor again in the same planning session.
 
-## 5. Publish Issues
+## 5. Approve The Plan
+
+Present the audited `Human Review`, identify the complete `PLAN.md` path, and ask the user to review and explicitly approve the finished plan before publication. Approval applies to the exact audited plan. If the user requests a substantive change, stop publication and return to the appropriate planning step; the revised plan requires audit and explicit approval in a new planning session. Publication-only changes under `Published Issues` do not invalidate approval.
+
+This step is complete only when the user explicitly approves the finished plan.
+
+## 6. Publish Issues
 
 Preflight the instructed provider, authentication, repository, issue creation, and task label. Compute each complete PR section's SHA-256 digest and invoke `ticket-master` with the ordered sections and digests. Reread `PLAN.md`, fetch every issue, and verify title, verbatim section, label, dependency, marker, digest, and checked item. Resume partial publication through `ticket-master`; never repair it by inference.
 

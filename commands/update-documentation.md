@@ -1,7 +1,5 @@
 ---
-name: update-documentation
 description: Update documentation for all merged pull requests represented in the active PLAN.md.
-disable-model-invocation: true
 ---
 
 # Update Documentation

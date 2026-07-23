@@ -1,6 +1,6 @@
 ---
 name: software-philosophy
-description: Use for non-mechanical source-code planning, implementation, refactoring, bug fixes, or review when design, abstraction, ownership, or maintainability decisions are required. Do not use for testing, documentation, investigation, configuration, CI, deployment, or mechanical edits.
+description: Use for non-mechanical source-code planning, code or test implementation, refactoring, and code review; not for test-contract authoring.
 ---
 
 # Software Philosophy
@@ -13,6 +13,7 @@ Pick exactly one primary mode and read its matching reference in full before act
 
 - Planning, approach comparison, decomposition, or refactor design: [references/planning.md](references/planning.md).
 - Code edits, implementation, local refactoring, or comments: [references/writing-code.md](references/writing-code.md).
+- Unit, integration, or end-to-end test implementation: [references/writing-tests.md](references/writing-tests.md).
 - Code review, diff review, implementation review, or AI patch evaluation: [references/reviewing-code.md](references/reviewing-code.md).
 
 Use a secondary mode only when the task clearly crosses boundaries. Reading each selected reference in full is mandatory on every invocation; never act from this summary, a prior invocation, or memory. Stop as blocked if a selected reference cannot be read.

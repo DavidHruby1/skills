@@ -1,7 +1,5 @@
 ---
-name: document-codebase
 description: Build whole-codebase docs by creating the docs structure, delegating source-backed files, then writing onboarding and index files from accepted reports.
-disable-model-invocation: true
 argument-hint: "[codebase path or scope]"
 ---
 

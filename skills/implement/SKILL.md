@@ -12,26 +12,28 @@ Use the repository's current checkout and ordinary branches. Never use Git workt
 
 ## 1. Establish The Run
 
-1. Resolve the exact supplied `task-NNN` using `AGENTS.md`; never infer or create one. Read `BRIEF.md` and `PLAN.md` in full, PR-relevant `RESEARCH.md`, and approved and audited `GHERKIN.md` sections when present. Stop for the producing workflow when required artifacts, approvals, decisions, audit evidence, or published issue evidence are absent or inconsistent.
+1. Resolve the exact supplied `task-NNN` using `AGENTS.md`; never infer or create one. Read `BRIEF.md` and `PLAN.md` in full, PR-relevant `RESEARCH.md`, and `GHERKIN.md` when present. Only approved and audited sections create test requirements; draft or unaudited sections are ignored and do not block implementation. Stop for the producing workflow when required plan artifacts, decisions, approved-contract evidence, or published issue evidence are inconsistent.
 2. Read repository instructions and relevant documentation. Inspect the planned source, tests, git status, branch, remotes, and recent history enough to verify the plan still matches the checkout. Stop on ambiguous unrelated changes, behavioral or architectural contradictions, an unsafe sequence, or drift between each published issue and its verbatim PR section.
-3. Treat approved Gherkin as the only supplemental test contract and route mapped scenarios through `testing`. Without mapped scenarios, do not invent Gherkin-specific tests, infrastructure, or dependencies; implement and validate every test and check required directly by `PLAN.md`.
+3. Only approved and audited Gherkin authorizes test-file edits. When no approved scenario maps to a PR, assign no test creation or modification, even when relevant tests already exist. Run applicable existing validation and report any conflicting test without changing it.
 4. Establish the base branch and deterministic stage branches `task-NNN/pr-N`. Reconcile existing branches or PRs from evidence rather than repeating work. Every stage must end as exactly one commit relative to its parent.
+
+Treat `Human Review` as orchestrator context only; the detailed PR sections are authoritative. Stop on conflicts and exclude the summary from worker assignments.
 
 This step is complete when the task, base, PR order, current progress, safety constraints, source boundaries, approved tests, and every blocking escalation are resolved.
 
 ## 2. Implement Each Stage
 
-Create each stage branch from its accepted parent. Give one `worker`:
+Create each stage branch from its accepted parent. Start one worker session for the stage, retain its task ID immediately, and reuse that session for test-first work, production continuation, and every correction. Group approved scenarios by the single owning PR in each `Traceability:` line, then give that worker:
 
 - the active task path, exact unchanged PR section and digest, branch, and base ref,
 - relevant brief criteria, research evidence, source evidence and reuse decisions from the plan, and plan-wide safety constraints,
 - the owned paths and symbols, explicit out-of-scope work, and validation commands,
-- every approved Gherkin section mapped to the PR, including approval, audit evidence, execution mode, and traceability,
+- the exact approved scenario IDs assigned to the PR and each complete contract entry, including level, basis, explanation, scope, Gherkin, traceability, approval, and audit evidence,
 - instructions to leave all git state, commits, pushes, and PRs to the orchestrator.
 
-The worker follows its own implementation process. Return material brief, plan, or source-reuse conflicts to the producing workflow rather than letting the worker redesign the assignment.
+The worker follows its own implementation process but treats the supplied PR section's `Steps` as its ordered assignment, completing every step without reordering or redesigning it unless repository evidence proves the sequence unsafe. Return material brief, plan, or source-reuse conflicts to the producing workflow rather than letting the worker redesign the assignment.
 
-For approved test-first Unit scenarios, first assign only the tests to the worker. Require `testing`, inspect the diff, then run the focused command yourself and accept only a behavioral red caused by missing planned behavior; collection, import, syntax, fixture, and environment failures are invalid. Then resume the worker for production code. For approved with-implementation scenarios, require `testing` and implement tests with production behavior. Workers report mapped test commands without running them. After implementation, independently run the narrowest relevant command and every suite selected by approved sections; all mapped tests must pass. Never invoke `test-auditor` during implementation. No mapped scenario removes only Gherkin-specific requirements; tests required directly by `PLAN.md` remain required.
+For approved `Basis: Planned behavior` scenarios at any level, first assign every test that can run against a valid harness before production behavior. Require the worker to use `software-philosophy` test-writing mode, inspect the diff, then run the focused commands yourself and accept only behavioral failures caused by absent or incorrect planned behavior; collection, import, syntax, fixture, infrastructure, and environment failures are invalid. Then resume the worker for production code. For approved `Basis: Existing behavior` scenarios, assign the tests against the current implementation and expect them to pass; a behavioral failure is a contract or production contradiction that must be resolved rather than masked. Workers report mapped commands without running them. After implementation, independently run every mapped command reported by the worker; all mapped tests must pass. Never invoke `test-contract-auditor` during implementation.
 
 Snapshot `HEAD`, refs, and the index before every worker call and verify that the worker did not mutate git-owned state afterward. Stop and report any such mutation rather than repairing it implicitly.
 
@@ -44,12 +46,12 @@ The orchestrator reviews the output itself. Invoke `software-philosophy` in revi
 - added logic does not duplicate an existing function, method, class, rule, transformation, or call path in the affected files or repository,
 - every new abstraction is necessary and each new symbol is placed with the existing owner of its knowledge,
 - every new or materially changed non-trivial function, method, and class has an accurate interface comment explaining its responsibility, rationale, and important constraints or behavior,
-- tests are traceable, meaningful, and capable of failing when mapped behavior breaks,
+- changed tests are traceable, meaningful, and capable of failing when mapped behavior breaks,
 - validation evidence is fresh after the final change.
 
-Do not accept the worker report as proof. Verify consequential claims in source and run planned and repository-required checks yourself. When no approved Gherkin scenario maps to the PR, planned tests and applicable repository checks remain acceptance gates; do not create an additional Gherkin-specific gate.
+Do not accept the worker report as proof. Verify consequential claims in source and run applicable existing plan and repository checks yourself. When no approved Gherkin scenario maps to the PR, do not create a new-test acceptance gate.
 
-Send every valid defect back to the same worker as a bounded correction with exact evidence and direction. Reinspect the correction and rerun invalidated checks. If that worker cannot complete the assignment, use at most one replacement worker for the stage. Stop when the result remains incorrect, needs an absent decision, or cannot be validated safely.
+Send every valid defect back to the stage's retained worker as a bounded correction with exact evidence and direction. Reinspect the correction and rerun invalidated checks. If that worker cannot complete the assignment, use at most one replacement worker for the stage and retain its task ID for all remaining work. Stop when the result remains incorrect, needs an absent decision, or cannot be validated safely.
 
 ## 4. Commit The Stage
 
@@ -59,7 +61,7 @@ Stage only the accepted inventory, inspect the complete staged diff, and create 
 
 ## 5. Validate And Publish
 
-On the top branch, run every `Final Cross-PR Validation` check and necessary repository-wide check. Fix an earlier stage on its own branch through a worker, reaccept and recommit it, then restack and revalidate every descendant. Preserve one commit per branch.
+On the top branch, run every `Final Cross-PR Validation` check and necessary repository-wide check. Fix an earlier stage on its own branch through that stage's retained worker or recorded replacement, reaccept and recommit it, then restack and revalidate every descendant. Preserve one commit per branch.
 
 After the stack is stable, read [`PR-FORMAT.md`](PR-FORMAT.md), preflight authentication and remote state, and restack if the remote base moved. Push branches without force and open PRs in dependency order, basing each later PR on the preceding branch. Build titles and bodies from final evidence according to `PR-FORMAT.md`; verify each remote tip, base, body, and diff.
 

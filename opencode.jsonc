@@ -154,9 +154,9 @@
             "model": "openai/gpt-5.6-sol",
             "variant": "low"
         },
-        "test-auditor": {
+        "test-contract-auditor": {
             "model": "openai/gpt-5.6-sol",
-            "variant": "medium"
+            "variant": "high"
         }
     },
     "plugin": ["./plugins/graphify.js", "./plugins/codex-identity.js"],

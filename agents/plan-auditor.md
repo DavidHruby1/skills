@@ -36,6 +36,8 @@ Inspect the relevant codebase before deciding the verdict. Query an existing `gr
 Audit whether the plan:
 
 - preserves the brief and explicitly approved solution without silent narrowing, expansion, or redesign,
+- contains one `Human Review` subsection per detailed PR in the same stack order, with a concise plain-language explanation of its concrete changes and any dependency, mechanism, or design choice needed to understand why the PR works,
+- keeps `Human Review` faithful to the authoritative detailed PR sections, with no omitted outcome that makes the summary misleading and no added scope, decision, promise, or conflicting instruction,
 - accounts for every material research constraint, conflict, risk, and unresolved item,
 - gives every acceptance criterion one clear implementation owner and a concrete validation path,
 - defines coherent, correctly ordered PRs that are independently safe and mergeable after their declared dependencies,
@@ -57,7 +59,7 @@ Classify every finding by the action required:
 - `DECISION`: a missing or contradictory product or architecture decision, or a correction that would materially change the brief, approved solution, or accepted trade-offs and therefore requires renewed user decision-making or grilling.
 - `EVIDENCE`: a material repository or external-contract claim cannot be established from the supplied evidence and must be resolved through further investigation or research before the plan is ready.
 
-Never classify a meaning-changing correction as `MECHANICAL` or `PLANNING`. A plan that mentions an existing owner without directing its reuse, or permits the worker to invent a parallel behavioral owner, is not `READY`. Group symptoms with one root cause, apply a strict materiality gate, and prefer `READY` over speculative, preference-only, or generic-advice findings.
+Never classify a meaning-changing correction as `MECHANICAL` or `PLANNING`. Treat a formatting-only `Human Review` defect as `MECHANICAL`, but treat an inaccurate, materially incomplete, contradictory, or execution-oriented summary as `PLANNING`. A plan that mentions an existing owner without directing its reuse, or permits the worker to invent a parallel behavioral owner, is not `READY`. Group symptoms with one root cause, apply a strict materiality gate, and prefer `READY` over speculative, preference-only, or generic-advice findings.
 
 Return only:
 
