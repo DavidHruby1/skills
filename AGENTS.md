@@ -8,3 +8,5 @@
 - Artifacts live in `.opencode/artifacts/task-NNN/`. An explicitly named task is active; otherwise the greatest suffix is active. `/grilling` creates the next task, while `/grilling task-NNN <reason>` resumes that existing task.
 - Use `duckduckgo-mcp-server` for internet research.
 - Choose repository tools by the question. When an existing `graphify-out/` can narrow a broad architecture, ownership, relationship, or data-flow question, query it first and verify important claims in source. For known files, names, strings, configuration, documentation, or localized questions, use direct `Read`, `Glob`, or `Grep`/`rg`. Use `ast-grep` for syntax-aware searches and structural transformations when syntax improves precision or safety; do not use it as a mandatory first choice.
+- When connecting to server using SSH, never repeat failed logins. Stop and give the user commands to use to give agent access to the server.
+- Skills that have `disable-model-invocation: true` are not allowed to invoke automatically.

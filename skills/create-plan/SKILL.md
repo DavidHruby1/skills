@@ -1,6 +1,7 @@
 ---
 name: create-plan
 description: Create and publish an approved, source-backed PLAN.md for a medium-to-large implementation that needs solution planning and tracked implementation issues.
+disable-model-invocation: true
 ---
 
 # Solution Planning

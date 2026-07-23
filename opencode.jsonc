@@ -114,6 +114,14 @@
             "model": "opencode/deepseek-v4-flash-free",
             "variant": "medium"
         },
+        "general": {
+            "permission": {
+                "task": {
+                    "*": "deny",
+                    "explore": "allow"
+                }
+            }
+        },
         "docu-writer": {
             "model": "openai/gpt-5.4-mini",
             "variant": "high"
