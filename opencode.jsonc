@@ -144,13 +144,17 @@
         },
         "plan-auditor": {
             "model": "openai/gpt-5.6-sol",
-            "variant": "low"
+            "variant": "medium"
         },
         "ticket-master": {
             "model": "openai/gpt-5.6-luna",
             "variant": "medium"
         },
         "worker": {
+            "model": "openai/gpt-5.6-sol",
+            "variant": "low"
+        },
+        "tester": {
             "model": "openai/gpt-5.6-sol",
             "variant": "low"
         },

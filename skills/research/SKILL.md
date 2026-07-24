@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Research
 
-Turn the active task's `BRIEF.md` into an evidence-backed `RESEARCH.md` for technical planning. Treat the brief as imported context: research records only new evidence, material qualifications or contradictions, and unresolved facts that affect planning. Solution selection belongs to planning.
+Turn the active task's `BRIEF.md` into an evidence-backed `RESEARCH.md` for technical planning. Treat the brief and its resolved decisions as imported context: research records only new evidence, material qualifications or contradictions, and unresolved facts that affect planning. Research does not reopen or replace those decisions.
 
 ## 1. Frame The Investigation
 

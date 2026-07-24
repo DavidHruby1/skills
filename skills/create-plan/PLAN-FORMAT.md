@@ -4,7 +4,7 @@
 
 Design the PR sequence before filling in the format. Divide work at coherent responsibility boundaries, not by file count, architectural layer, or arbitrary line ranges.
 
-1. Map every approved behavior, acceptance criterion, structural change, migration, and operational concern to required implementation work and PR ownership.
+1. Map every authoritative behavior, acceptance criterion, structural change, migration, and operational concern to required implementation work and PR ownership.
 2. Identify complete building blocks, then combine adjacent blocks unless keeping them separate materially reduces risk or cognitive load, preserves useful standalone value, or is required by the hard size limit. Aim for the fewest coherent PRs, not the greatest possible decomposition.
 3. Arrange the blocks as a dependency graph. No PR may depend on a later PR or leave deliberate breakage for a later PR to repair.
 4. Put each production behavior in the PR that owns it, record applicable existing validation commands, and keep every PR independently verifiable. Do not include new test behavior, coverage, levels, scenarios, or test implementation in `PLAN.md`.
@@ -28,10 +28,6 @@ Use this structure. Omit only sections marked optional and replace every placeho
 ```markdown
 # Plan: <Concise Outcome>
 
-## Approved Solution
-
-<Describe the approved direction, why it was selected, and its accepted trade-offs. Do not repeat the brief or research.>
-
 ## Human Review
 
 ### Co PR 1 skutečně udělá
@@ -51,6 +47,10 @@ Use this structure. Omit only sections marked optional and replace every placeho
 - Research: `.opencode/artifacts/task-NNN/RESEARCH.md` <!-- Omit when absent. -->
 - Relevant documentation: `<paths>`
 - Relevant ADRs: `<paths>` <!-- Omit when absent. -->
+
+## Planning Clarifications
+
+- <Material question and user answer not already recorded in the task artifacts> <!-- Omit when none. -->
 
 ## Plan-Wide Safety
 
@@ -120,7 +120,8 @@ Use this structure. Omit only sections marked optional and replace every placeho
 
 ## Completion Checks
 
-- The plan matches the solution explicitly approved during solution planning and does not silently change the brief.
+- The plan matches the brief, accepted research, and planning clarifications without contradiction, silent narrowing, expansion, or redesign.
+- Planning Clarifications records only material answers not already present in task artifacts and contains no invented decisions.
 - Human Review contains one clearly numbered subsection per PR in stack order, explains its concrete changes and important non-obvious connections in plain language, and is understandable without the execution contract.
 - Human Review faithfully summarizes the authoritative Pull Requests sections without adding scope, decisions, promises, or conflicting instructions.
 - Every brief acceptance criterion has one implementation owner, and applicable existing validation commands are recorded without prescribing new test coverage.

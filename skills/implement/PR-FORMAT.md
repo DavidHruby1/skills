@@ -1,35 +1,25 @@
 # Pull Request Format
 
-Build the pull-request description from the final accepted diff. Optimize it for fast review: lead with a symbol index, explain only material implementation details, and state each fact once.
+Build a concise pull-request description from the final accepted diff. Optimize it for fast review: identify the material boundaries, explain consequential decisions once, and omit code narration that the diff already makes clear.
 
 Write every Markdown section heading (`##`, `###`, and deeper) in English. Write the pull-request title and all other description content in Czech, including prose, table headings, labels, risks, and impact statements. Keep only code identifiers, paths, commands, provider syntax, and established technical terms in their required or conventional form.
 
 Use this structure. Omit optional sections when they add no information and replace every placeholder with concrete evidence from the final diff.
 
 ````markdown
-## Change Index
+## Changes
 
-| Symbol | Stav | Umístění | Účel |
-|---|---|---|---|
-| `<ClassName, function(), or method()>` | `Přidáno`, `Změněno`, `Přejmenováno` nebo `Odstraněno` | `<path>` | <Jedna věta popisující odpovědnost nebo materiální změnu a její účel.> |
+| Oblast | Umístění | Změna |
+|---|---|---|
+| `<symbol or behavior boundary>` | `<path>` | <Jedna věta popisující materiální změnu a její účel.> |
 
-<!-- Include every new or materially changed class, function, and method, plus important renamed or removed symbols. Add a row for a material route, schema, configuration, or other behavior that has no symbol. Exclude trivial helpers and mechanical edits. -->
+<!-- Group closely related symbols into one boundary. Include material behavior, contract, schema, configuration, migration, or route changes. Exclude trivial helpers and mechanical edits. -->
 
-## How and Why
+## Design
 
-### `<ClassName, function(), or method()>`
+<!-- Optional. -->
 
-**Umístění:** `<path>`
-
-**Jak:** <V několika přímých větách vysvětli relevantní control flow, data flow, změnu stavu, algoritmus, chování při selhání nebo invariant.>
-
-**Proč:** <Vysvětli, proč bylo zvoleno toto řešení, a uveď významný kompromis pouze tehdy, pokud existuje.>
-
-```<language>
-<5-15 řádků reprezentativního kódu z finálního přijatého diffu>
-```
-
-<!-- Repeat only for non-trivial symbols. Give a class its own section only when its overall responsibility needs explanation; otherwise document the relevant methods. Do not repeat the index or narrate code already obvious from the snippet. -->
+<Vysvětli pouze neobvyklý control flow, vlastnictví pravidla, kompatibilitní rozhodnutí nebo významný kompromis, který nelze rychle vyčíst z diffu. Sekci vynech, pokud by pouze opakovala tabulku nebo kód.>
 
 ## Impacts
 
@@ -56,8 +46,7 @@ Use this structure. Omit optional sections when they add no information and repl
 - Every Markdown section heading is in English.
 - The pull-request title and all other description content are in Czech; only required identifiers, code, paths, commands, provider syntax, and conventional technical terms remain untranslated.
 - The description matches the final accepted diff and contains no planned but unimplemented behavior.
-- The index accounts for every new or materially changed class, function, and method, every important renamed or removed symbol, and every material non-symbol change.
-- Trivial helpers and mechanical edits do not receive index rows or detail sections.
-- Every non-trivial indexed symbol has one concise detail section explaining how and why it works, with a representative snippet from the final diff.
+- The changes table accounts for every material behavior boundary, contract, schema, configuration, migration, or route change without listing trivial helpers separately.
+- Design explanation appears only for consequential decisions that the diff does not make obvious; representative code snippets are not required.
 - Contract, compatibility, migration, risk, and visual information appears only when applicable.
-- Information is stated once and the description can be scanned from index to implementation detail without reading the diff first.
+- Information is stated once and the description can be scanned quickly before reading the diff.
