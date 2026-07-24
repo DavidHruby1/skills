@@ -1,103 +1,63 @@
 # Pull Request Format
 
-Build the pull-request description from the final accepted diff, not from `PLAN.md` alone. Explain the behavioral change, important implementation decisions, connections, and risks so a reviewer understands the change before reading code. Organize by coherent functionality, not by file order or every edited symbol. Include signatures only when they clarify a meaningful contract or flow; do not narrate trivial helpers, loops, or mechanical edits.
+Build the pull-request description from the final accepted diff. Optimize it for fast review: lead with a symbol index, explain only material implementation details, and state each fact once.
 
-Write the pull-request title and the entire description in Czech, including all headings, prose, table headings, labels, risk statements, and validation summaries. Keep only code identifiers, paths, commands, provider keywords such as closing references, and established technical terms in their required or conventional form. Do not publish an English title or description even when the repository, source code, issue, or plan is written in English.
+Write every Markdown section heading (`##`, `###`, and deeper) in English. Write the pull-request title and all other description content in Czech, including prose, table headings, labels, risks, and impact statements. Keep only code identifiers, paths, commands, provider syntax, and established technical terms in their required or conventional form.
 
-Use this structure. Omit only sections marked optional and replace every placeholder with concrete information.
+Use this structure. Omit optional sections when they add no information and replace every placeholder with concrete evidence from the final diff.
 
-```markdown
-## Přehled
+````markdown
+## Change Index
 
-<Summarize the outcome, motivation, main behavior, and the most important implementation decision. Include the useful reading orientation here.>
-
-## Kontext stacku
-
-- Úkol: `task-NNN`
-- Issue: <provider-supported closing reference and published issue URL, or a plain link when automatic closure is not guaranteed>
-- Závisí na: <preceding pull request or `Žádný`>
-- Fáze plánu: <PR N and outcome from PLAN.md>
-- Digest sekce: <published PR-section SHA-256>
-
-## Chování
-
-### Před změnou
-
-<Describe the relevant previous behavior or limitation.>
-
-### Po změně
-
-<Describe the new observable behavior and preserved invariants.>
-
-## Mapa změn
-
-| Oblast | Klíčové symboly | Změna | Důvod |
+| Symbol | Stav | Umístění | Účel |
 |---|---|---|---|
-| `<path or boundary>` | `<symbols>` | <what changed> | <why it changed> |
+| `<ClassName, function(), or method()>` | `Přidáno`, `Změněno`, `Přejmenováno` nebo `Odstraněno` | `<path>` | <Jedna věta popisující odpovědnost nebo materiální změnu a její účel.> |
 
-## Podrobné změny
+<!-- Include every new or materially changed class, function, and method, plus important renamed or removed symbols. Add a row for a material route, schema, configuration, or other behavior that has no symbol. Exclude trivial helpers and mechanical edits. -->
 
-### <Coherent functionality or decision>
+## How and Why
 
-**Umístění:** `<path or boundary>`
+### `<ClassName, function(), or method()>`
 
-**Klíčový kontrakt:** `<signature, schema, route, event, or `Interní`>`
+**Umístění:** `<path>`
 
-**Co se změnilo:** <Describe the implemented behavior.>
+**Jak:** <V několika přímých větách vysvětli relevantní control flow, data flow, změnu stavu, algoritmus, chování při selhání nebo invariant.>
 
-**Jak to funguje:** <Explain the relevant control flow, data flow, state changes, or algorithm.>
+**Proč:** <Vysvětli, proč bylo zvoleno toto řešení, a uveď významný kompromis pouze tehdy, pokud existuje.>
 
-**Proč toto řešení:** <Explain the decision, owned complexity, and accepted trade-off.>
-
-**Vazby:** <Name entry points, callers, dependencies, persistence, side effects, and downstream consumers that matter.>
-
-**Chování při selhání a invarianty:** <Explain relevant errors, fallback behavior, safety properties, and preserved contracts.>
-
-<!-- Repeat for each coherent change. Do not create sections for trivial symbols or mechanical edits. -->
-
-## Kontrakty a kompatibilita
-
-- <API, type, schema, configuration, persistence, migration, or compatibility impact; or `None`>
-
-## Rozhodnutí a kompromisy
-
-<!-- Omit when the implementation followed an established pattern without a material design choice. -->
-
-- **Rozhodnutí:** <chosen approach>
-  **Důvod:** <concrete reason>
-  **Zamítnutá alternativa:** <credible alternative and why it was not chosen>
-
-## Rizika a omezení
-
-- <residual risk, limitation, mitigation, or `None`>
-
-## Migrace a nasazení
-
-<!-- Omit when no data, deployment, operational, or rollout concern exists. -->
-
-- <required migration, sequencing, compatibility window, rollback, or observability note>
-
-## Vizuální doklady
-
-<!-- Omit when the pull request has no user-visible change. -->
-
-<Screenshots or other concise before-and-after evidence.>
-
-## Mimo rozsah
-
-<!-- Omit when no excluded work needs clarification. -->
-
-- <work intentionally excluded from this pull request>
+```<language>
+<5-15 řádků reprezentativního kódu z finálního přijatého diffu>
 ```
+
+<!-- Repeat only for non-trivial symbols. Give a class its own section only when its overall responsibility needs explanation; otherwise document the relevant methods. Do not repeat the index or narrate code already obvious from the snippet. -->
+
+## Impacts
+
+<!-- Optional. Keep only applicable lines; omit the section when none apply. -->
+
+- **Kontrakty:** <dopad na API, typy, schema, eventy nebo persistenci>
+- **Kompatibilita:** <dopad na kompatibilitu nebo požadované pořadí změn>
+- **Migrace:** <požadavky na data, deployment, rollout nebo rollback>
+- **Rizika:** <zbývající riziko nebo omezení a jeho mitigace>
+
+## Context
+
+`task-NNN` · <provider-supported issue reference and URL> · závisí na <preceding pull request or `Žádný`> · digest `<published PR-section SHA-256>`
+
+## Visual Evidence
+
+<!-- Optional. Include only for user-visible changes. -->
+
+<Stručné screenshoty nebo jiné before-and-after doklady.>
+````
 
 ## Completion Checks
 
-- The pull-request title and complete description are written in Czech; only required identifiers, code, paths, commands, provider syntax, and conventional technical terms remain untranslated.
-- The description matches the final committed diff and contains no planned but unimplemented behavior.
-- The overview explains the outcome, motivation, main behavior, and reading orientation without repeating the full body.
-- Stack context matches the task's published issue and immediate PR dependency, without claiming unsupported automatic closure.
-- Detailed sections represent coherent functionality or decisions, not a symbol-by-symbol or line-by-line inventory.
-- Every non-obvious design choice states why it was selected and names a credible rejected alternative when one existed.
-- Entry points, dependencies, state, side effects, failure behavior, and invariants are covered wherever they affect understanding.
-- Contract, compatibility, migration, rollout, visual, risk, and out-of-scope information is present when applicable and omitted when it adds no information.
-- The description is detailed enough to establish a correct working model before code review, but does not duplicate implementation mechanics already obvious from the diff.
+- Every Markdown section heading is in English.
+- The pull-request title and all other description content are in Czech; only required identifiers, code, paths, commands, provider syntax, and conventional technical terms remain untranslated.
+- The description matches the final accepted diff and contains no planned but unimplemented behavior.
+- The index accounts for every new or materially changed class, function, and method, every important renamed or removed symbol, and every material non-symbol change.
+- Trivial helpers and mechanical edits do not receive index rows or detail sections.
+- Every non-trivial indexed symbol has one concise detail section explaining how and why it works, with a representative snippet from the final diff.
+- Contract, compatibility, migration, risk, and visual information appears only when applicable.
+- Information is stated once and the description can be scanned from index to implementation detail without reading the diff first.

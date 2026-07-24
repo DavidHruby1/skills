@@ -34,16 +34,16 @@ Use this structure. Omit only sections marked optional and replace every placeho
 
 ## Human Review
 
-### What PR 1 Actually Does
+### Co PR 1 skutečně udělá
 
-<Explain in one sentence how this PR contributes to the overall plan.>
+<Jednou větou vysvětlete, jak tento PR přispívá k celkovému plánu.>
 
-1. <Concrete change in plain language>
-2. <Concrete change in plain language>
+**Plánované funkce a třídy:**
 
-<When needed, briefly explain the important dependency, mechanism, or design choice and why it matters.>
+- `<Název funkce nebo třídy>`: <Vysvětlete, co bude dělat, jak bude fungovat a spolupracovat se zbytkem implementace a proč byly zvoleny právě tato odpovědnost a tento návrh.>
+- `<Název funkce nebo třídy>`: <Vysvětlete, co bude dělat, jak bude fungovat a spolupracovat se zbytkem implementace a proč byly zvoleny právě tato odpovědnost a tento návrh.>
 
-<!-- Repeat once per PR in stack order. Keep this readable summary consistent with, but less mechanical than, the authoritative Pull Requests section. -->
+<!-- Zahrňte všechny funkce a třídy plánované pro daný PR. Podsekci zopakujte jednou pro každý PR v pořadí stacku. Zachovejte tento čitelný souhrn v souladu s autoritativní sekcí Pull Requests, ale formulujte jej méně mechanicky. Celou sekci Human Review pište česky; přesné identifikátory zdrojového kódu ponechte beze změny. -->
 
 ## Inputs
 

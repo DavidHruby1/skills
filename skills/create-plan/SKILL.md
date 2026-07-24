@@ -30,7 +30,7 @@ Present the evidence, options, trade-offs, and a reasoned recommendation. Challe
 
 ## 3. Write The Plan
 
-Write `PLAN.md` using [`PLAN-FORMAT.md`](PLAN-FORMAT.md). Preserve the approved solution, give the user a plain-language `Human Review` of every PR, and populate one pending `Published Issues` item per PR for the repository-instructed GitHub or GitLab provider.
+Write `PLAN.md` using [`PLAN-FORMAT.md`](PLAN-FORMAT.md). Write the entire artifact in English except for the content under `## Human Review`, which must be in Czech while preserving exact source-code identifiers and established technical terms. Preserve the approved solution, give the user a plain-language `Human Review` of every PR, and populate one pending `Published Issues` item per PR for the repository-instructed GitHub or GitLab provider.
 
 Make each PR pass `PLAN-FORMAT.md`'s source-evidence, reuse, symbol ownership, ordering, traceability, and existing-validation gates.
 

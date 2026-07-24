@@ -67,7 +67,7 @@ Record the size, concise evidence, and delivery workflow in `BRIEF.md`. Use the 
 
 ## 6. Crystallize The Brief
 
-Create or update `BRIEF.md` in the active task as answers crystallize. Keep it concise and implementation-neutral, recording:
+Create or update `BRIEF.md` in the active task as answers crystallize. Write the entire artifact in English, preserving exact source-code identifiers and established technical terms. Keep it concise and implementation-neutral, recording:
 
 - the problem and desired outcome,
 - canonical domain terms,

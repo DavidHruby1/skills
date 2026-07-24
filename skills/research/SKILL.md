@@ -53,6 +53,6 @@ This step is complete when every externally dependent planning fact is supported
 
 ## 5. Synthesize The Research
 
-Read [`RESEARCH-FORMAT.md`](RESEARCH-FORMAT.md), then synthesize accepted reports into the active task's `RESEARCH.md` instead of concatenating them. Write the delta from `BRIEF.md`: cite the brief rather than restating its scope, rules, acceptance criteria, or repository evidence, and state each finding once where it is most useful. Repository evidence governs repository behavior; authoritative version-matched evidence governs external contracts. Preserve material conflicts and unknowns.
+Read [`RESEARCH-FORMAT.md`](RESEARCH-FORMAT.md), then synthesize accepted reports into the active task's `RESEARCH.md` instead of concatenating them. Write the entire artifact in English, preserving exact source-code identifiers and established technical terms. Write the delta from `BRIEF.md`: cite the brief rather than restating its scope, rules, acceptance criteria, or repository evidence, and state each finding once where it is most useful. Repository evidence governs repository behavior; authoritative version-matched evidence governs external contracts. Preserve material conflicts and unknowns.
 
 The research is complete only when the artifact passes every completion check in `RESEARCH-FORMAT.md`, every investigation question is answered or remains an explicit unknown, every included finding adds planning-relevant information beyond the brief, and no subagent has written the artifact.
