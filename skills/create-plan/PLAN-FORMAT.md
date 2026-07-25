@@ -23,7 +23,7 @@ Design the PR sequence before filling in the format. Divide work at coherent res
 
 Use this structure. Omit only sections marked optional and replace every placeholder with project-specific content.
 
-`Human Review` is the reader's fast path through the plan. Give every PR one matching subsection in stack order. Start with one sentence that explains the PR's role, follow with a short numbered list of concrete changes (normally two to five; do not split one change artificially), then explain any dependency, mechanism, or design choice whose importance would otherwise be unclear. Use plain language and enough detail that the PR can be understood without its execution contract. Avoid source paths, symbol inventories, commands, estimates, and worker instructions unless one is essential to understanding the behavior. The detailed `Pull Requests` sections remain authoritative and the review must not add scope, decisions, or promises.
+`Human Review` is the reader's fast path through the plan. Give every PR one matching subsection in stack order. Start with one sentence that explains the PR's role, follow with a short numbered list of concrete changes (normally two to five; do not split one change artificially), then explain any dependency, mechanism, or design choice whose importance would otherwise be unclear. For each planned function or class, explain concretely what reaches it, what it does step by step, what it calls, changes, or returns, and why that responsibility belongs there; define unfamiliar domain concepts on first use, and never use labels such as "handles", "coordinates", or "manages" in place of the mechanism. Use plain language and enough detail that the PR can be understood without its execution contract. Avoid source paths, symbol inventories, commands, estimates, and worker instructions unless one is essential to understanding the behavior. The detailed `Pull Requests` sections remain authoritative and the review must not add scope, decisions, or promises.
 
 ```markdown
 # Plan: <Concise Outcome>
@@ -36,8 +36,8 @@ Use this structure. Omit only sections marked optional and replace every placeho
 
 **Plánované funkce a třídy:**
 
-- `<Název funkce nebo třídy>`: <Vysvětlete, co bude dělat, jak bude fungovat a spolupracovat se zbytkem implementace a proč byly zvoleny právě tato odpovědnost a tento návrh.>
-- `<Název funkce nebo třídy>`: <Vysvětlete, co bude dělat, jak bude fungovat a spolupracovat se zbytkem implementace a proč byly zvoleny právě tato odpovědnost a tento návrh.>
+- `<Název funkce nebo třídy>`: <Konkrétně popište, co do ní vstupuje nebo ji spouští, co krok za krokem udělá, co zavolá, změní nebo vrátí, jak tím naváže na ostatní části a proč tato odpovědnost patří právě sem.>
+- `<Název funkce nebo třídy>`: <Konkrétně popište, co do ní vstupuje nebo ji spouští, co krok za krokem udělá, co zavolá, změní nebo vrátí, jak tím naváže na ostatní části a proč tato odpovědnost patří právě sem.>
 
 <!-- Zahrňte všechny funkce a třídy plánované pro daný PR. Podsekci zopakujte jednou pro každý PR v pořadí stacku. Zachovejte tento čitelný souhrn v souladu s autoritativní sekcí Pull Requests, ale formulujte jej méně mechanicky. Celou sekci Human Review pište česky; přesné identifikátory zdrojového kódu ponechte beze změny. -->
 

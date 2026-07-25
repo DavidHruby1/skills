@@ -33,9 +33,9 @@ The draft is complete when every `PLAN-FORMAT.md` check passes, the user can und
 
 ## 3. Audit Once
 
-Invoke `plan-auditor` exactly once with the task artifacts, planning clarifications, full draft, source-reuse map, affected-file inventory, and relevant repository evidence.
+Invoke `plan-auditor` exactly once over the lifetime of the active task with the task artifacts, planning clarifications, full draft, source-reuse map, affected-file inventory, and relevant repository evidence.
 
-Apply every finding that can be resolved from the authoritative artifacts, repository evidence, or external evidence directly to `PLAN.md`, including meaning-changing corrections required to restore alignment with that evidence. When a finding exposes a genuinely missing product, architecture, compatibility, ownership, or external-contract decision, return to Step 1 and obtain only that decision; this is clarification, not plan approval. Never invoke the auditor again in the same planning session.
+Apply every finding that can be resolved from the authoritative artifacts, repository evidence, or external evidence directly to `PLAN.md`, including meaning-changing corrections required to restore alignment with that evidence. When a finding exposes a genuinely missing product, architecture, compatibility, ownership, or external-contract decision, return to Step 1 and obtain only that decision; this is clarification, not plan approval. Never invoke `plan-auditor` again for that task, including in a resumed planning workflow; handle later plan changes without another audit.
 
 The audit is complete only when every finding is either corrected in `PLAN.md` or resolved through the Step 1 clarification path and reflected in `PLAN.md`. Continue directly to publication without presenting the plan for confirmation or requesting approval; human review happens after this workflow completes.
 
