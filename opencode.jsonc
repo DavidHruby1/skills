@@ -50,7 +50,6 @@
             "git clean *": "ask",
             "git checkout *": "ask",
             "git restore *": "ask",
-            "docker *": "ask",
             "docker-compose *": "ask",
             "kubectl *": "ask",
             "helm *": "ask",
