@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Implement
 
-Execute an explicitly supplied task's approved `PLAN.md` as a sequential stack of reviewable pull requests. A `worker` writes only production code and runs assigned non-test validation. Tests are created beforehand by `/create-tests`; production workers never read, modify, or run them. After every production stage is complete, the orchestrator alone compares those tests with approved Gherkin, runs them, routes corrections by recorded task ID, performs final review and validation, and publishes the stack. It never writes implementation or test code itself.
+Execute an explicitly supplied task's approved `PLAN.md` as a sequential stack of reviewable pull requests. A `worker` writes only production code and runs assigned non-test validation. Tests are created beforehand by `/create-tests`; production workers never read, modify, or run them. The orchestrator waits for every production worker and correction to finish, then performs a finding-free source and specification audit under `software-philosophy` before it compares tests with approved Gherkin, runs validation, and publishes the stack. It never writes implementation or test code itself.
 
 Use the repository's current checkout and ordinary branches. Never use Git worktrees. Use one worker at a time because workers share the checkout; the worker may delegate only bounded read-only exploration.
 
@@ -50,20 +50,28 @@ After the worker returns, perform only a bounded stage gate. Do not invoke revie
 
 Resolve a failed gate through the retained worker before continuing. Otherwise stage only the production inventory and verify every test path remains byte-for-byte equal to the `/create-tests` checkpoint. For PR 1, reconstruct one provisional commit relative to the original base containing the unchanged test checkpoint inventory and accepted PR 1 production inventory; do not edit or regenerate test content. For later PRs, create exactly one provisional local commit relative to the preceding stage. Inspect the staged summary and unexpected paths, record the branch, commit, parent, size, worker task ID, non-test validation evidence, and residual risks, then branch the next PR from that checkpoint. Do not push yet.
 
-Do not treat the checkpoint as final acceptance. Deep source review and independent stack validation happen once after all workers finish.
+Do not treat the checkpoint as final acceptance. Deep source review and independent stack validation happen only after all workers finish. Do not start review while any planned stage lacks a returned worker result, a passing stage gate, or its provisional commit, or while any worker or correction call is still active.
 
 ## 4. Review And Accept The Stack
 
-On the top branch, invoke `software-philosophy` in review mode once. Inventory every tracked and untracked path and review each provisional commit's complete diff against its parent. Verify across the stack:
+This is a hard barrier. Enter it only after every planned production stage has completed Section 3 and no worker call is active. On the top branch, reread the complete approved `BRIEF.md` and `PLAN.md` from disk; do not review from assignments, summaries, worker reports, or memory. Invoke `software-philosophy` in review mode and keep its review guidance governing the entire audit and correction loop.
 
-- every brief criterion, PR outcome, dependency, and safety constraint is satisfied by production behavior,
+Build an explicit traceability ledger before accepting code. Account separately for every brief requirement, acceptance criterion, non-goal, constraint, and edge case, and every plan-wide constraint plus each PR's outcome, ordered step, dependency, safety constraint, and validation requirement. For each item, record exact source or diff evidence and validation evidence, or mark it missing, contradictory, or unverifiable. A grouped assertion such as "all criteria pass" is not evidence. Resolve every mismatch with the authoritative specs before proceeding.
+
+Inventory every tracked and untracked path. Review every provisional commit's complete diff against its parent line by line, then inspect enough unchanged surrounding code, owners, callers, callees, data flow, error paths, and repository-wide equivalents to judge behavior and design rather than diff appearance. Verify across the stack:
+
+- every item in the traceability ledger is demonstrably satisfied by production behavior exactly as specified in `BRIEF.md` and `PLAN.md`,
+- no worker silently omitted, weakened, broadened, reordered, or reinterpreted a required behavior or plan step,
 - every changed path and behavior is in scope and no required outcome is missing,
+- observable behavior, ordering, defaults, errors, data shapes, persistence, side effects, external calls, authorization, and compatibility agree with the specs and do not regress unaffected paths,
 - added logic does not duplicate an existing function, method, class, rule, transformation, or call path in the affected files or repository,
 - every new abstraction is necessary and each new symbol is placed with the existing owner of its knowledge,
 - every new or materially changed non-trivial function, method, and class has an accurate interface comment explaining its responsibility, rationale, and important constraints or behavior,
 - each stage complies with the changed-logic limits in [`../create-plan/PLAN-FORMAT.md`](../create-plan/PLAN-FORMAT.md).
 
-Do not accept worker reports as proof of consequential source claims. Send every valid defect back to that stage's retained worker as a bounded correction with exact evidence and direction. If that worker cannot complete the assignment, use at most one replacement worker for the stage and retain its task ID for all remaining work. Reinspect only the invalidated review boundaries, reconstruct the corrected one-commit stage, restack every descendant, and repeat affected review checks. Stop when the result remains incorrect, needs an absent decision, or cannot be validated safely.
+Do not accept worker reports, passing tests, compilation, or clean-looking code as proof that a spec item is implemented correctly. Send every valid defect back to that stage's retained worker as a bounded correction with exact source and spec evidence plus the required direction. If that worker cannot complete the assignment, use at most one replacement worker for the stage and retain its task ID for all remaining work. Wait for the correction worker to return, rerun the stage gate, reconstruct the corrected one-commit stage, and restack every descendant before reviewing again.
+
+Every correction invalidates the affected ledger entries, diffs, call paths, and cross-stage assumptions. Reinspect all of them under `software-philosophy`, update their evidence, and repeat until a complete pass produces no findings and no missing, contradictory, or unverifiable ledger item. Stop when the result remains incorrect, needs an absent decision, or cannot be validated safely. Section 5 is blocked until this acceptance condition is met.
 
 ## 5. Validate Tests Against Gherkin
 
@@ -81,15 +89,15 @@ Require every approved scenario exactly once and every manifest path to remain i
 Run every unique test command recorded in `TESTS.md` only after that comparison, plus test commands explicitly required by `Final Cross-PR Validation`. Classify each failure before correction:
 
 - When the test does not faithfully implement its mapped Gherkin, resume the recorded tester task ID with the scenario entry, exact mismatch, owned test path, and failing evidence. The tester may change only its recorded test paths. Recompare the corrected test and rerun only invalidated commands.
-- When the test faithfully implements Gherkin and production behavior disagrees, resume the production worker task ID for the scenario's owning PR with the brief or plan behavior, scenario ID, observable mismatch, and runtime evidence, but never test source or test implementation details. Reinspect the production correction, rebuild that stage's one commit, restack descendants, and rerun invalidated non-test and test commands.
+- When the test faithfully implements Gherkin and production behavior disagrees, resume the production worker task ID for the scenario's owning PR with the brief or plan behavior, scenario ID, observable mismatch, and runtime evidence, but never test source or test implementation details. Wait for it to finish, rebuild that stage's one commit, restack descendants, return the changed stack through Section 4's acceptance barrier, and rerun invalidated non-test and test commands.
 - When failure comes from collection, import, syntax, fixture, infrastructure, or environment rather than asserted behavior, route it to the tester only when its test change caused the failure; otherwise stop and report the external blocker. Never weaken a faithful test to make production pass.
 
 Retain at most one replacement tester per layer and one replacement production worker per stage when a recorded session cannot finish. Stop on a Gherkin contradiction, missing ownership, unresolved failure, or absent decision. Preserve one final PR commit per stage; test corrections remain part of PR 1 and require restacking descendants.
 
 ## 6. Validate And Publish
 
-After test corrections are stable, run every remaining `Final Cross-PR Validation` check and necessary repository-wide non-test check once on the top branch. Do not repeat successful checks unless a later correction invalidated them. Fix an earlier stage through its retained production worker, then restack and rerun only invalidated checks. Preserve one commit per branch.
+After test corrections are stable, run every remaining `Final Cross-PR Validation` check and necessary repository-wide non-test check once on the top branch. Do not repeat successful checks unless a later correction invalidated them. Fix an earlier stage through its retained production worker, wait for it to finish, restack, return the changed stack through Section 4's acceptance barrier, and rerun only invalidated checks. Preserve one commit per branch.
 
-After the stack is stable, read [`PR-FORMAT.md`](PR-FORMAT.md), preflight authentication and remote state, and restack if the remote base moved. Push branches without force and open PRs in dependency order, basing each later PR on the preceding branch. Build titles and bodies from final evidence according to `PR-FORMAT.md`; verify each remote tip, base, body, and diff.
+After the stack is stable, read [`PR-FORMAT.md`](PR-FORMAT.md), preflight authentication and remote state, and restack if the remote base moved. If that restack changes any reviewed diff, return the changed stack through Section 4's acceptance barrier and rerun invalidated checks. Push branches without force and open PRs in dependency order, basing each later PR on the preceding branch. Build titles and bodies from final evidence according to `PR-FORMAT.md`; verify each remote tip, base, body, and diff.
 
 Finish when every planned PR is one accepted remote commit relative to its parent, every feasible final check passes, every remote diff matches its reviewed local diff, and no blocking defect remains. Report the ordered stack, URLs, outcomes, validation, corrections, residual risks, and unavailable external-only checks.
