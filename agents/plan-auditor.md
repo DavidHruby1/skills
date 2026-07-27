@@ -54,7 +54,7 @@ Verify that:
 - no existing test is required to prove behavior that does not exist yet;
 - source evidence supports ownership and safety claims without demanding exhaustive symbol/class inventories or rejection of every theoretical owner;
 - PR boundaries, assigned paths, out-of-scope statements, dependencies, and plan-wide constraints prevent overlap and deliberate intermediate breakage;
-- production-logic estimates follow the 500-line target and 750-line hard limit, exclude tests, and require test scope to be reported separately during implementation;
+- production-logic estimates use the 500-line target as advisory planning evidence, explain materially larger coherent outcomes, exclude tests, and require test scope to be reported separately during implementation; size alone is never a blocking finding;
 - the plan avoids speculative abstraction, shallow wrappers, unrelated cleanup, unsafe rewrites, and complexity unsupported by current requirements.
 
 Test each finding against available source and authoritative evidence. Do not report generic preference or require detailed symbol-by-symbol steps, duplicate execution sections, or repeated ownership statements.

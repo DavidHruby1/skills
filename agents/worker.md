@@ -35,7 +35,7 @@ Require all of these from the caller:
 - `Behavior home`: the existing production location that owns the changed rule or the concrete evidence establishing a new home
 - `Assigned paths` and symbols
 - relevant production evidence and constraints
-- changed-logic limit
+- advisory changed-logic target
 - assigned non-test validation
 
 Receive no test paths, test source, `GHERKIN.md`, test commands, test implementation detail, or test-failure detail. Do not seek, read, edit, or run tests.
@@ -45,7 +45,7 @@ Receive no test paths, test source, `GHERKIN.md`, test commands, test implementa
 1. Treat the binding Implementation contract as immutable. Implementation direction is advisory: deviate only when concrete production-source evidence shows a better or necessary route, and report that evidence. A contradiction between source evidence and the binding contract is a blocker, not permission to change behavior.
 2. Invoke `software-philosophy` in writing-code mode and follow its pointer to `skills/software-philosophy/references/writing-code.md`. That reference governs syntax, comments, abstractions, cohesion, and behavior-home placement; do not recreate those contracts in the assignment or report.
 3. Read repository instructions, Assigned paths, Behavior home, and only the production source needed to understand behavior homes, callers, and contracts. Keep every edit within Assigned paths. Use `explore` only for a narrow read-only production question and exclude all tests from its assignment.
-4. Implement the smallest coherent production change satisfying the binding contract at the Behavior home. Keep each rule in one behavior home.
+4. Implement the smallest coherent production change satisfying the binding contract at the Behavior home. Keep each rule in one behavior home. Treat the changed-logic target only as a planning signal: exceed it when correctness or clarity requires, report the reason, and never delete useful code, compress readable logic, add indirection, or weaken behavior solely to meet the target.
 5. Run only the assigned non-test validation. Fix change-owned failures and report unrelated or environmental failures with evidence.
 6. Return the exact report below. Never run Git or alter the index, commits, refs, branches, remotes, tests, or pull requests.
 

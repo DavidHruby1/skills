@@ -19,7 +19,7 @@ The orchestrator owns branches, commits, test routing, inspector findings, and p
 3. Resolve the stage branch from repository instructions, configuration, and local and remote refs. Use it directly when exactly one candidate is supported. When several candidates remain, use the question tool and list their exact branch names; when none is supported, ask for the stage branch instead of guessing. Record its full current tip SHA. Determine whether `GHERKIN.md` contains scenarios. Tests are optional: when none exists, do not require `task-NNN/tests`, test commits, or test routing.
 4. When scenarios exist, require local `task-NNN/tests` and derive test routing from scenario IDs, commits, and trailers. Verify each test file matches its latest accepted owning commit. If task-owned test changes are already present, invoke `tester` to validate and complete them, invoke `test-auditor` statically, commit the accepted correction on `task-NNN/tests`, and update its owning test checkpoint before continuing. If `Test-Base` differs from the stage tip, rebuild the test stack against the current stage while preserving accepted test contents and corrections. Perform both reconciliations automatically without asking or requiring a separate `/create-tests` run.
 5. Mechanically map every scenario to coverage, an `Owning PR`, latest test commit, controlled test files, and a repository-defined test command. Allow one test to cover tightly coupled scenarios and supplemental tests justified by the same contract. Resolve harmless missing metadata from the plan, Gherkin, paths, and history; ask only when contradictory evidence leaves expected behavior or ownership materially ambiguous.
-6. Record each PR's binding contract, advisory direction, behavior home, assigned production paths, changed-logic limit, non-test validation, optional owned test commits, and parent checkpoint.
+6. Record each PR's binding contract, advisory direction, behavior home, assigned production paths, advisory changed-logic target, non-test validation, optional owned test commits, and parent checkpoint.
 
 Completion criterion: the exact task, stage, stack, contracts, ownership, validation, and current controlled test evidence are unambiguous.
 
@@ -35,10 +35,10 @@ For each PR:
 
 1. Create `task-NNN/pr-N` from the preceding checkpoint: stage for PR 1, otherwise `task-NNN/pr-(N-1)`.
 2. When scenarios exist, apply or cherry-pick the PR's current accepted test commits from local `task-NNN/tests`. Rebuild stale test-stack metadata automatically as described in Step 1. When no scenario exists, skip test-commit handling. The orchestrator and production workers never edit tests; every necessary test change is delegated to `tester` and statically audited.
-3. Launch one `worker` and retain its session for corrections. Supply only the Owning PR, binding Implementation contract, advisory Implementation direction, behavior home, assigned production paths and symbols, relevant production evidence, changed-logic limit, and assigned non-test validation.
+3. Launch one `worker` and retain its session for corrections. Supply only the Owning PR, binding Implementation contract, advisory Implementation direction, behavior home, assigned production paths and symbols, relevant production evidence, advisory changed-logic target, and assigned non-test validation. State explicitly that the target never overrides correctness, clarity, or the smallest coherent implementation.
 4. Never supply a test path, test source, Gherkin, test command, test implementation detail, or test-failure detail to a worker.
 5. Wait for the worker to finish production code and assigned non-test validation.
-6. Mechanically verify only completion, assigned-path scope, unchanged Git refs and index, changed-logic size, and fresh non-test validation evidence. Do not review source or judge implementation quality.
+6. Mechanically verify only completion, assigned-path scope, unchanged Git refs and index, changed-logic size, and fresh non-test validation evidence. Size is reporting evidence, not a pass/fail gate. Never request deletion, compression, indirection, or repartitioning solely to meet the target; record a concise reason when the coherent implementation exceeds it. Do not review source or judge implementation quality.
 7. Return a failed mechanical gate or worker-reported blocker to the same worker. A contradiction between source evidence and the binding contract blocks `/implement`; advisory direction may change when the worker provides concrete source evidence.
 8. When tests exist, verify they match their latest accepted owning commits. Route unexpected test changes through the automatic test-correction procedure; never include them in a production commit. Create the provisional production stage commit and record its parent, test commits, production commit, worker session, size, and validation.
 
@@ -100,7 +100,7 @@ Use this structure and omit only optional sections:
 
 ## Production Size
 
-`<changed logic>` / `<PLAN limit>` změněných řádků produkční logiky.
+`<changed logic>` / `<PLAN target>` změněných řádků produkční logiky. <Při překročení stručně vysvětlete, proč je výsledná změna stále nejmenší koherentní implementací.>
 
 ## Test Scope
 

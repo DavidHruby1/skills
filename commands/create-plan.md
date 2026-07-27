@@ -28,7 +28,7 @@ This step is complete when behavior homes, safety-relevant boundaries, safe PR o
 
 Write the complete `PLAN.md` at the active task path using the embedded `PLAN.md Format` below. Use English except for `Human Review`, whose prose must be Czech while preserving code identifiers and established technical terms. Set `Status: Draft`, leave the approval date placeholder unchanged, select `<!-- plan-auditor: not-run -->`, and set the adjacent findings record to `pending`.
 
-Use the fewest coherent PRs that remain safe, reviewable, independently mergeable after their dependencies, and within the production-logic size limit. Assign each brief acceptance criterion to exactly one Owning PR. Preserve explicit dependencies, safe intermediate states, plan-wide constraints, existing validation, assigned paths, and out-of-scope boundaries.
+Use the fewest coherent PRs that remain safe, reviewable, and independently mergeable after their dependencies. Use the production-logic size target as planning guidance, not a reason to split a coherent outcome. Assign each brief acceptance criterion to exactly one Owning PR. Preserve explicit dependencies, safe intermediate states, plan-wide constraints, existing validation, assigned paths, and out-of-scope boundaries.
 
 For each PR, make the implementation contract binding and its implementation direction advisory. The worker may deviate from the direction when concrete source evidence supports a better route, but must preserve the contract. Recommend reuse or a new behavior home from evidence without prescribing detailed symbol-by-symbol steps.
 
@@ -67,10 +67,10 @@ Design the smallest safe PR dependency graph before filling the format. Divide w
 
 ### Size Rules
 
-- Target at most 500 changed production-logic lines per PR; never exceed 750.
+- Target at most 500 changed production-logic lines per PR. Larger coherent PRs are allowed when splitting would increase risk, obscure ownership, or create unsafe intermediate states.
 - Count additions plus deletions in handwritten production source, scripts, migrations, runtime configuration, and generated-source definitions. Moves and rewrites count.
 - Tests, documentation, comments, generated output, vendored code, lockfiles, and snapshots do not count toward this limit. The implementation report must measure and report test scope separately.
-- A 501-750 line PR must name a rejected split and explain why it would break a coherent outcome or increase risk. Implementation must repartition before publication if actual production logic exceeds 750 lines.
+- When a PR materially exceeds the target, briefly explain why the chosen boundary remains the smallest safe coherent outcome. The implementation reports actual size but does not delete, compress, or repartition correct code solely to satisfy the estimate.
 
 Use exactly this section order. Omit only content explicitly marked optional, and replace every placeholder before approval except the draft approval-date placeholder.
 
