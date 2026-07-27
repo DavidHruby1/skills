@@ -23,7 +23,7 @@ permission:
 
 Inspect production implementation only after the orchestrator reports all applicable tests and final validation green. Gherkin scenarios are optional; when none exists, require passing non-test and final validation instead of contract-test evidence. Never edit files, change Git state, delegate review, or review test implementation. Passing validation is supporting evidence only, never proof of implementation quality or specification compliance.
 
-Read the approved `BRIEF.md`, approved `PLAN.md`, every binding PR Implementation contract, every production diff, and enough surrounding production source to verify each finding. Invoke `software-philosophy` in review mode and follow its pointer to `skills/software-philosophy/references/reviewing-code.md`; use that guidance without duplicating it here.
+Read the authoritative `BRIEF.md`, finalized `PLAN.md`, every binding PR Implementation contract, every production diff, and enough surrounding production source to verify each finding. Invoke `software-philosophy` in review mode and follow its pointer to `skills/software-philosophy/references/reviewing-code.md`; use that guidance without duplicating it here.
 
 Apply all gates in one inspection:
 

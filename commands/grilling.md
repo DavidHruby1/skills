@@ -1,6 +1,6 @@
 ---
-description: Start or resume a relentless grill that crystallizes a plan or design into BRIEF.md, assesses whether research is recommended, classifies delivery size, and recommends the next workflow.
-argument-hint: "[task-NNN] [reason]"
+description: Start a grill from an optional specification or resume an explicitly named task, crystallize BRIEF.md, and recommend the next workflow.
+argument-hint: "[specification | task-NNN [reason-or-specification]]"
 agent: build
 ---
 
@@ -8,7 +8,7 @@ agent: build
 
 Invocation arguments: `$ARGUMENTS`.
 
-Start or resume a numbered task and turn an uncertain plan or design into `BRIEF.md` through a relentless interview of one complete text batch and, only for newly emerged branches, at most one follow-up batch. Assess whether research would help, then classify the resolved work as small, medium, or large so the user knows the recommended next workflow.
+Start a numbered task from an optional specification or resume an explicitly named task and turn the input into `BRIEF.md` through a relentless interview of one complete text batch and, only for newly emerged branches, at most one follow-up batch. Assess whether research would help, then classify the resolved work as small, medium, or large so the user knows the recommended next workflow.
 
 ## Interaction Contract
 
@@ -22,7 +22,9 @@ Number the questions. Under each question, present every materially credible, no
 
 ## 1. Resolve The Task
 
-Apply the task-artifact convention from `AGENTS.md`. When the invocation names one `task-NNN`, require that exact direct child of `.opencode/artifacts/` to exist and resume it; stop for a corrected ID rather than falling back or creating a task when it is missing or ambiguous. Treat any following reason as the focus for reopening the grill, not as an approved decision.
+Parse the invocation deterministically. When its first whitespace-delimited token exactly matches `^task-[0-9]+$`, treat it as a resume request and all remaining text as the reason or new specification to investigate. Otherwise treat all arguments as the specification for a new task. An empty invocation starts a new task from the current request and preceding conversation.
+
+Apply the task-artifact convention from `AGENTS.md`. For a resume request, require that exact direct child of `.opencode/artifacts/` to exist; stop for a corrected ID rather than falling back or creating a task when it is missing or ambiguous. Treat following text as a claim and focus for reopening the grill, not as an approved decision.
 
 When no task is named, inspect the directories directly under `.opencode/artifacts/`, find the greatest numeric suffix among names matching `^task-[0-9]+$`, and create the next `task-NNN`, padded to at least three digits. Start with `task-001`; never fill a gap or reuse an existing directory. If creation collides with another process, scan again and retry with the new maximum.
 
@@ -32,7 +34,7 @@ Use the selected directory for the entire grill. This step is complete when exac
 
 Choose the grounding branch from the invocation:
 
-- For `/grilling` without a task ID, treat the user's current request and preceding conversation as the seed for the new task. If they do not establish a concrete problem and desired outcome, ask all opening questions needed to establish them in the complete text questionnaire following the Interaction Contract before searching the repository. Do not invent a topic or resume the previously greatest task.
+- For a new task, treat the full invocation specification, the user's current request, and preceding conversation as its seed. If they do not establish a concrete problem and desired outcome, ask all opening questions needed to establish them in the complete text questionnaire following the Interaction Contract before searching the repository. Do not invent a topic or resume the previously greatest task.
 - For `/grilling task-NNN <reason>`, first read the existing `BRIEF.md` in full and then every task artifact relevant to the stated reason. Use the reason as a claim to investigate, not as proof that the brief is wrong.
 
 Once the subject is known, read relevant documentation, ADRs, source, and tests. Answer factual questions and resolve technically dominant choices from evidence; ask the user only for product or design decisions that depend on their priorities.

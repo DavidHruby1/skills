@@ -7,7 +7,7 @@ Create or revise the active task's `GHERKIN.md` as the contract for what tests m
 
 Resolve the active task using `AGENTS.md`. Determine the evidence basis from explicit arguments first, then repository evidence:
 
-- **Planned behavior:** Require the task's full `BRIEF.md` and published `PLAN.md`, plus `RESEARCH.md` when present. `PLAN.md` must contain `Status: Approved`; otherwise stop. Read relevant documentation, source, existing tests, configuration, and manifests. `BRIEF.md` governs behavior and the approved `PLAN.md` governs implementation ownership.
+- **Planned behavior:** Require the task's full `BRIEF.md` and finalized, published `PLAN.md`, plus `RESEARCH.md` when present. Verify that its audit records are resolved and every planned PR has verified publication metadata; otherwise stop. Read relevant documentation, source, existing tests, configuration, and manifests. `BRIEF.md` governs behavior and `PLAN.md` governs implementation ownership.
 - **Existing behavior:** `BRIEF.md` and `PLAN.md` are optional. Read the relevant source in full, existing tests when present, governing documentation, and only bounded path-scoped Git history needed to recover intent. Treat implementation as evidence, not unquestionable intent; stop on a material disagreement among evidence or with the request.
 
 Ask one focused question if the basis remains ambiguous. Record `Basis: Planned behavior` or `Basis: Existing behavior` in each changed section. Select the smallest non-duplicative set of unit, integration, and end-to-end scenarios that proves all material behavior and risk; do not ask the user to choose levels.
@@ -20,7 +20,7 @@ For every scenario:
 - Add `**What this test does:**` with two or three plain sentences describing the starting situation, action, and observable result without test jargon or implementation details.
 - Add `**Test scope:**` with one short explanation of the real participating boundary and any evidence-backed material limitation.
 - Add one fenced `gherkin` block containing `Feature`, optional `Rule`, level and ID tags, one scenario, and declarative `Given`, `When`, `Then`, `And`, or `But` steps. Describe observable behavior.
-- Add one `Traceability:` line immediately after the fence. Name an `Owning PR: N` when a plan assigns the behavior to a PR. For planned behavior, cite at least one relevant `BRIEF.md` criterion and verify that the named PR exists in the approved `PLAN.md` and owns the behavior. Existing behavior cites concrete source, test, documentation, or commit evidence.
+- Add one `Traceability:` line immediately after the fence. Name an `Owning PR: N` when a plan assigns the behavior to a PR. For planned behavior, cite at least one relevant `BRIEF.md` criterion and verify that the named PR exists in the finalized `PLAN.md` and owns the behavior. Existing behavior cites concrete source, test, documentation, or commit evidence.
 
 Cover each applicable criterion and material invariant, including representative success, rejection, boundary, and consequential failure behavior. Add scenarios for distinct risks, not duplicate confidence. The explanation, scope, Gherkin, level, basis, ownership, and traceability must agree.
 

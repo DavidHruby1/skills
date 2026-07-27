@@ -1,5 +1,5 @@
 ---
-description: Create and publish an audited, source-backed PLAN.md for a medium-to-large implementation that needs implementation planning and tracked issues.
+description: Propose, audit, obtain approval for, then write and publish a source-backed PLAN.md for a medium-to-large implementation.
 argument-hint: "[task-NNN]"
 agent: build
 ---
@@ -8,7 +8,7 @@ agent: build
 
 Invocation arguments: `$ARGUMENTS`.
 
-Turn the active task's authoritative `BRIEF.md` and optional `RESEARCH.md` into an approved, implementation-ready `PLAN.md`, then publish its PR stages as issues. This workflow is for medium-to-large implementations; do not invoke it autonomously for a small local change.
+Turn the active task's authoritative `BRIEF.md` and optional `RESEARCH.md` into an audited implementation proposal. Write `PLAN.md` and publish its PR stages as issues only after explicit user approval. This workflow is for medium-to-large implementations; do not invoke it autonomously for a small local change.
 
 ## Authority
 
@@ -24,40 +24,40 @@ User product decisions in task artifacts and planning clarifications are binding
 
 This step is complete when behavior homes, safety-relevant boundaries, safe PR order, existing static and non-test validation, and all material decisions are known. Source evidence is required where behavior ownership or safety matters; exhaustive symbol or class inventories are not.
 
-## 2. Complete The Draft
+## 2. Complete The Proposal
 
-Write the complete `PLAN.md` at the active task path using the embedded `PLAN.md Format` below. Use English except for `Human Review`, whose prose must be Czech while preserving code identifiers and established technical terms. Set `Status: Draft`, leave the approval date placeholder unchanged, select `<!-- plan-auditor: not-run -->`, and set the adjacent findings record to `pending`.
+Compose the complete proposed `PLAN.md` in memory using the embedded `PLAN.md Format` below. Do not create or modify `PLAN.md` yet. Use English except for `Human Review`, whose prose must be Czech while preserving code identifiers and established technical terms. Select `<!-- plan-auditor: not-run -->` and set the adjacent findings record to `pending` in the proposal.
 
 Use the fewest coherent PRs that remain safe, reviewable, and independently mergeable after their dependencies. Use the production-logic size target as planning guidance, not a reason to split a coherent outcome. Assign each brief acceptance criterion to exactly one Owning PR. Preserve explicit dependencies, safe intermediate states, plan-wide constraints, existing validation, assigned paths, and out-of-scope boundaries.
 
-For each PR, make the implementation contract binding and its implementation direction advisory. The worker may deviate from the direction when concrete source evidence supports a better route, but must preserve the contract. Recommend reuse or a new behavior home from evidence without prescribing detailed symbol-by-symbol steps.
+For each PR, make the implementation contract binding and its implementation direction advisory. Later implementation may deviate from the direction when concrete source evidence supports a better route, but must preserve the contract. Recommend reuse or a new behavior home from evidence without prescribing detailed symbol-by-symbol steps.
 
-The draft is complete only when every format check passes and a worker can implement every contract without inventing a material product or external-contract decision.
+The proposal is complete only when every format check passes and every contract can be implemented without inventing a material product or external-contract decision.
 
 ## 3. Audit Exactly Once
 
-Consult the durable plan-auditor marker. If it is `not-run`, change it to `invoked` immediately before invoking `plan-auditor` exactly once over the lifetime of the active task with the task artifacts, planning clarifications, full draft, and relevant repository evidence. Immediately after it returns, persist its unresolved findings verbatim in the adjacent findings record before doing other work. Never invoke it a second time, including after clarification, manual edits, or a resumed workflow. A resumed plan uses the persisted findings.
+Consult the marker in the in-memory proposal. Change it from `not-run` to `invoked` immediately before invoking `plan-auditor` exactly once for this proposal with the task artifacts, planning clarifications, full proposal, and relevant repository evidence. Immediately after it returns, place its unresolved findings verbatim in the adjacent findings record before doing other work. Never invoke it a second time for this proposal, including after clarification or corrections.
 
-Resolve every finding in `PLAN.md` and remove it from the findings record as its resolution is reflected. Use evidence for factual or planning findings and ask the user only when a finding exposes a missing binding decision or an evidence-backed contradiction. Set the record to `None` and the marker to `resolved` only when every finding is resolved and the complete draft remains internally consistent.
+Resolve every finding in the proposal and remove it from the findings record as its resolution is reflected. Use evidence for factual or planning findings and ask the user only when a finding exposes a missing binding decision or an evidence-backed contradiction. Set the record to `None` and the marker to `resolved` only when every finding is resolved and the complete proposal remains internally consistent.
 
-## 4. Obtain Approval
+## 4. Obtain Approval Before Writing
 
-Tell the user explicitly to open and read `PLAN.md` in their editor. Then use the question tool with exactly this question, substituting the absolute path:
+Present the complete `Human Review` from the audited proposal in normal assistant text. Then use the question tool with exactly this question:
 
-`PLAN.md je připravený v <absolute path>. Schvaluješ aktuální plán a publikaci ticketů?`
+`Schvaluješ předložený plán, vytvoření PLAN.md a publikaci ticketů?`
 
 Offer exactly these choices:
 
 - `Schvaluji a publikuj`
 - `Neschvaluji`
 
-On `Neschvaluji`, retain `Status: Draft`, publish nothing externally, and stop. The user may edit the plan and resume later; do not re-audit.
+On `Neschvaluji`, do not create or modify `PLAN.md`, publish nothing externally, and stop.
 
-On `Schvaluji a publikuj`, reread the current `PLAN.md` from disk and treat that exact version, including manual edits, as publication authority. Mechanically verify the `resolved` audit marker, `None` findings record, required sections, unresolved placeholders, PR numbering, one Owning PR per acceptance criterion, dependencies, constraints, validation, out-of-scope boundaries, and cross-section consistency. If manual edits remove either audit record or introduce a material contradiction that cannot be resolved mechanically, stop with `Status: Draft`, publish nothing, and report the contradiction; do not re-audit. Otherwise set `Status: Approved`, replace `Approved: YYYY-MM-DD` with the current date, and only then continue.
+On `Schvaluji a publikuj`, mechanically verify the in-memory proposal's `resolved` audit marker, `None` findings record, required sections, unresolved placeholders, PR numbering, one Owning PR per acceptance criterion, dependencies, constraints, validation, out-of-scope boundaries, and cross-section consistency. Write that exact verified proposal to the active task's `PLAN.md`, reread it, and verify byte-equivalent material content before continuing. If verification fails, publish nothing and report the blocker; do not re-audit. Do not invoke or select `ticket-master` before the user gives this approval and the written file passes verification.
 
 ## 5. Publish Issues
 
-Preflight the instructed provider, authentication, repository, and task label. Compute each complete approved PR section's SHA-256 digest and invoke `ticket-master` with the ordered sections and digests. Reread `PLAN.md` and verify its publication metadata against every resulting issue.
+Only after Step 4 has recorded `Schvaluji a publikuj` and successfully written and verified `PLAN.md`, preflight the instructed provider, authentication, repository, and task label. Compute each complete finalized PR section's SHA-256 digest and invoke `ticket-master` with the ordered sections and digests. Reread `PLAN.md` and verify its publication metadata against every resulting issue.
 
 Finish only when every current PR has one verified issue and removed open stages were verified as superseded and closed. Do not implement code.
 
@@ -72,12 +72,10 @@ Design the smallest safe PR dependency graph before filling the format. Divide w
 - Tests, documentation, comments, generated output, vendored code, lockfiles, and snapshots do not count toward this limit. The implementation report must measure and report test scope separately.
 - When a PR materially exceeds the target, briefly explain why the chosen boundary remains the smallest safe coherent outcome. The implementation reports actual size but does not delete, compress, or repartition correct code solely to satisfy the estimate.
 
-Use exactly this section order. Omit only content explicitly marked optional, and replace every placeholder before approval except the draft approval-date placeholder.
+Use exactly this section order. Omit only content explicitly marked optional, and replace every placeholder before approval.
 
 ```markdown
 # Plan: <Outcome>
-Status: Draft | Approved
-Approved: YYYY-MM-DD
 <!-- plan-auditor: not-run | invoked | resolved -->
 <!-- plan-audit-findings: pending | None | <verbatim unresolved findings> -->
 
@@ -85,7 +83,7 @@ Approved: YYYY-MM-DD
 
 ### PR 1
 
-<Česky popište výsledek PR, mechanismus změny a důvod tohoto řešení. Nepoužívejte inventář symbolů, detailní kroky implementace ani instrukce pro workera.>
+<Česky popište výsledek PR, mechanismus změny a důvod tohoto řešení. Nepoužívejte inventář symbolů ani detailní kroky implementace.>
 
 <!-- Zopakujte jednou pro každý PR v pořadí stacku. Zachovejte přesné identifikátory a technické termíny. -->
 
@@ -120,7 +118,7 @@ Approved: YYYY-MM-DD
 
 - `<likely path:symbol>`: <Evidence-backed advisory recommendation, including why this existing behavior home should be reused or why a new behavior home belongs here>
 - Assigned paths: `<edit scope>`
-- The worker may deviate from this direction on concrete source evidence while preserving the implementation contract.
+- Later implementation may deviate from this direction on concrete source evidence while preserving the implementation contract.
 
 **Dependencies:** <Earlier PRs or `None`>
 
@@ -156,7 +154,7 @@ Approved: YYYY-MM-DD
 
 ### Plan Format Completion Checks
 
-- The file starts exactly with the title, status, approval, and single selected plan-auditor and findings records shown. Drafts retain `Approved: YYYY-MM-DD`; approval replaces only the date placeholder and status.
+- The file starts exactly with the title and single selected plan-auditor and findings records shown.
 - Human Review has `### PR N` for every PR and Czech prose explaining outcome, mechanism, and reason without symbol inventories or detailed implementation steps.
 - The plan matches binding user product decisions. Factual assumptions are evidence-backed or reconciled with the user.
 - Every brief acceptance criterion appears once under the Validation section of exactly one Owning PR.
@@ -167,4 +165,4 @@ Approved: YYYY-MM-DD
 - Existing static and non-test validation is recorded when available. Existing tests need not prove new behavior.
 - Size estimates count production logic only. Tests are excluded and their scope is reported separately by implementation.
 - Final validation contains only genuinely cross-PR checks. Published Issues has one pending or verified item per current PR in stack order.
-- Approval requires `<!-- plan-auditor: resolved -->` and `<!-- plan-audit-findings: None -->`. No unresolved placeholder remains at approval, no blocking decision is delegated to implementation, and no duplicate execution sections appear.
+- Writing requires user approval, `<!-- plan-auditor: resolved -->`, and `<!-- plan-audit-findings: None -->`. No unresolved placeholder remains, no blocking decision is delegated to implementation, and no duplicate execution sections appear.
