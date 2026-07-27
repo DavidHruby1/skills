@@ -1,12 +1,12 @@
 # Writing Tests
 
-Use when implementing unit, integration, or end-to-end tests assigned from approved `GHERKIN.md`. Tests prove observable behavior and should fail for one clear behavioral reason, not because they mirror implementation structure.
+Use when implementing unit, integration, or end-to-end tests from `GHERKIN.md` and governing evidence. Tests prove observable behavior and should fail for one clear behavioral reason, not because they mirror implementation structure.
 
 ## Contract And Evidence
 
-- Require exact assigned scenario IDs from a `GHERKIN.md` section with `Status: Approved`, an approval date, and a passed audit. Without them, stop without editing tests.
-- Implement only the assigned IDs and preserve each ID in its test name or parametrization ID.
-- Treat each approved scenario's plain-language description, scope, Gherkin, level, basis, and traceability as one contract. Report contradictions instead of choosing one representation.
+- Treat each scenario's plain-language description, scope, Gherkin, level, basis, and traceability as one contract without approval or audit metadata gates.
+- Cover every assigned scenario effectively; one test may cover tightly coupled scenarios.
+- Add directly related coverage when the contract, source interface, regression, or test boundary shows it is needed to prove the same behavior. Do not invent product behavior.
 - For `Basis: Planned behavior`, write a test that should fail for absent or incorrect behavior when `/implement` executes it after production stages.
 - For `Basis: Existing behavior`, write a test that should pass against the established behavior when `/implement` executes it.
 - Test creation does not execute tests. The test must still be independently runnable through a focused repository command; execution evidence belongs to `/implement`.
@@ -18,7 +18,7 @@ Use when implementing unit, integration, or end-to-end tests assigned from appro
 - Exercise the public interface used by real callers. Assert returns, errors, rendered output, emitted events, response contracts, persistence, or intentional external commands.
 - Keep each test independently runnable and deterministic. Control time, randomness, global state, network, filesystem, database data, and third-party systems only at boundaries outside the behavior under test; restore changed state.
 - Give each test one behavioral reason to fail. Use arrange-act-assert when it clarifies those roles and parametrization when examples express one rule with meaningfully different boundaries.
-- Cover the approved representative normal, boundary, invalid, and failure cases without repeating the same rule at every level.
+- Cover representative normal, boundary, invalid, and failure cases supported by contract and evidence without repeating the same rule at every level.
 - Prefer explicit assertions over broad snapshots, incidental record counts, or implementation calls. Expected values must be independently obvious or fixed examples, not the production algorithm repeated in the test.
 - Keep production logic out of fixtures, factories, setup helpers, and expected-value calculations. Add dependencies or infrastructure only with explicit approval.
 
@@ -63,7 +63,7 @@ An integration test proves one named seam between real collaborators. Typical se
 - When database behavior matters, use the production engine and relevant schema or migrations. Give each test controlled business data and restore isolation through rollback, truncation, or a disposable resource.
 - For Vue, mount the meaningful tree with real children and plugins, interact through rendered controls, and assert visible DOM or documented emitted behavior.
 - For APIs, use the framework's public test client and assert status, response contract, persistence, and material side effects. Do not bypass routing, serialization, validation, or middleware when they belong to the seam.
-- Cover seam-specific failures such as serialization, constraints, transactions, authorization, timeout, retry, or contract errors only when they are in approved scope.
+- Cover seam-specific failures when the contract or repository evidence makes them relevant.
 
 Good integration test:
 
