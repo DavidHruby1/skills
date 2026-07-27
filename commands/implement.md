@@ -1,12 +1,14 @@
 ---
-name: implement
 description: Implement every stacked pull request in an explicitly named task through production workers, optional contract tests, inspection, and publication.
-disable-model-invocation: true
+argument-hint: "task-NNN"
+agent: build
 ---
 
 # Implement
 
-Run only as `/implement task-NNN`. Require the exact task and an approved `PLAN.md`.
+Invocation arguments: `$ARGUMENTS`.
+
+Require exactly one argument matching `task-NNN`. If it is absent or invalid, print `Usage: /implement task-NNN` and stop without changing the repository or Git state. Resolve the task directly from `$1`; never infer or substitute another task. Require its approved `PLAN.md`.
 
 The orchestrator owns branches, commits, tests, inspector findings, and publication. It never writes production or test code, judges source or diff quality, or performs source review. Use the shared checkout without worktrees and run one production `worker` at a time.
 
@@ -71,7 +73,7 @@ The two-pass limit is an explicit token-saving compromise. The orchestrator trac
 
 ## 5. Publish The Stack
 
-Read [`PR-FORMAT.md`](PR-FORMAT.md) and fetch. When approved scenarios exist, require the selected stage tip to still equal `Test-Base` before publication; if it moved, use the Step 1 hard-stop message and require a new `/create-tests`. When no approved scenarios exist and stage moved, invalidate the stack and rebuild it from the current stage through Sections 2-4. Never publish an implementation based on a stale stage.
+Use the embedded `Pull Request Format` below and fetch. When approved scenarios exist, require the selected stage tip to still equal `Test-Base` before publication; if it moved, use the Step 1 hard-stop message and require a new `/create-tests`. When no approved scenarios exist and stage moved, invalidate the stack and rebuild it from the current stage through Sections 2-4. Never publish an implementation based on a stale stage.
 
 Push without force and open, but never merge, each PR with these bases:
 
@@ -82,3 +84,68 @@ task-NNN/pr-3 -> task-NNN/pr-2
 ```
 
 Verify every remote head, base, body, commit set, and own diff against its preceding branch. Finish when every planned PR is open and verified. Report only the ordered PR URLs and bases, outcomes, applicable test evidence, validation evidence, inspector verdicts, corrections, and residual risks, then stop. Do not perform or describe any post-publication operation.
+
+## Pull Request Format
+
+Build each description from that PR's final own diff against its preceding branch. Write every Markdown heading in English. Write the title and all body content in Czech except identifiers, paths, commands, provider syntax, and established technical terms.
+
+Use this structure and omit only optional sections:
+
+````markdown
+## Changes
+
+| Oblast | Umístění | Změna |
+|---|---|---|
+| `<behavior boundary>` | `<path>` | <Materiální produkční změna a její účel.> |
+
+## Production Size
+
+`<changed logic>` / `<PLAN limit>` změněných řádků produkční logiky.
+
+## Test Scope
+
+<!-- When approved scenarios exist, use the table. Otherwise write `Testy nebyly pro tento task vytvořeny.` -->
+
+| Scenario ID | Úroveň | Test commit | Výsledek |
+|---|---|---|---|
+| `<scenario ID>` | `<unit/integration/end-to-end>` | `<SHA>` | `PASS` |
+
+<!-- Keep test scope separate from production size. Describe audited scope and evidence, not test implementation. -->
+
+## Design
+
+<!-- Optional. Explain only a consequential ownership decision, unusual control flow, compatibility choice, or deviation from advisory Implementation direction. -->
+
+## Impacts
+
+<!-- Optional. Keep only applicable lines. -->
+
+- **Kontrakty:** <dopad>
+- **Kompatibilita:** <dopad>
+- **Migrace:** <požadavky>
+- **Rizika:** <zbývající riziko a mitigace>
+
+## Validation
+
+- `<non-test or final command/check>`: `PASS` - <stručný důkaz>
+- **Implementation inspection:** `<PASS | REWORK twice followed by green mechanical publication gate>`
+
+## Context
+
+`task-NNN` · <issue reference and URL> · `PR N` · základ `<stage or preceding task branch>` · digest `<published PR-section SHA-256>`
+
+## Visual Evidence
+
+<!-- Optional. Include only for user-visible changes. -->
+
+<Stručný before-and-after důkaz.>
+````
+
+### Pull Request Completion Checks
+
+- Headings are English; the title and body are Czech with only required technical exceptions.
+- The body describes only the PR's own final diff.
+- Production size and test scope are separate; a task without approved scenarios states that tests were not created.
+- When tests exist, claims cite scenario IDs, commits, and results without reviewing or narrating test implementation.
+- Validation and inspection claims match final evidence.
+- The base and dependency are exact. The body contains no post-publication instructions.

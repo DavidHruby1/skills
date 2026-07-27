@@ -1,11 +1,12 @@
 ---
-name: grilling
 description: Start or resume a relentless grill that crystallizes a plan or design into BRIEF.md, assesses whether research is recommended, classifies delivery size, and recommends the next workflow.
-disable-model-invocation: true
 argument-hint: "[task-NNN] [reason]"
+agent: build
 ---
 
 # Grilling
+
+Invocation arguments: `$ARGUMENTS`.
 
 Start or resume a numbered task and turn an uncertain plan or design into `BRIEF.md` through a relentless interview of one complete text batch and, only for newly emerged branches, at most one follow-up batch. Assess whether research would help, then classify the resolved work as small, medium, or large so the user knows the recommended next workflow.
 
