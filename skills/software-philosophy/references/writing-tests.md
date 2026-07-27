@@ -7,12 +7,14 @@ Use when implementing unit, integration, or end-to-end tests assigned from appro
 - Require exact assigned scenario IDs from a `GHERKIN.md` section with `Status: Approved`, an approval date, and a passed audit. Without them, stop without editing tests.
 - Implement only the assigned IDs and preserve each ID in its test name or parametrization ID.
 - Treat each approved scenario's plain-language description, scope, Gherkin, level, basis, and traceability as one contract. Report contradictions instead of choosing one representation.
-- For `Basis: Planned behavior`, tests may be written before production behavior at any level. A valid initial failure must come from absent or incorrect behavior, never collection, syntax, import, fixture, infrastructure, or environment failure.
-- For `Basis: Existing behavior`, tests should pass against the established behavior. A behavioral failure is evidence of a contract or production contradiction, not permission to weaken the test.
+- For `Basis: Planned behavior`, write a test that should fail for absent or incorrect behavior when `/implement` executes it after production stages.
+- For `Basis: Existing behavior`, write a test that should pass against the established behavior when `/implement` executes it.
+- Test creation does not execute tests. The test must still be independently runnable through a focused repository command; execution evidence belongs to `/implement`.
 
 ## Shared Rules
 
 - Inspect existing tests, configuration, fixtures, helpers, production interfaces, and focused commands before editing. Follow repository conventions and reuse existing infrastructure.
+- Apply the Comments contract in [writing-code.md](writing-code.md) to every new or materially changed non-trivial test helper, fixture function, class, or method.
 - Exercise the public interface used by real callers. Assert returns, errors, rendered output, emitted events, response contracts, persistence, or intentional external commands.
 - Keep each test independently runnable and deterministic. Control time, randomness, global state, network, filesystem, database data, and third-party systems only at boundaries outside the behavior under test; restore changed state.
 - Give each test one behavioral reason to fail. Use arrange-act-assert when it clarifies those roles and parametrization when examples express one rule with meaningfully different boundaries.
@@ -96,7 +98,7 @@ def test_IT_001_creates_an_order(api_client, mocker):
 An end-to-end test proves a consequential completed journey through the production-built application, real first-party network and backend, and controlled data. Use the repository's installed runner; when none exists, obtain approval before adding one.
 
 - Start from a user goal and assert meaningful checkpoints and the final observable outcome. Never import application internals into a browser test.
-- Use a production build or production-equivalent server and schema with explicit test configuration. Keep first-party calls real when they belong to the journey; replace uncontrolled third parties at their owned boundary.
+- Use a production build or production-equivalent server and schema with explicit test configuration. Keep first-party calls real when they belong to the journey; replace uncontrolled third parties at the controlled boundary.
 - Create unique business data through an intentional API or fixture boundary and clean it up, or use an isolated disposable environment. Never depend on another test's state or execution order.
 - Prefer role, label, placeholder, or stable test-ID locators. Avoid DOM ancestry, generated classes, XPath, and positional selectors.
 - Use auto-waiting actions and assertions. Wait for observable conditions or specific responses, never arbitrary delays.

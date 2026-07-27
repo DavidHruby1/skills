@@ -1,16 +1,16 @@
 ---
 name: research
-description: Build RESEARCH.md from BRIEF.md using mapped internal investigation and required external evidence when repository facts are insufficient.
+description: Build RESEARCH.md from BRIEF.md using map-first internal investigation, applicable external evidence, and explicit assumption falsification.
 disable-model-invocation: true
 ---
 
 # Research
 
-Turn the active task's `BRIEF.md` into an evidence-backed `RESEARCH.md` for technical planning. Treat the brief and its resolved decisions as imported context: research records only new evidence, material qualifications or contradictions, and unresolved facts that affect planning. Research does not reopen or replace those decisions.
+Run only when the user explicitly invokes `/research`. Turn the active task's `BRIEF.md` into an evidence-backed `RESEARCH.md` for technical planning. BRIEF.md controls intended behavior. User-owned decisions remain binding, while factual assumptions must be challenged when repository or authoritative external evidence contradicts them.
 
 ## 1. Frame The Investigation
 
-Resolve the active task using `AGENTS.md` and read its `BRIEF.md` in full. Stop and request `/grilling` when no task or brief exists. Extract only questions whose answers the brief does not already establish and that could materially affect planning: unknown current behavior, constraints, precedent, validation paths, risks, or external contracts. Include a resolved requirement or acceptance criterion only when evidence could qualify or contradict it.
+Resolve the active task using `AGENTS.md` and read its `BRIEF.md` in full. Stop and request `/grilling` when no task or brief exists. Extract planning-relevant unknowns and every factual or technical assumption in the brief that evidence could qualify or contradict. Do not reopen normative product decisions.
 
 Classify two independent axes:
 
@@ -51,8 +51,14 @@ Accept a report only when every assigned question has an answer or explicit unre
 
 This step is complete when every externally dependent planning fact is supported by applicable evidence or remains an explicit unknown with the missing evidence named.
 
-## 5. Synthesize The Research
+## 5. Falsify Brief Assumptions
 
-Read [`RESEARCH-FORMAT.md`](RESEARCH-FORMAT.md), then synthesize accepted reports into the active task's `RESEARCH.md` instead of concatenating them. Write the entire artifact in English, preserving exact source-code identifiers and established technical terms. Write the delta from `BRIEF.md`: cite the brief rather than restating its scope, rules, acceptance criteria, or repository evidence, and state each finding once where it is most useful. Repository evidence governs repository behavior; authoritative version-matched evidence governs external contracts. Preserve material conflicts and unknowns.
+After internal and external evidence gathering, perform exactly one explicit falsification pass over every factual or technical assumption extracted from the brief. Seek disconfirming evidence, classify each assumption as supported, contradicted, or unresolved, and cite the applicable evidence.
+
+Preserve evidence-backed contradictions and present any product implication to the user for decision. Never overwrite a user-owned product decision unilaterally. This step is complete when every extracted factual or technical assumption has a cited status and every contradiction is retained for user resolution.
+
+## 6. Synthesize The Research
+
+Read [`RESEARCH-FORMAT.md`](RESEARCH-FORMAT.md), then synthesize accepted reports and the falsification pass into the active task's `RESEARCH.md` instead of concatenating them. Write the entire artifact in English, preserving exact source-code identifiers and established technical terms. Write the delta from `BRIEF.md`: cite the brief rather than restating its scope, rules, acceptance criteria, or repository evidence, and state each finding once where it is most useful. Repository evidence governs repository behavior; authoritative version-matched evidence governs external contracts. Preserve material conflicts, contradictions, and unknowns, including those awaiting user decision.
 
 The research is complete only when the artifact passes every completion check in `RESEARCH-FORMAT.md`, every investigation question is answered or remains an explicit unknown, every included finding adds planning-relevant information beyond the brief, and no subagent has written the artifact.

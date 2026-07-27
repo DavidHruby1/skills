@@ -29,35 +29,58 @@ Use a secondary mode only when the task clearly crosses boundaries. Reading each
 
 - Complexity is anything that makes software hard to understand or modify; reduce change amplification, cognitive load, and unknown unknowns.
 - Complexity comes from dependencies and obscurity; prefer orthogonal components, obvious code, precise names, and explicit contracts.
-- Important knowledge has one authoritative owner; DRY knowledge, not repeated text.
-- Prefer deep modules: simple interfaces hiding meaningful complexity and owned decisions.
-- Pull complexity downward when the module owns it; keep related knowledge together when splitting would leak assumptions.
+- Each concrete rule has one behavior home; callers invoke it rather than copying it.
+- Prefer deep modules: simple interfaces hiding meaningful complexity and decisions.
+- Pull complexity downward into the behavior home; keep related knowledge together when splitting would leak assumptions.
 - Design strategically for current pressure: design non-trivial structure twice, keep decisions reversible, and define avoidable errors out of existence where practical.
-- Use comments as a required navigation layer. Write or update an interface comment before implementing every new or materially changed non-trivial class, function, or method, then keep it accurate as the body changes. Preserve the abstraction's responsibility, why it exists here, and the constraints, invariants, side effects, ordering, or failure behavior a caller or maintainer must know; do not merely narrate ordinary statements.
+- For code changes, apply the full Syntax Simplicity Gate and Comments contract in [references/writing-code.md](references/writing-code.md).
 - Risky assumptions must be proven with code, tests, tools, measurements, tracer bullets, or focused clarification.
+
+## Terminology
+
+- **Behavior home**: the sole code location where a concrete rule is implemented. Callers invoke it; they do not duplicate the rule.
+- **Owning PR**: the PR that implements the behavior.
+- **Assigned paths**: the files an agent may edit.
+
+Use **behavior home**, not ambiguous phrases such as behavioral owner, existing owner, source owner, or owner of knowledge, when this is the intended meaning.
 
 ## Abstraction Gate
 
-Before changing structure, name the complexity symptom: change amplification, cognitive load, unknown unknowns, duplicated knowledge, leaked data shape, information leakage, temporal coupling, scattered special cases, repeated conditionals, behavior drift, or unsupported future flexibility.
+Apply this gate before planning, creating, extending, moving, or reviewing an abstraction.
 
-Create an abstraction only when it does at least one real job:
+1. Find the same or a closely related rule in the codebase.
+2. Decide whether the change naturally fits that existing behavior home.
+3. If it fits, extend that behavior home. Otherwise create one clearly named behavior home for the different rule.
+4. Never create a second implementation of the rule. Callers must invoke the behavior home.
+5. Do not introduce a wrapper, helper, service, or manager that merely forwards arguments and hides no decision.
 
-- creates a deep module: simple interface, meaningful hidden complexity
-- hides domain, policy, lifecycle, validation, formatting, mapping, caching, authorization, retry, ordering, or external-system knowledge
-- represents duplicated business, data-shape, formatting, validation, or lifecycle knowledge once
-- reduces caller cognitive load, makes the common path easier, or makes misuse harder
-- pulls complexity into the module that owns it
-- localizes a change required now or supported as near-term by approved requirements, repository evidence, or an established product commitment
-- separates things that change for different reasons
-- prevents callers from knowing external quirks, internal data shapes, or ordering rules
+An existing behavior home fits only when:
 
-Reject an abstraction when it is a shallow module, pass-through layer, vague `manager`/`handler`/`processor`/`helper`/`utils` concept, speculative interface, one-off wrapper with no hidden knowledge, boolean mode flag, temporal decomposition that splits one cohesive workflow by execution order and makes callers remember phases, lifecycle order, or internal state, file split that fragments one idea, or cleanup that merely makes code look senior.
+- it implements the same rule
+- the change matches its current purpose
+- its name remains true
+- it does not gain mixed, unrelated responsibilities
+- callers need no extra knowledge of internal ordering or details
+- its interface remains simpler than the mechanism it hides
 
-Reject it when callers still need to understand the internals, the name is imprecise, it only forwards arguments or returns the same result, it exists only to make code look tidy, it creates more files without reducing cognitive load, or one clear function is easier to read than several tiny ones.
+Create a new behavior home when:
 
-Good fix directions: centralize duplicated business knowledge, move external data quirks to boundary code, replace real mode flags with explicit operations, encapsulate ordering rules inside one operation, rename vague concepts before extracting more code, inline shallow pass-through layers, and comment the purpose and reasoning that code alone does not preserve.
+- this is a different rule or responsibility
+- the existing location would have two unrelated reasons to change
+- the existing name would become false
+- callers would otherwise need to know order, an external format, or hidden state
+- a new boundary hides real domain, validation, lifecycle, or external-system decisions
+- common use becomes simpler or misuse becomes harder
 
-Boundary check: Which decision lives here? Which callers stop needing to know it? Which future change becomes local? Which misuse becomes harder?
+A similar name or nearby lines do not prove two pieces of code implement the same rule. Looking architectural is not a reason to create an abstraction.
+
+Check:
+
+1. What concrete rule lives here?
+2. Which code stops knowing or copying that rule?
+3. Is the name still truthful?
+4. Will the next change to this rule happen in one place?
+5. Does this abstraction make a decision, or merely forward work?
 
 ## Refactor Gate
 
@@ -69,7 +92,7 @@ Never claim "no behavior change" after changing conditionals, ordering, error ha
 
 Stop when the current plan, change, or review is clear, local, validated as far as feasible, and easy enough to change next.
 
-Treat fake abstractions, pass-through layers, speculative generality, mechanical line-by-line comments, broad rewrites, and refactors with behavior drift as stop signals unless current requirements justify them.
+Treat fake abstractions, pass-through layers, speculative generality, broad rewrites, and refactors with behavior drift as stop signals unless current requirements justify them.
 
 Common stop signals:
 
@@ -82,8 +105,6 @@ Common stop signals:
 Stop coding or refactoring when the behavior change is easy to make, cleanup spreads outside the changed area, unrelated behavior knowledge is needed to continue safely, validation is missing for a risky structural move, public interfaces would change without explicit need, or the next move is mostly style preference.
 
 Stop abstracting when the abstraction would support imaginary needs, cannot be given a precise name, only forwards parameters, still requires callers to know hidden details, makes the common path harder, or fragments one clear function.
-
-Comment coverage is part of implementation completeness, not a preference. Omit a function-level comment only for a genuinely trivial, self-explanatory operation with no meaningful branch, transformation, side effect, boundary interaction, invariant, ordering rule, or failure behavior. Stop adding comments only when they merely translate syntax, would become stale as soon as implementation changes, or try to justify confusing code instead of fixing it. Do not remove a useful reason just because it can eventually be reconstructed from the implementation or surrounding history.
 
 Leave imperfect code alone when it is outside the task, stable despite ugliness, requires product, architecture, testing, or performance decisions, or has no small safe improvement.
 

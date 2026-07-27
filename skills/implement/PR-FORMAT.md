@@ -1,52 +1,64 @@
 # Pull Request Format
 
-Build a concise pull-request description from the final accepted diff. Optimize it for fast review: identify the material boundaries, explain consequential decisions once, and omit code narration that the diff already makes clear.
+Build each description from that PR's final own diff against its preceding branch. Write every Markdown heading in English. Write the title and all body content in Czech except identifiers, paths, commands, provider syntax, and established technical terms.
 
-Write every Markdown section heading (`##`, `###`, and deeper) in English. Write the pull-request title and all other description content in Czech, including prose, table headings, labels, risks, and impact statements. Keep only code identifiers, paths, commands, provider syntax, and established technical terms in their required or conventional form.
-
-Use this structure. Omit optional sections when they add no information and replace every placeholder with concrete evidence from the final diff.
+Use this structure and omit only optional sections:
 
 ````markdown
 ## Changes
 
 | Oblast | Umístění | Změna |
 |---|---|---|
-| `<symbol or behavior boundary>` | `<path>` | <Jedna věta popisující materiální změnu a její účel.> |
+| `<behavior boundary>` | `<path>` | <Materiální produkční změna a její účel.> |
 
-<!-- Group closely related symbols into one boundary. Include material behavior, contract, schema, configuration, migration, or route changes. Exclude trivial helpers and mechanical edits. -->
+## Production Size
+
+`<changed logic>` / `<PLAN limit>` změněných řádků produkční logiky.
+
+## Test Scope
+
+<!-- When approved scenarios exist, use the table. Otherwise write `Testy nebyly pro tento task vytvořeny.` -->
+
+| Scenario ID | Úroveň | Test commit | Výsledek |
+|---|---|---|---|
+| `<scenario ID>` | `<unit/integration/end-to-end>` | `<SHA>` | `PASS` |
+
+<!-- Keep test scope separate from production size. Describe audited scope and evidence, not test implementation. -->
 
 ## Design
 
-<!-- Optional. -->
-
-<Vysvětli pouze neobvyklý control flow, vlastnictví pravidla, kompatibilitní rozhodnutí nebo významný kompromis, který nelze rychle vyčíst z diffu. Sekci vynech, pokud by pouze opakovala tabulku nebo kód.>
+<!-- Optional. Explain only a consequential ownership decision, unusual control flow, compatibility choice, or deviation from advisory Implementation direction. -->
 
 ## Impacts
 
-<!-- Optional. Keep only applicable lines; omit the section when none apply. -->
+<!-- Optional. Keep only applicable lines. -->
 
-- **Kontrakty:** <dopad na API, typy, schema, eventy nebo persistenci>
-- **Kompatibilita:** <dopad na kompatibilitu nebo požadované pořadí změn>
-- **Migrace:** <požadavky na data, deployment, rollout nebo rollback>
-- **Rizika:** <zbývající riziko nebo omezení a jeho mitigace>
+- **Kontrakty:** <dopad>
+- **Kompatibilita:** <dopad>
+- **Migrace:** <požadavky>
+- **Rizika:** <zbývající riziko a mitigace>
+
+## Validation
+
+- `<non-test or final command/check>`: `PASS` - <stručný důkaz>
+- **Implementation inspection:** `<PASS | REWORK twice followed by green mechanical publication gate>`
 
 ## Context
 
-`task-NNN` · <provider-supported issue reference and URL> · závisí na <preceding pull request or `Žádný`> · digest `<published PR-section SHA-256>`
+`task-NNN` · <issue reference and URL> · `PR N` · základ `<stage or preceding task branch>` · digest `<published PR-section SHA-256>`
 
 ## Visual Evidence
 
 <!-- Optional. Include only for user-visible changes. -->
 
-<Stručné screenshoty nebo jiné before-and-after doklady.>
+<Stručný before-and-after důkaz.>
 ````
 
 ## Completion Checks
 
-- Every Markdown section heading is in English.
-- The pull-request title and all other description content are in Czech; only required identifiers, code, paths, commands, provider syntax, and conventional technical terms remain untranslated.
-- The description matches the final accepted diff and contains no planned but unimplemented behavior.
-- The changes table accounts for every material behavior boundary, contract, schema, configuration, migration, or route change without listing trivial helpers separately.
-- Design explanation appears only for consequential decisions that the diff does not make obvious; representative code snippets are not required.
-- Contract, compatibility, migration, risk, and visual information appears only when applicable.
-- Information is stated once and the description can be scanned quickly before reading the diff.
+- Headings are English; the title and body are Czech with only required technical exceptions.
+- The body describes only the PR's own final diff.
+- Production size and test scope are separate; a task without approved scenarios states that tests were not created.
+- When tests exist, claims cite scenario IDs, commits, and results without reviewing or narrating test implementation.
+- Validation and inspection claims match final evidence.
+- The base and dependency are exact. The body contains no post-publication instructions.

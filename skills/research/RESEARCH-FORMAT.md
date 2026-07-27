@@ -1,6 +1,6 @@
 # RESEARCH.md Format
 
-Use this structure as a menu, not a completeness checklist. Keep `Basis`, then include only sections with planning-relevant information not already established by the brief or another section. Replace every retained placeholder with research specific to the brief.
+Use this structure as a menu, not a completeness checklist. Keep `Basis` and `Brief Assumption Falsification`, then include only sections with planning-relevant information not already established by the brief or another section. Replace every retained placeholder with research specific to the brief.
 
 ```markdown
 # Research: <Concise Outcome>
@@ -66,6 +66,10 @@ Use this structure as a menu, not a completeness checklist. Keep `Basis`, then i
 
 <!-- Write `None.` when there are no material conflicts or unknowns. -->
 
+## Brief Assumption Falsification
+
+- <Brief factual or technical assumption>: <supported | contradicted | unresolved>; <evidence and product implication, if any>
+
 ## Sources
 
 <!-- Omit when every source is already cited at the finding it supports. -->
@@ -90,7 +94,8 @@ Use this structure as a menu, not a completeness checklist. Keep `Basis`, then i
 - Repository claims cite repository sources; consequential external claims cite authoritative sources with version or date context.
 - Facts, inferences, conflicts, and unknowns are distinguishable.
 - Conflicting evidence is preserved rather than silently resolved.
+- Every brief factual or technical assumption is recorded as supported, contradicted, or unresolved with evidence; contradictions and their product implications remain visible for user decision.
 - Planning constraints do not propose, rank, recommend, or select solutions or prescribe implementation steps.
-- Every material third-party or platform runtime contract is supported by authoritative evidence applicable to the repository's version, or recorded as an explicit blocking unknown.
+- Every material third-party or platform runtime contract is supported by authoritative evidence applicable to the repository's version, or recorded as an explicit unknown.
 - The artifact contains synthesis rather than concatenated subagent reports.
-- The artifact treats `BRIEF.md` as imported context: it does not restate resolved scope, rules, acceptance criteria, repository evidence, or the same finding in multiple sections.
+- The artifact treats `BRIEF.md` as the source of intended behavior without treating its factual assumptions as unquestionable; it does not restate resolved scope, rules, acceptance criteria, repository evidence, or the same finding in multiple sections.
