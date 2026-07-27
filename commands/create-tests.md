@@ -3,7 +3,9 @@ description: Implement and statically audit approved Gherkin tests by owning PR
 agent: build
 ---
 
-Create or reconcile every test authorized by approved `GHERKIN.md`. Require exactly `/create-tests task-NNN`; never infer the task. Write no production code. Keep Git operations in this orchestrator. Never run tests, push, or open a test pull request.
+Create or reconcile every test authorized by approved `GHERKIN.md` for task `$1`. Invocation arguments: `$ARGUMENTS`.
+
+Require exactly one argument matching `task-NNN`. If it is absent or invalid, print `Usage: /create-tests task-NNN` and stop without changing the repository or Git state. Resolve the task directly from `$1`; never infer or substitute another task. Write no production code. Keep Git operations in this orchestrator. Never run tests, push, or open a test pull request.
 
 ## 1. Establish Contract And Branch
 
@@ -11,9 +13,9 @@ Read repository instructions, full `GHERKIN.md`, relevant test configuration and
 
 Require each approved scenario to have one level, one unique stable ID, a complete internally consistent contract entry, and exactly one `Owning PR: N` in its Gherkin traceability. For planned behavior, require `PLAN.md` with `Status: Approved` and verify that the named PR exists and owns the behavior. Stop on missing, duplicate, contradictory, or ambiguous contract data.
 
-Resolve the stage branch from repository instructions, configuration, and local and remote refs. Use it directly when exactly one candidate is supported. When several candidates remain, use the question tool and list their exact branch names; when none is supported, ask for the stage branch instead of guessing. Record the selected branch's full current commit SHA as `Test-Base` before creating any test branch or commit. Inspect Git status, current branch, refs, index, and commits already on `task-NNN/tests`; require no unaccounted source or test changes and no branch checked out in another worktree. Reuse an existing test branch only when its first commit parent and every `Test-Base` trailer equal the current full stage SHA and its contents match the approved contract.
+Resolve the stage branch from repository instructions, configuration, and local and remote refs. Use it directly when exactly one candidate is supported. When several candidates remain, use the question tool and list their exact branch names; when none is supported, ask for the stage branch instead of guessing. Record the selected branch's full current commit SHA as `Test-Base` before creating any test branch or commit. Inspect Git status, current branch, refs, index, and commits already on `$1/tests`; require no unaccounted source or test changes and no branch checked out in another worktree. Reuse an existing test branch only when its first commit parent and every `Test-Base` trailer equal the current full stage SHA and its contents match the approved contract.
 
-When `task-NNN/tests` exists but cannot be reused, preserve it automatically before rebuilding. Record its exact tip, rename the local branch to the first unused `task-NNN/tests-archive-<old-tip-short>` name, adding `-2`, `-3`, and so on only on collision, then verify the archive points to the recorded tip and `task-NNN/tests` no longer exists. Never delete, reset, rebase, force-update, or overwrite the old branch. Stop if clean-state, rename, or verification fails. Create the new `task-NNN/tests` directly from the current `Test-Base`; never create per-PR test branches or worktrees.
+When `$1/tests` exists but cannot be reused, preserve it automatically before rebuilding. Record its exact tip, rename the local branch to the first unused `$1/tests-archive-<old-tip-short>` name, adding `-2`, `-3`, and so on only on collision, then verify the archive points to the recorded tip and `$1/tests` no longer exists. Never delete, reset, rebase, force-update, or overwrite the old branch. Stop if clean-state, rename, or verification fails. Create the new `$1/tests` directly from the current `Test-Base`; never create per-PR test branches or worktrees.
 
 ## 2. Allocate And Implement
 
@@ -36,7 +38,7 @@ Recheck path ownership, Git state, scenario-to-test mapping, test commands, and 
 Create or retain exactly one final test commit per owning PR, ordered by the approved plan stack for planned behavior and by ascending numeric `Owning PR` for existing behavior. Each commit contains only that PR's owned test inventory and these exact trailers, with scenario IDs sorted and comma-separated without spaces:
 
 ```text
-Task: task-NNN
+Task: $1
 Owning-PR: 2
 Scenarios: UT-002,E2E-001
 Test-Audit: passed
