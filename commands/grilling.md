@@ -14,13 +14,17 @@ Start a numbered task from an optional specification or resume an explicitly nam
 
 Ask every user-facing question in normal assistant text. Never invoke the `question` tool, an `ask` tool, or any other interactive prompt tool during this workflow.
 
-Before sending each questionnaire, investigate and reason through the entire known design tree. Include every currently known material question, with dependent questions phrased conditionally. Do not split questions that can already be asked together or hold known questions back for a later round. Use as few focused questionnaires as the material decision tree permits; there is no fixed round limit.
+Reach the user's stated goal by the shortest, simplest coherent path. Keep the grill strictly within the scope required for that outcome: do not explore speculative extensions, hypothetical future needs, or edge cases that are implausible or immaterial to the requested behavior. Ask a question only when its answer can materially change the smallest valid solution; prefer a reasonable evidence-backed default when the choice is low-risk and reversible. Do not seek completeness for its own sake or turn the grill into architecture design.
+
+Before sending each questionnaire, investigate and reason through the entire in-scope design tree. Include every currently known question that is necessary to avoid a materially wrong outcome, with dependent questions phrased conditionally. Do not split questions that can already be asked together or hold known questions back for a later round. Use as few focused questionnaires as the necessary decision tree permits; there is no fixed round limit.
 
 Number the questions. Under each question, present every materially credible, non-dominated choice, labeled sequentially `a)`, `b)`, and so on. Do not invent choices to reach a fixed count. Describe each choice neutrally and with comparable specificity: its behavior, main benefit, main cost, and the realistic condition under which it is preferable. When technical expertise or evidence supports a recommendation, place it after the options under a separate `Recommendation:` label and cite the basis; keep the options neutral. If only one credible choice remains, explain the evidence-backed conclusion instead of asking a performative question. Tell the user they can reply compactly, for example `1a, 2c`, and may replace any choice with their own answer.
 
 ## 1. Resolve The Task
 
 Parse the invocation deterministically. When its first whitespace-delimited token exactly matches `^task-[0-9]+$`, treat it as a resume request and all remaining text as the reason or new specification to investigate. Otherwise treat all arguments as the specification for a new task. An empty invocation starts a new task from the current request and preceding conversation.
+
+When the parsed specification is non-empty, preserve it verbatim in `BRIEF.md` under `## User Spec`, and make that the first section in the file. For a resume request, preserve only the text after `task-NNN`, not the task ID. Create this section only when it does not already exist; never overwrite or duplicate an existing `## User Spec`. An empty invocation does not create the section.
 
 Apply the task-artifact convention from `AGENTS.md`. For a resume request, require that exact direct child of `.opencode/artifacts/` to exist; stop for a corrected ID rather than falling back or creating a task when it is missing or ambiguous. Treat following text as a claim and focus for reopening the grill, not as an approved decision.
 
@@ -83,6 +87,7 @@ Record the size, concise evidence, and delivery workflow in `BRIEF.md`. Use the 
 
 Create or update `BRIEF.md` in the active task as answers crystallize. Write the entire artifact in English, preserving exact source-code identifiers and established technical terms. Keep it concise and implementation-neutral, recording:
 
+- the invocation specification under `## User Spec` as the first section when required by Step 1,
 - the problem and desired outcome,
 - canonical domain terms,
 - scope, constraints, and invariants,
