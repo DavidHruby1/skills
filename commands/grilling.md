@@ -8,15 +8,13 @@ agent: build
 
 Invocation arguments: `$ARGUMENTS`.
 
-Start a numbered task from an optional specification or resume an explicitly named task and turn the input into `BRIEF.md` through a relentless interview of one complete text batch and, only for newly emerged branches, at most one follow-up batch. Assess whether research would help, then classify the resolved work as small, medium, or large so the user knows the recommended next workflow.
+Start a numbered task from an optional specification or resume an explicitly named task and turn the input into `BRIEF.md` through a focused, evidence-backed interview. Assess whether research would help, then classify the resolved work as small, medium, or large so the user knows the recommended next workflow.
 
 ## Interaction Contract
 
 Ask every user-facing question in normal assistant text. Never invoke the `question` tool, an `ask` tool, or any other interactive prompt tool during this workflow.
 
-Before sending questions, investigate and reason through the entire known design tree. Then send one comprehensive questionnaire containing every known material question, including dependent questions phrased conditionally. Do not split known questions across messages or hold questions back for a later round.
-
-The entire grill has a budget of one complete questionnaire and at most one follow-up questionnaire for newly emerged branches. Any opening questionnaire in Step 2 consumes the complete questionnaire; any later questionnaire is the single permitted follow-up.
+Before sending each questionnaire, investigate and reason through the entire known design tree. Include every currently known material question, with dependent questions phrased conditionally. Do not split questions that can already be asked together or hold known questions back for a later round. Use as few focused questionnaires as the material decision tree permits; there is no fixed round limit.
 
 Number the questions. Under each question, present every materially credible, non-dominated choice, labeled sequentially `a)`, `b)`, and so on. Do not invent choices to reach a fixed count. Describe each choice neutrally and with comparable specificity: its behavior, main benefit, main cost, and the realistic condition under which it is preferable. When technical expertise or evidence supports a recommendation, place it after the options under a separate `Recommendation:` label and cite the basis; keep the options neutral. If only one credible choice remains, explain the evidence-backed conclusion instead of asking a performative question. Tell the user they can reply compactly, for example `1a, 2c`, and may replace any choice with their own answer.
 
@@ -34,7 +32,7 @@ Use the selected directory for the entire grill. This step is complete when exac
 
 Choose the grounding branch from the invocation:
 
-- For a new task, treat the full invocation specification, the user's current request, and preceding conversation as its seed. If they do not establish a concrete problem and desired outcome, ask all opening questions needed to establish them in the complete text questionnaire following the Interaction Contract before searching the repository. Do not invent a topic or resume the previously greatest task.
+- For a new task, treat the full invocation specification, the user's current request, and preceding conversation as its seed. If they do not establish a concrete problem and desired outcome, ask the opening questions needed to establish them following the Interaction Contract before searching the repository. Do not invent a topic or resume the previously greatest task.
 - For `/grilling task-NNN <reason>`, first read the existing `BRIEF.md` in full and then every task artifact relevant to the stated reason. Use the reason as a claim to investigate, not as proof that the brief is wrong.
 
 Once the subject is known, read relevant documentation, ADRs, source, and tests. Answer factual questions and resolve technically dominant choices from evidence; ask the user only for product or design decisions that depend on their priorities.
@@ -45,11 +43,11 @@ Infer the narrowest reasonable scope that achieves the user's stated outcome. Tr
 
 Build the design tree from the grounded facts. This step is complete when the new or resumed subject is explicit, factual questions are answered, and the unresolved decision branches and their dependencies are known.
 
-## 3. Grill In One Batch
+## 3. Grill In Focused Batches
 
-Use the grounded design tree to send the questionnaire defined by the Interaction Contract. If Step 2 already consumed the complete questionnaire, this questionnaire is permitted only for material branches newly emerged from its answers and repository grounding, and it consumes the single follow-up. Before including a choice, verify that a reasonable user could prefer it under a concrete condition; remove choices that are merely weaker versions of another choice. Explain why each decision matters and add a concrete scenario when useful. Challenge vague or conflicting terms, propose precise domain language, and show contrary evidence. Probe only material behavior, boundaries, failures, invariants, compatibility, security, operations, validation, and acceptance criteria within scope.
+Use the grounded design tree to send the questionnaire defined by the Interaction Contract. Before including a choice, verify that a reasonable user could prefer it under a concrete condition; remove choices that are merely weaker versions of another choice. Explain why each decision matters and add a concrete scenario when useful. Challenge vague or conflicting terms, propose precise domain language, and show contrary evidence. Probe only material behavior, boundaries, failures, invariants, compatibility, security, operations, validation, and acceptance criteria within scope.
 
-After the user responds, re-evaluate the whole decision tree. If the answers are sufficient, proceed to the assessments and crystallize the brief. If the follow-up budget remains, ask it only when an answer introduced a material branch that could not reasonably have been anticipated; include every newly material question in that single text message and follow the Interaction Contract again. Never use the follow-up to ask a known question that should have been included in the first questionnaire.
+After each user response, re-evaluate the whole decision tree. If the answers are sufficient, proceed to the assessments and crystallize the brief. Otherwise ask another focused questionnaire containing every currently unresolved material question. Do not repeat a resolved question unless new evidence creates a concrete contradiction or changes its implications.
 
 This step is complete when every material branch is resolved.
 

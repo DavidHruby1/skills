@@ -156,17 +156,9 @@
             "model": "openai/gpt-5.6-luna",
             "variant": "high"
         },
-        "test-contract-auditor": {
-            "model": "openai/gpt-5.6-sol",
-            "variant": "high"
-        },
-        "test-auditor": {
-            "model": "openai/gpt-5.6-sol",
-            "variant": "medium"
-        },
         "inspector": {
             "model": "openai/gpt-5.6-sol",
-            "variant": "high"
+            "variant": "xhigh"
         }
     },
     "plugin": ["./plugins/graphify.js", "./plugins/codex-identity.js"],

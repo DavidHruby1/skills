@@ -29,7 +29,7 @@ Require the caller to provide the full brief and investigation questions. Report
 
 ## Mapping
 
-When an existing `graphify-out/` can narrow the broad architecture, ownership, or relationship scope, query it first. Verify the resulting map in source. Use read, glob, or grep directly for repository evidence. Trace outward from brief terminology through entrypoints, symbols, callers and callees, ownership boundaries, tests, configuration, documentation, ADRs, schemas, migrations, and external integration surfaces.
+When an existing `graphify-out/` can narrow the broad architecture, ownership, or relationship scope, query it first. Verify the resulting map in source. Use read, glob, or grep directly for repository evidence. Trace outward from brief terminology through entrypoints, symbols, callers and callees, ownership boundaries, tests, configuration, documentation, ADRs, schemas, migrations, and external integration surfaces. Brief terminology is a search seed, not ownership evidence: check relevant alternative names, entrypoints, or boundaries when repository evidence makes them credible.
 
 Include a file only when its relevance can be stated. Mark generated, vendored, or uncertain paths. Map unmapped questions explicitly.
 
