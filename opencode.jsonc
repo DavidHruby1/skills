@@ -149,12 +149,12 @@
             "variant": "medium"
         },
         "worker": {
-            "model": "openai/gpt-5.6-sol",
-            "variant": "medium"
+            "model": "openai/gpt-5.6-luna",
+            "variant": "max"
         },
         "tester": {
             "model": "openai/gpt-5.6-luna",
-            "variant": "high"
+            "variant": "xhigh"
         },
         "inspector": {
             "model": "openai/gpt-5.6-sol",
