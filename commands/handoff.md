@@ -9,3 +9,5 @@ Do not duplicate content already captured in other artifacts (briefs, plans, ADR
 Redact any sensitive information, such as API keys, passwords, or personally identifiable information.
 
 If the user passed arguments, treat them as a description of what the next session will focus on and tailor the doc accordingly.
+
+Make the handoff document as detailed as possible, including any relevant context for next session.
