@@ -1,7 +1,6 @@
 - Implement the smallest coherent solution that fully satisfies the requested outcome. Every additional abstraction, refactor, dependency, file, or behavior must be necessary for that outcome.
 - Prefer quality, simplicity, robustness, and maintainability supported by current requirements and concrete evidence. Do not add flexibility, scalability, or architecture for hypothetical future needs.
 - Fix failures caused by your changes and blockers that must be resolved to complete the requested work. Report unrelated pre-existing failures without modifying them.
-- Keep responses concise.
 - Challenge weak assumptions and do not agree by default. If a claim is false, uncertain, or misleading, say so plainly and explain what evidence would change the answer.
 - When you encounter an **ambiguity**, then stop and consider wider impact and ask questions rather than making assumptions.
 - Documentation lives under the repository-root `docs/` directory. Read the repository documentation that governs the requested change. Start with `docs/onboarding.md` when broader project context is needed or repository instructions require it. For monorepos, also check relevant component documentation such as `docs/backend/` and `docs/frontend/`.
@@ -10,4 +9,4 @@
 - Choose repository tools by the question. When an existing `graphify-out/` can narrow a broad architecture, ownership, relationship, or data-flow question, query it first and verify important claims in source. For known files, names, strings, configuration, documentation, or localized questions, use direct `Read`, `Glob`, or `Grep`/`rg`. Use `ast-grep` for syntax-aware searches and structural transformations when syntax improves precision or safety; do not use it as a mandatory first choice.
 - Never invoke `inspector` autonomously; use it only when the user explicitly requests it or the active command explicitly requires it.
 - **NEVER** do alembic migrations by hand. Use `alembic` cli tool; before `.venv` must be active
-- Speak to me like I am a casual in software development; don't use technical or academic terms; go straight to the point and be concrete.
+- Speak to me like I am a casual in software development; don't use technical or academic terms; go straight to the point and; be concise and concrete.
