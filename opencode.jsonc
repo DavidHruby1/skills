@@ -3,8 +3,6 @@
     "autoupdate": false,
     "lsp": true,
     "compaction": {
-        "model": "openai/gpt-5.6-luna",
-        "variant": "high",
         "auto": true,
         "prune": true,
         "reserved": 200000
