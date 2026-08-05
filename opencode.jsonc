@@ -7,14 +7,6 @@
         "prune": true,
         "reserved": 200000
     },
-    "references": {
-        "isman-backend": "~/projects/isman/isman-backend",
-        "isman-frontend": "~/projects/isman/isman-frontend-v3-update",
-        "isman-worker": "~/projects/isman/worker-light",
-        "mansel-backend": "~/projects/mansel/backend-v3",
-        "mansel-frontend": "~/projects/mansel/frontend-v3",
-        "mansel-worker": "~/projects/mansel/worker"
-    },
     "mcp": {
         "duckduckgo": {
             "type": "local",
@@ -123,6 +115,10 @@
         },
     },
     "agent": {
+        "compaction": {
+            "model": "openai/gpt-5.6-luna",
+            "variant": "high"
+        },
         "plan": {
             "model": "openai/gpt-5.6-luna",
             "variant": "xhigh",
@@ -177,7 +173,7 @@
         },
         "worker": {
             "model": "openai/gpt-5.6-luna",
-            "variant": "xhigh"
+            "variant": "max"
         },
         "tester": {
             "model": "openai/gpt-5.6-luna",
