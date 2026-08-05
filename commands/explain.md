@@ -1,5 +1,6 @@
 ---
 description: Build a concise, source-backed HTML walkthrough for provided code files
+argument-hint: <Enter files and what you want to explain>
 agent: build
 ---
 
