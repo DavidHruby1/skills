@@ -7,7 +7,7 @@ Explain the code files named in `$ARGUMENTS` as a compact local static site. Wor
 
 Write all explanatory content, headings, captions, navigation, quiz questions, answers, and diagram labels in clear, natural Czech, and set each page's `<html lang="cs">`. Keep source excerpts, code identifiers, file paths, API names, and established technical terms unchanged when translating them would reduce precision.
 
-Treat `$ARGUMENTS` as 1-8 literal file paths relative to the project root. Accept readable text files inside the project only. If a path is invalid, report it, print `Usage: /explain <file> [file ...]`, and stop without writing output.
+Treat `$ARGUMENTS` as up to 8 requested readable text file paths, optionally alongside configured `@` references to other repositories. A configured reference is valid repository context, not a file path: use it as the root for resolving related relative paths and never report the reference itself as an invalid path. Resolve file paths as supplied, including absolute paths and paths outside the current project. If an actual requested file path is invalid, report it, print `Usage: /explain <file> [file ...]`, and stop without writing output.
 
 Read repository instructions and onboarding documentation when present. Read every requested file completely, then inspect only the callers, dependencies, types, tests, and documentation needed to explain it accurately. Use history only when an important design choice remains unexplained.
 

@@ -179,7 +179,7 @@
         },
         "worker": {
             "model": "openai/gpt-5.6-luna",
-            "variant": "max"
+            "variant": "xhigh"
         },
         "tester": {
             "model": "openai/gpt-5.6-luna",
