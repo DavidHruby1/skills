@@ -126,18 +126,8 @@ Do not interrupt for unrelated technical debt, cosmetic issues, or personal pref
 - For a bug fix, add a test that fails before the fix and passes afterward when practical.
 - Do not test framework internals, unreachable states, equivalent input permutations, or unrelated modules.
 
-Escalate verification in this order:
-1. targeted tests for the changed behavior;
-2. tests for the affected module or package;
-3. repository-wide checks.
-
-Move to a broader level only when the change can affect that level or project instructions require it.
-Use broader testing when the change affects security, data integrity, financial logic, concurrency, public contracts, or code shared by many modules.
-Do not rerun a passing check unless relevant code changed.
-
 Before finishing:
-1. compare the result with the request;
-2. inspect the diff for unrelated changes;
-3. run required lint, type, build, and test checks for the affected scope;
-4. state what was verified, what was not, and any unrelated failures.
-Then stop.
+1. Do quick small diff review of the changed files to double-check if all good
+2. Run tests for affected scope
+3. Run type-check
+Then stop if all good. I will check it myself manually after, so no need to do huge rounds of diff review and running gazzilions of tests.
