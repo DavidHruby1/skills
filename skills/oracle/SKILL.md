@@ -16,6 +16,32 @@ Oracle bundles a prompt and selected files for an independent model review. Trea
 
 API mode requires the corresponding provider key and can incur usage charges. Browser mode requires a supported Chrome installation and a signed-in browser profile.
 
+## ChatGPT Pro Browser Mode
+
+For the strongest ChatGPT Pro consultation, first try the `chatgpt-pro-heavy`
+preset. Inspect the dry run and require `browser desired model: Pro` before the
+live call.
+
+The current ChatGPT UI can show thinking effort as a slider instead of an
+option named `Extended`. If Oracle reports that `Pro` or `Pro Extended` cannot
+be selected, do not substitute another model. Set the Oracle browser profile
+to `Pro` with the effort slider at its maximum, then preserve those UI choices
+in the consult call:
+
+```json
+{
+  "engine": "browser",
+  "model": "gpt-5.5-pro",
+  "browserModelStrategy": "current",
+  "browserAttachments": "always"
+}
+```
+
+In this fallback, omit `browserModelLabel` and `browserThinkingTime` so Oracle
+does not try to match obsolete picker labels. `browserThinkingTime: "pro"` is
+not a valid MCP value. Confirm from session output that the request uses
+`picker=current` before trusting the run.
+
 ## CLI Fallback
 
 Preview a bundle without credentials or a model call:
