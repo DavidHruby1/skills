@@ -13,18 +13,6 @@
             "command": ["uvx", "duckduckgo-mcp-server"],
             "enabled": true,
         },
-        "oracle": {
-            "type": "local",
-            "command": ["oracle-mcp"],
-            "enabled": true,
-            "environment": {
-                "ORACLE_ENGINE": "browser",
-                "ORACLE_HOME_DIR": "/home/hruby/.oracle",
-                "ORACLE_BROWSER_PROFILE_DIR": "/home/hruby/.oracle/browser-profile",
-                "ORACLE_BROWSER_REMOTE_DEBUG_HOST": "127.0.0.1",
-                "ORACLE_CHROME_NO_SANDBOX": "1",
-            },
-        },
     },
     "permission": {
         "glob": "allow",

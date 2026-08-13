@@ -1,6 +1,5 @@
 ## Instructions
 
-- Keep responses simple using `ASD-STE100` Simplified Technical English as inspiration.
 - Challenge weak assumptions and do not agree by default. If a claim is false, uncertain, or misleading, say so plainly and explain what evidence would change the answer.
 - When you encounter an **ambiguity**, then stop and consider wider impact and ask questions rather than making assumptions.
 - Documentation lives under the repository-root `docs/` directory. Read the repository documentation that governs the requested change. Start with `docs/onboarding.md` when broader project context is needed or repository instructions require it. For monorepos, also check relevant component documentation such as `docs/backend/` and `docs/frontend/`.
@@ -8,7 +7,7 @@
 - Use `duckduckgo-mcp-server` for internet research.
 - Choose repository tools by the question. When an existing `graphify-out/` can narrow a broad architecture, ownership, relationship, or data-flow question, query it first and verify important claims in source. For known files, names, strings, configuration, documentation, or localized questions, use direct `Read`, `Glob`, or `Grep`/`rg`. Use `ast-grep` for syntax-aware searches and structural transformations when syntax improves precision or safety; do not use it as a mandatory first choice.
 - Never invoke `inspector` autonomously; use it only when the user explicitly requests it or the active command explicitly requires it.
-- **NEVER** do alembic migrations by hand. Use `alembic` cli tool; `.venv` must be active before doing the migration.
+- **NEVER** do alembic migrations by creating a file by yourself; Always use `alembic` cli tool; Use commands such as `alembic revision --autogenerate`, `alembic upgrade head`, etc.; `.venv` must be active before doing the migration.
 
 ## Subagents
 
@@ -17,7 +16,7 @@ Use subagents selectively. Work directly when the scope and behavior home are cl
 If a special command such as `/grilling`, `/create-plan`, or `/research` is active, follow that command's workflow. Otherwise, only use these subagents:
 
 - `@explore`: Use for broad read-only discovery or unknown ownership, entrypoints, or flow. More than six relevant files or three packages is a useful signal. Do not use it for a known symbol in a small scope. Ask one bounded question and require source evidence. Query an existing `graphify-out/` first for broad relationship questions.
-- `@bash-agent`: Always use when several shell commands are expected to produce large outputs or for running tests. Provide the exact commands, working directory, and dependency order. Require a compact report with each command's exit status and the evidence needed to assess its result.
+- `@bash-agent`: Only use for huge amount of bash commands or for running tests. Also use when several shell commands are expected to produce large outputs. Provide the exact commands, working directory, and dependency order. Require a compact report with each command's exit status and the evidence needed to assess its result. DON'T USE FOR NORMAL WORK, DON'T USE FOR SMALL AMOUNT OF COMMANDS OR GIT COMMANDS THAT ARE NOT EXPECTED TO PRODUCE LARGE OUTPUTS.
 - `@general`: Use only for substantial cross-cutting work that one agent can own end to end and that materially reduces primary-agent context. Investigation, implementation, and validation alone are not enough. Do not use it for simple work, pure discovery, or a clean worker stage.
 - `@worker`: Use for a coherent, independent production stage, normally across four files or about 150 lines. Require a clear behavior boundary, non-overlapping paths, and a complete contract. The worker does not edit tests or Git state.
 - `@tester`: Use for a substantial independent test stage, normally with five behavior cases or three test files. Implement one to four focused cases directly. Give it a clear test boundary and behavior contract. The tester does not edit production code or run tests.
