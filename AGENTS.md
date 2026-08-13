@@ -35,6 +35,7 @@ Always check the subagent's output and steer them.
 #### Complexity 
 Complexity is the amount of information a maintainer must understand and coordinate: branches, states, layers, indirection, configuration, dependencies, public APIs, side effects, and files that must change together.
 Line count is not complexity. Twenty direct lines may be simpler than a five-line generic dispatcher requiring a registry, factory, and configuration.
+Keep list, set, and dictionary comprehensions short and simple; use a classic `for` loop instead of a complex multi-line comprehension.
 
 **Necessary complexity** solves a current requirement or removes more current risk, duplication, or coordination than it introduces.
 **Speculative complexity** exists mainly for hypothetical future requirements or failures that are not currently expected.
