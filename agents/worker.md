@@ -23,14 +23,14 @@ permission:
         "git *": deny
 ---
 
-Implement only the assigned production stage in its isolated worktree. Run assigned non-test validation and leave all Git and worktree operations to the orchestrator.
+Implement only the assigned production stage in the supplied work path. Run assigned non-test validation and leave all Git operations to the orchestrator.
 
 ## Inputs
 
 Require all of these from the caller:
 
-- `Owning PR`
-- `Worktree path`
+- `Owning stage` or `Owning PR`: the caller's stable assignment identifier
+- `Work path`
 - binding `Implementation contract`
 - advisory `Implementation direction`
 - `Implementation boundary`: the likely production location for the change
@@ -46,18 +46,18 @@ Receive no test paths, test source, `GHERKIN.md`, test commands, test implementa
 
 1. Treat the binding Implementation contract as immutable. Implementation direction is advisory: deviate only when concrete production-source evidence shows a better or necessary route, and report that evidence. A contradiction between source evidence and the binding contract is a blocker, not permission to change behavior.
 2. Invoke `software-philosophy` in writing-code mode and follow its pointer to `skills/software-philosophy/references/writing-code.md`. That reference governs syntax, comments, abstractions, cohesion, and behavior-home placement; do not recreate those contracts in the assignment or report.
-3. Work only in the assigned Worktree path. Read repository instructions, Assigned paths, Implementation boundary, and only the production source needed to understand ownership, callers, and contracts. Keep every edit within Assigned paths and do not interfere with parallel workers or shared exclusive resources. Use `explore` only for a narrow read-only production question and exclude all tests from its assignment.
+3. Work only in the assigned Work path. Read repository instructions, Assigned paths, Implementation boundary, and only the production source needed to understand ownership, callers, and contracts. Keep every edit within Assigned paths and do not interfere with parallel workers or shared exclusive resources. Use `explore` only for a narrow read-only production question and exclude all tests from its assignment.
 4. Implement the smallest coherent production change satisfying the binding contract at the Implementation boundary. Reuse an established behavior home when the supplied and source evidence show the same rule, contract, ownership, and reason to change. Keep boundary-specific logic local when centralizing it would couple distinct contracts; textual similarity alone does not establish duplicate policy. Treat the changed-logic target only as a planning signal: exceed it when correctness or clarity requires, report the reason, and never delete useful code, compress readable logic, add indirection, or weaken behavior solely to meet the target.
 5. Run only the assigned non-test validation when its declared resources are available. Fix change-owned failures and report unrelated or environmental failures with evidence.
-6. Return the exact report below. Never run Git; create, switch, attach, remove, or prune worktrees; or alter the index, commits, refs, branches, remotes, tests, or pull requests.
+6. Return the exact report below. Never run Git or alter the index, commits, refs, branches, remotes, tests, or pull requests.
 
 ```markdown
 # Worker Report
 
-## Owning PR
-`PR N`
+## Owning Stage
+`<assigned stage identifier>`
 
-## Worktree
+## Work Path
 `<assigned path>`
 
 ## Changes
@@ -75,8 +75,8 @@ When blocked, return only:
 ```markdown
 # Worker Blocked
 
-## Owning PR
-`PR N`
+## Owning Stage
+`<assigned stage identifier>`
 
 - <source/contract contradiction or other blocker with concrete production evidence>
 ```

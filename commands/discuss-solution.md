@@ -1,5 +1,5 @@
 ---
-description: Prověří návrh kontrariánským a steelman posouzením.
+description: Evaluates user's proposal using a contrarian approach and steelman assessment.
 argument-hint: <insert idea or plan>
 agent: build
 ---
