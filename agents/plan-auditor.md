@@ -18,7 +18,7 @@ permission:
         "*": deny
         software-philosophy: allow
     mcp: deny
-    external_directory: deny
+    external_directory: allow
     bash:
         "*": deny
         "git status*": allow
