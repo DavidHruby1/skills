@@ -11,7 +11,7 @@ Build source-grounded codebase documentation by mapping first, creating the docs
 
 1. Resolve the codebase scope. If the user gives no path, use the current project root. Completion: one root or explicit scope is named.
 2. Create a documentation branch before mapping or writing. Require the scope to be in a Git repository. From the current `HEAD`, create and switch to `docs/codebase-documentation`, or the first free `docs/codebase-documentation-N` starting at `2` when that name exists in local or known remote refs. Completion: one new documentation branch is checked out.
-3. Map before reading. Query an existing `graphify-out/` first to narrow the whole-codebase architecture, dependencies, communities, entrypoints, and relationships. Verify the map in source, using `ast-grep` only for syntax-aware structural checks where it improves precision. Completion: the major code areas and their source evidence are listed.
+3. Map before reading. Use `ast-grep` only for syntax-aware structural checks where it improves precision. Completion: the major code areas and their source evidence are listed.
 4. Plan and create the docs structure. Start coarse and split only when source-backed concerns have different reader questions or source ownership. Use `docs/architecture/` and `docs/modules/` for a single component; in a monorepo, use component roots such as `docs/backend/` and `docs/frontend/` with their own architecture and module subdirectories. Create the needed directories before delegation. Do not create `docs/README.md`. Completion: every proposed source-backed doc has a target path, writer, audience, source scope, and reason to exist, and the required directories exist.
 5. Delegate source-backed files. Spawn one writing subagent per source-backed documentation file. Use `docu-writer` for each module and architecture document. Give each subagent exactly one assigned scope, audience, target documentation path, and any section requirements. Completion: every delegated file has a concise subagent report.
 6. Check subagent reports. Compare each report against its assignment: target path written, assigned scope inspected, sources named, uncertainty reported, and no global docs-tree decision made by the subagent. Inspect target files or source only when the report is insufficient or inconsistent. Completion: every accepted source-backed file has a report that matches its assignment, and every rejected or uncertain file has a reason.
@@ -20,11 +20,11 @@ Build source-grounded codebase documentation by mapping first, creating the docs
 
 ## Exploration Rule
 
-When `graphify-out/graph.json` already exists, use `graphify query`, `graphify explain`, `graphify path`, or `graphify affected` to narrow broad documentation boundaries and relationships before ordinary file reads. Do not build a graph solely to satisfy this workflow; when no graph exists, map with glob, grep, read, and LSP.
+Map with glob, grep, read, and LSP.
 
 Use `ast-grep` after scope mapping only when syntax-aware structure improves the precision of facts such as framework entrypoints, route declarations, API clients, state stores, controllers, services, jobs, or schema definitions. Use direct read, glob, or grep for known files, names, strings, configuration, documentation, and localized questions.
 
-If no usable graph exists or Graphify is blocked by permissions, continue with glob, grep, read, and LSP, adding `ast-grep` only for syntax-aware checks where structure improves precision. Do not skip the mapping step.
+Add `ast-grep` only when syntax-aware checks improve the precision of scope mapping. Do not skip the mapping step.
 
 ## Target Files
 

@@ -6,7 +6,7 @@
 - Documentation lives under the repository-root `docs/` directory. Read the repository documentation that governs the requested change. Start with `docs/onboarding.md` when broader project context is needed or repository instructions require it. For monorepos, also check relevant component documentation such as `docs/backend/` and `docs/frontend/`.
 - Artifacts live in `.opencode/artifacts/task-NNN/`. An explicitly named task is active; otherwise the greatest suffix is active. `/grilling` creates the next task, while `/grilling task-NNN <reason>` resumes that existing task.
 - Use `duckduckgo-mcp-server` for internet research.
-- Choose repository tools by the question. When an existing `graphify-out/` can narrow a broad architecture, ownership, relationship, or data-flow question, query it first and verify important claims in source. For known files, names, strings, configuration, documentation, or localized questions, use direct `Read`, `Glob`, or `Grep`/`rg`. Use `ast-grep` for syntax-aware searches and structural transformations when syntax improves precision or safety; do not use it as a mandatory first choice.
+- Choose repository tools by the question. For known files, names, strings, configuration, documentation, or localized questions, use direct `Read`, `Glob`, or `Grep`/`rg`. Use `ast-grep` for syntax-aware searches and structural transformations when syntax improves precision or safety; do not use it as a mandatory first choice.
 - Never invoke `inspector` autonomously; use it only when the user explicitly requests it or the active command explicitly requires it.
 - **NEVER** do alembic migrations by hand. Use `alembic` cli tool; `.venv` must be active before doing the migration.
 - ALWAYS USE 4 SPACES FOR INDENTATION!
@@ -17,7 +17,7 @@ Use subagents selectively. Work directly when the scope and behavior home are cl
 
 If a special command such as `/grilling`, `/create-plan`, or `/research` is active, follow that command's workflow. Otherwise, only use these subagents:
 
-- `@explore`: Use for broad read-only discovery or unknown ownership, entrypoints, or flow. More than six relevant files or three packages is a useful signal. Do not use it for a known symbol in a small scope. Ask one bounded question and require source evidence. Query an existing `graphify-out/` first for broad relationship questions.
+- `@explore`: Use for broad read-only discovery or unknown ownership, entrypoints, or flow. More than six relevant files or three packages is a useful signal. Do not use it for a known symbol in a small scope. Ask one bounded question and require source evidence.
 - `@bash-agent`: Use only for big amounts of shell commands or when several shell commands are expected to produce large outputs or for running tests. Provide the exact commands, working directory, and dependency order. Require a compact report with each command's exit status and the evidence needed to assess its result. Don't use it for a few commands only!
 - `@general`: Use only for substantial cross-cutting work that one agent can own end to end and that materially reduces primary-agent context. Investigation, implementation, and validation alone are not enough. Do not use it for simple work, pure discovery, or a clean worker stage.
 - `@worker`: Use for a coherent, independent production stage, normally across four files or about 150 lines. Require a clear behavior boundary, non-overlapping paths, and a complete contract. The worker does not edit tests or Git state.
