@@ -173,5 +173,5 @@
             "variant": "medium"
         }
     },
-    "plugin": ["./plugins/graphify.js", "./plugins/codex-identity.js"],
+    "plugin": ["./plugins/codex-identity.js"],
 }
