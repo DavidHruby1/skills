@@ -1,31 +1,28 @@
 ## Instructions
 
-- Keep responses simple using `ASD-STE100` Simplified Technical English as inspiration.
 - Challenge weak assumptions and do not agree by default. If a claim is false, uncertain, or misleading, say so plainly and explain what evidence would change the answer.
 - When you encounter an **ambiguity**, then stop and consider wider impact and ask questions rather than making assumptions.
-- Documentation lives under the repository-root `docs/` directory. Read the repository documentation that governs the requested change. Start with `docs/onboarding.md` when broader project context is needed or repository instructions require it. For monorepos, also check relevant component documentation such as `docs/backend/` and `docs/frontend/`.
-- Artifacts live in `.opencode/artifacts/task-NNN/`. An explicitly named task is active; otherwise the greatest suffix is active. `/grilling` creates the next task, while `/grilling task-NNN <reason>` resumes that existing task.
+- Documentation lives under the repository-root `docs/` directory. Read the repository documentation that governs the requested change. Start with `onboarding.md` when broader project context is needed or repository instructions require it. First `cd` into `docs/` and then see what is inside, because `onboarding.md` can be nested inside `docs/backend/` or `docs/frontend/`.
 - Use `duckduckgo-mcp-server` for internet research.
-- Choose repository tools by the question. For known files, names, strings, configuration, documentation, or localized questions, use direct `Read`, `Glob`, or `Grep`/`rg`. Use `ast-grep` for syntax-aware searches and structural transformations when syntax improves precision or safety; do not use it as a mandatory first choice.
 - Never invoke `inspector` autonomously; use it only when the user explicitly requests it or the active command explicitly requires it.
-- **NEVER** do alembic migrations by hand. Use `alembic` cli tool; `.venv` must be active before doing the migration.
+- **NEVER** do alembic migrations by hand. Use `alembic` cli tool and commands like `alembic revision --autogenerate`, `alembic upgrade head` for example; `.venv` must be active before doing the migration.
 - ALWAYS USE 4 SPACES FOR INDENTATION!
 
 ## Subagents
 
-Use subagents selectively. Work directly when the scope and behavior home are clear. Counts are signals, not sufficient reasons to delegate. Delegate only to reduce context load, resolve bounded uncertainty, enable useful parallel work, or isolate a coherent stage.
+Use subagents proactively when they reduce primary-agent context, resolve bounded uncertainty, enable useful parallel work, or isolate a coherent stage. Work directly when the task is already narrow and its behavior home is clear. Counts are practical signals, not hard thresholds.
 
-If a special command such as `/grilling`, `/create-plan`, or `/research` is active, follow that command's workflow. Otherwise, only use these subagents:
+If a special command such as `/grilling`, `/create-plan`, or `/research` is active, follow that command's workflow. Otherwise, choose among these subagents:
 
-- `@explore`: Use for broad read-only discovery or unknown ownership, entrypoints, or flow. More than six relevant files or three packages is a useful signal. Do not use it for a known symbol in a small scope. Ask one bounded question and require source evidence.
-- `@bash-agent`: Use only for big amounts of shell commands or when several shell commands are expected to produce large outputs or for running tests. Provide the exact commands, working directory, and dependency order. Require a compact report with each command's exit status and the evidence needed to assess its result. Don't use it for a few commands only!
-- `@general`: Use only for substantial cross-cutting work that one agent can own end to end and that materially reduces primary-agent context. Investigation, implementation, and validation alone are not enough. Do not use it for simple work, pure discovery, or a clean worker stage.
-- `@worker`: Use for a coherent, independent production stage, normally across four files or about 150 lines. Require a clear behavior boundary, non-overlapping paths, and a complete contract. The worker does not edit tests or Git state.
-- `@tester`: Use for a substantial independent test stage, normally with five behavior cases or three test files. Implement one to four focused cases directly. Give it a clear test boundary and behavior contract. The tester does not edit production code or run tests.
+- `@explore`: Delegate broad read-only discovery, especially when ownership, entrypoints, or flow are unclear. Six relevant files or three packages is a strong signal, but uncertainty alone may justify it. Ask one bounded question and require source evidence.
+- `@bash-agent`: Delegate test runs and shell-heavy verification, or command batches expected to produce substantial output. Provide the exact commands, working directory, and dependency order. Require a compact report with each command's exit status and the evidence needed to assess its result.
+- `@general`: Delegate substantial cross-cutting work that one agent can own end to end and that materially reduces primary-agent context. Prefer a narrower agent for pure discovery, shell execution, testing, or a clean production stage.
+- `@worker`: Delegate a coherent, independent production stage with a clear behavior boundary, non-overlapping paths, and a complete contract. Four files or about 150 lines is a strong signal, not a prerequisite. The worker does not edit tests or Git state.
+- `@tester`: Delegate an independent test stage with a clear behavior contract, especially across several behavior cases or test files. Implement a small focused case directly when delegation would add more coordination than it removes. The tester does not edit production code or run tests.
 
-Choose the narrowest suitable agent. Chain agents only when one output defines the next assignment. Every prompt must state the scope, inputs, contract, expected report, and definition of done.
+Choose the narrowest suitable agent and run independent assignments in parallel. Chain agents when one output defines the next assignment. Every prompt must state the scope, inputs, contract, expected report, and definition of done.
 
-Always check the subagent's output and steer them.
+Review every subagent result, integrate its evidence, and steer or retry when the contract is not met.
 
 ## Over-engineering
 
