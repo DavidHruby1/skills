@@ -1,6 +1,6 @@
 ---
 name: i-have-adhd
-description: 'Use this skill for any response. Shape output for a reader with ADHD: lead with the next action, number multi-step work, restate state across turns, suppress tangents, give specific time estimates, make wins visible.'
+description: 'Use this skill only when user says the keyword `adhd`.'
 metadata:
   tags: "ADHD, Output Style, Productivity, Formatting"
   category: "productivity"

@@ -1,14 +1,10 @@
 ## Instructions
 
-- Keep responses simple using `ASD-STE100` Simplified Technical English as inspiration.
 - Challenge weak assumptions and do not agree by default. If a claim is false, uncertain, or misleading, say so plainly and explain what evidence would change the answer.
 - When you encounter an **ambiguity**, then stop and consider wider impact and ask questions rather than making assumptions.
-- Documentation lives under the repository-root `docs/` directory. Read the repository documentation that governs the requested change. Start with `docs/onboarding.md` when broader project context is needed or repository instructions require it. For monorepos, also check relevant component documentation such as `docs/backend/` and `docs/frontend/`.
-- Artifacts live in `.opencode/artifacts/task-NNN/`. An explicitly named task is active; otherwise the greatest suffix is active. `/grilling` creates the next task, while `/grilling task-NNN <reason>` resumes that existing task.
+- Documentation lives under the repository-root `docs/` directory. Read the repository documentation that governs the requested change. Start with looking for `onboarding.md` when broader project context is needed or repository instructions require it.
 - Use `duckduckgo-mcp-server` for internet research.
-- Choose repository tools by the question. For known files, names, strings, configuration, documentation, or localized questions, use direct `Read`, `Glob`, or `Grep`/`rg`. Use `ast-grep` for syntax-aware searches and structural transformations when syntax improves precision or safety; do not use it as a mandatory first choice.
-- Never invoke `inspector` autonomously; use it only when the user explicitly requests it or the active command explicitly requires it.
-- **NEVER** do alembic migrations by hand. Use `alembic` cli tool; `.venv` must be active before doing the migration.
+- **NEVER** do alembic migrations by hand. Use `alembic` cli tool and commands like `alembic revision --autogenerate`, `alembic upgrade head` for example; `.venv` must be active before doing the migration.
 - ALWAYS USE 4 SPACES FOR INDENTATION!
 
 ## Subagents
