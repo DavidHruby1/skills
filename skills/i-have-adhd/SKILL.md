@@ -1,6 +1,6 @@
 ---
 name: i-have-adhd
-description: 'Use this skill only when user says the keyword `adhd`.'
+description: 'Use this skill only when user explicitly mentions `adhd`. Otherwise, DO NOT USE IT.'
 metadata:
   tags: "ADHD, Output Style, Productivity, Formatting"
   category: "productivity"

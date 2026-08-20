@@ -1,6 +1,6 @@
 ---
 name: software-philosophy
-description: Use for non-mechanical source-code planning, code or test implementation, refactoring, and code review; not for test-contract authoring.
+description: Use for non-mechanical source-code planning, code or test implementation, refactoring, and code review; not for test-contract authoring. Use only where the task clearly crosses boundaries.
 ---
 
 # Software Philosophy
