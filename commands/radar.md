@@ -12,9 +12,9 @@ Do not implement it or propose a patch.
 Instead:
 1. Find the smallest number of code sections that directly control the feature.
 2. Show full code snippets only for the most important entry points, typically:
-
    * the relevant template or UI section
    * the event handler or main function that controls the behavior
+   * the state, store, API call, or data source that drives the behavior
 3. Do not show snippets for helpers, utilities, types, or secondary functions unless they are essential to understanding the main behavior.
 4. After the main snippets, list the remaining relevant functions, hooks, utilities, types, and tests only with their file, line range, name, and a concise explanation.
 5. Describe the event and data flow between the relevant parts.
