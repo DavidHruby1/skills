@@ -5,13 +5,18 @@ Restart OpenCode after installing or changing it. No config entry or dependency
 is needed.
 
 For root sessions, the `tool.execute.before` hook rejects text reads whose
-requested range contains more than 350 lines. The error suggests either grep
-followed by a bounded read, or a task delegated to `explore` with a specific
-question. The hook does not launch a subagent itself.
+requested range contains more than 350 lines. After a rejection, the same root
+session cannot make another tool call until it delegates a non-empty, specific
+prompt through `task` with `subagent_type: "explore"`. The hook adds the rejected
+file path and starting line to the delegated prompt. It does not launch a
+subagent itself; it enforces the parent agent's next tool choice.
 
 - Explicit `limit <= 350` passes. Offset alone is not an exemption.
 - Small files and short remaining ranges near EOF pass.
 - All child sessions (`parentID` present), not just `explore`, are exempt.
+- A different tool or subagent type cannot bypass a pending delegation.
+- A valid delegation clears the requirement before the task executes. If that
+    task fails, another oversized read establishes the requirement again.
 - Directories, missing/inaccessible files, supported attachment extensions and
     detected binary files are left to native Read handling.
 - If session lookup fails, the hook warns and allows native Read to proceed.
@@ -31,5 +36,5 @@ summary. No overall cost or quality improvement is guaranteed.
 ## Verification
 
 Run `bun test tests/large-read-guard.test.js` from `~/.config/opencode`.
-There is no configured type-checker. Tests cover the threshold boundary, range
-handling, child-session exemption, passthrough cases and session lookup failure.
+There is no configured type-checker. Tests cover the delegation handshake and
+child-session exemption.
