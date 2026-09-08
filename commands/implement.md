@@ -48,9 +48,9 @@ Once implementation is complete, update documentation affected by actual behavio
 
 ## Review At Most Three Rounds
 
-Run this section only if the user explicitly requests code review for this task. `/implement` alone does not authorize review. Otherwise record `NOT REQUESTED`, skip the review loop, and continue to authorized publication after required checks without claiming a review PASS. Do not dispatch inspectors as a substitute for loading the skill.
+Run this section for every `/implement` task after all required prepared checks pass. This is the mandatory post-validation review gate for `/implement`; it does not require a separate user request. Load `code-review` and run the review loop before publication. Do not dispatch inspectors as a substitute for loading the skill.
 
-When explicitly requested, load `code-review` and supply task mode, the complete three-document package, all PRs with incremental and full diffs, immutable checkpoints, assigned paths, worker reports, exclusions, untracked inventory, and actual per-slice/combined validation. Explicitly pass `Prepared tests: execution-only; no test-source or coverage review`. Both inspectors review production/spec/standards and actual check evidence, not existing test implementations.
+Load `code-review` and supply task mode, the complete three-document package, all PRs with incremental and full diffs, immutable checkpoints, assigned paths, worker reports, exclusions, untracked inventory, and actual per-slice/combined validation. Explicitly pass `Prepared tests: execution-only; no test-source or coverage review`. Both inspectors review production/spec/standards and actual check evidence, not existing test implementations.
 
 One round is completed only when both independent Standards and Spec inspectors return valid results on the same unchanged complete state. Persist both results and the round number in execution state before acting on them. Incomplete inspector work is a blocker or resumable incomplete round, never a fabricated pass and never grounds for starting endless fresh rounds.
 
