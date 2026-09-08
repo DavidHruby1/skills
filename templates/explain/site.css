@@ -1,0 +1,101 @@
+:root {
+  color-scheme: dark;
+  --bg: #08111f;
+  --panel: #111827;
+  --text: #e5e7eb;
+  --muted: #a8b3c2;
+  --line: #334155;
+  --accent: #22d3ee;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: radial-gradient(circle at 10% 0%, #12233d 0, var(--bg) 38rem);
+  color: var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  line-height: 1.65;
+}
+
+a { color: #67e8f9; }
+a:focus-visible, button:focus-visible { outline: 3px solid #fbbf24; outline-offset: 3px; }
+
+main, .page-nav {
+  width: min(76ch, calc(100% - 2rem));
+  margin-inline: auto;
+}
+
+main { padding-block: 3rem; }
+h1, h2, h3 { line-height: 1.2; }
+h1 { font-size: clamp(2rem, 5vw, 3.8rem); }
+h2 { margin-top: 3rem; }
+p, li { color: #d6deea; }
+
+.page-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 1rem;
+}
+
+.diagram-viewport, .function-canvas-shell {
+  width: min(96vw, 1500px);
+  margin: 2rem 50%;
+  transform: translateX(-50%);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--panel) 94%, transparent);
+  overflow: auto;
+}
+
+.diagram-viewport { padding: 1rem; }
+.diagram-viewport svg { min-width: 900px; }
+
+.graph-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.graph-toolbar button {
+  border: 1px solid #475569;
+  border-radius: 8px;
+  background: #172033;
+  color: var(--text);
+  padding: 0.45rem 0.75rem;
+  cursor: pointer;
+}
+
+#function-graph {
+  width: 100%;
+  height: min(72vh, 820px);
+  min-height: 520px;
+}
+
+#function-details {
+  min-height: 7rem;
+  padding: 1rem;
+  border-top: 1px solid var(--line);
+}
+
+pre[class*="language-"] {
+  width: min(96vw, 1200px);
+  margin: 1.5rem 50% !important;
+  transform: translateX(-50%);
+  border: 1px solid #334155;
+  border-radius: 12px;
+  box-shadow: 0 18px 50px rgb(0 0 0 / 0.3);
+}
+
+code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
+
+@media (max-width: 600px) {
+  main { padding-block: 1.5rem; }
+  #function-graph { min-height: 430px; }
+  .page-nav { flex-wrap: wrap; }
+}

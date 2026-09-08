@@ -153,7 +153,6 @@
         "./plugins/codex-identity.js",
         "./plugins/large-read-guard.js",
         "./plugins/observability.js",
-        "./plugins/clipboard.js",
         "opencode-mem@2.26.0",
         [
             "opencode-session-recall@2.3.0",
