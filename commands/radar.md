@@ -23,7 +23,7 @@ Prefer a small number of highly relevant files and snippets. If a feature touche
 
 For every snippet or referenced function, always include 1-3 bullet points explaining how it works and why it matters. Three bullet points is a hard maximum.
 
-Only use @explore subagents to search the codebase, but only if necessary meaning the feature span is broad and complex **across more than 4 files.**
+Only use @explore subagents to search the codebase when ownership is unknown or the span is broad and complex; for known symbols in a small scope read directly.
 
 Output format:
 

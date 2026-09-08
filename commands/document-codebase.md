@@ -1,143 +1,113 @@
 ---
-description: Build whole-codebase docs by creating the docs structure, delegating source-backed files, then writing onboarding and index files from accepted reports.
-argument-hint: "[codebase path or scope]"
+description: Create or improve concise, source-backed fullstack documentation, onboarding, and evidenced architecture decision records.
 ---
 
 # Document Codebase
 
-Build source-grounded codebase documentation by mapping first, creating the docs structure, delegating source-backed files, then writing onboarding and index files from accepted reports.
+Document the current codebase so a maintainer can run it, understand its boundaries, find the right place for a change, and preserve important rules. Build a useful map, not an encyclopedia of files.
+
+Requested path or scope: $ARGUMENTS
+
+## Scope and Evidence
+
+- Use the requested project or scope; default to the current project root. Read its `AGENTS.md`, existing documentation conventions, and `docs/onboarding.md` when present before choosing a structure.
+- Focus on the actual fullstack application: frontend, backend, their contracts, development workflow, and relevant operations. Do not invent absent components or infrastructure.
+- Read source, tests, scripts, manifests, configuration, and CI where they establish behavior or supported workflows. Dependency contents, vendored code, build output, and generated files are not documentation subjects; generated contracts can be referenced, not manually edited.
+- Source proves current implementation, not original intent. Use approved decisions, ADRs, issues, PRs, or explicit user confirmation for rationale. Planning artifacts are evidence of intent, not proof of implementation.
+- Preserve existing human-written intent and unrelated edits. If code and an accepted contract disagree, report the conflict and ask before changing the contract. Do not silently endorse implementation drift.
 
 ## Process
 
-1. Resolve the codebase scope. If the user gives no path, use the current project root. Completion: one root or explicit scope is named.
-2. Create a documentation branch before mapping or writing. Require the scope to be in a Git repository. From the current `HEAD`, create and switch to `docs/codebase-documentation`, or the first free `docs/codebase-documentation-N` starting at `2` when that name exists in local or known remote refs. Completion: one new documentation branch is checked out.
-3. Map before reading. Use `ast-grep` only for syntax-aware structural checks where it improves precision. Completion: the major code areas and their source evidence are listed.
-4. Plan and create the docs structure. Start coarse and split only when source-backed concerns have different reader questions or source ownership. Use `docs/architecture/` and `docs/modules/` for a single component; in a monorepo, use component roots such as `docs/backend/` and `docs/frontend/` with their own architecture and module subdirectories. Create the needed directories before delegation. Do not create `docs/README.md`. Completion: every proposed source-backed doc has a target path, writer, audience, source scope, and reason to exist, and the required directories exist.
-5. Delegate source-backed files. Spawn one writing subagent per source-backed documentation file. Use `docu-writer` for each module and architecture document. Give each subagent exactly one assigned scope, audience, target documentation path, and any section requirements. Completion: every delegated file has a concise subagent report.
-6. Check subagent reports. Compare each report against its assignment: target path written, assigned scope inspected, sources named, uncertainty reported, and no global docs-tree decision made by the subagent. Inspect target files or source only when the report is insufficient or inconsistent. Completion: every accepted source-backed file has a report that matches its assignment, and every rejected or uncertain file has a reason.
-7. Write navigation files from accepted reports. After source-backed files are accepted, create or update onboarding and folder `index.md` files only from the planned tree, accepted reports, and verified target files. Use `docs/onboarding.md` for repository-wide navigation and `docs/<component>/onboarding.md` for component navigation. Completion: onboarding and indexes point to existing accepted docs, state gaps explicitly, and do not introduce new code claims.
-8. Report coverage. Return the documentation branch, files created or updated, subagents used, accepted reports, rejected or uncertain reports, skipped docs, source areas inspected, and unresolved uncertainty. Completion: the user can see where the work lives, what exists, what was checked, and what is not proven.
+1. Resolve the root and scope. Inspect Git status when available. In a Git repository, preserve the existing branch workflow: create and switch from current `HEAD` to `docs/codebase-documentation`, or the first free `docs/codebase-documentation-N` starting at `2`, checking local and known remote refs. Do not force a switch or discard changes; ask if a safe switch is blocked. Without Git, work in place and report that limitation. Do not commit, push, or publish without explicit authorization.
+2. Map the relevant entrypoints, major responsibilities, API boundary, data ownership, and supported development commands. Trace important flows across frontend and backend rather than cataloguing every file. Use direct searches for known scopes; delegate broad read-only discovery to `explore` only when useful.
+3. Inspect existing docs and identify reader questions that are unanswered or stale. Choose the smallest set of pages to create or update. Record each target's audience, primary question, source scope, and canonical ownership. Do not create empty directories, placeholder pages, or one document per module by default.
+4. Write source-backed documentation. Work directly for small scopes. Delegate independently useful code explanations to `docu-writer` with precise sources, audience, target path under `docs/`, required sections, and non-overlapping ownership. The caller owns the overall structure, onboarding, workflow guides, ADR handling, and validation; no agent-count or file-count quota applies.
+5. Verify the written pages against their sources, then update navigation. Check local links, command definitions, important behavior claims, and the final change scope. Run existing relevant documentation checks if available; do not add tools just for this task. Report changed paths, inspected coverage, checks actually run, and unresolved gaps concisely.
 
-## Exploration Rule
+## Structure
 
-Map with glob, grep, read, and LSP.
+Keep documentation under repository-root `docs/`. Preserve an established useful layout instead of migrating it to match a template. The root `README.md` is the entry point: project purpose, a verified quick start or link to it, and documentation links. Do not duplicate setup instructions there and in several guides.
 
-Use `ast-grep` after scope mapping only when syntax-aware structure improves the precision of facts such as framework entrypoints, route declarations, API clients, state stores, controllers, services, jobs, or schema definitions. Use direct read, glob, or grep for known files, names, strings, configuration, documentation, and localized questions.
+For a project without documentation, start with only the pages needed from this shape:
 
-Add `ast-grep` only when syntax-aware checks improve the precision of scope mapping. Do not skip the mapping step.
-
-## Target Files
-
-Use this shape as a starting point, not a quota. Plan source-backed files for writing subagents, then plan `onboarding.md` and folder `index.md` files for the orchestrator after reports are accepted.
-
-```
+```text
+README.md
 docs/
     onboarding.md
-    architecture/
-        index.md
-        frontend.md
-        backend.md
-        data.md
-    modules/
-        index.md
-        <module>.md
+    architecture.md
+    development.md
+    frontend.md
+    backend.md
+    adr/
+        0001-<decision>.md
 ```
 
-Create only source-backed files supported by the repository and an available writer. Create `onboarding.md` and folder `index.md` files only after subagent reports are accepted. Prefer fewer, clearer files over a scattered tree.
+`onboarding.md` gives a short starting path: prerequisites, links to setup and architecture, and where to begin a change. It is not another copy of those pages. Use an existing `docs/README.md` or index as navigation when present; avoid multiple competing indexes. Create folder indexes only when they improve discovery.
 
-For a monorepo with independently owned components, apply the same shape beneath `docs/<component>/`, for example `docs/backend/architecture/` and `docs/frontend/modules/`. Keep cross-cutting documentation directly under `docs/`.
+Split into `docs/architecture/`, `docs/frontend/`, `docs/backend/`, domain pages, or operations/runbooks only when distinct reader questions or ownership justify it. Keep cross-stack flows in one canonical page and link from frontend/backend docs. Existing component READMEs may link to the canonical docs; do not create competing documentation trees beside each application.
 
-## Ownership
+## What to Explain
 
-- `docs/architecture/`: cross-cutting technical structure, not individual product modules.
-- `docs/modules/`: one coherent business, product, or domain area per file.
-- `docs/onboarding.md`: maintainer starting path through accepted documentation, written after source-backed docs exist.
-- `index.md`: folder navigation for accepted files in that folder, written after source-backed docs exist.
+Select applicable topics, not a mandatory section checklist:
 
-## Split Rule
+| Area | Maintainer questions |
+| --- | --- |
+| System | What does it do? What are the boundaries and external dependencies? Where does a representative user action go? |
+| Frontend | How do routing, rendering, server/client state, data fetching, cache invalidation, forms, and errors work? Where are shared UI and accessibility conventions? |
+| Backend | Who owns domain rules and data? Where are authorization and validation enforced? What are transaction boundaries, job/retry semantics, and integration failure behavior? |
+| Fullstack contract | Where is the canonical API/event schema? How do authentication, errors, pagination, compatibility, and client generation work where applicable? |
+| Development and operations | How do I set up, run, test, migrate, deploy, observe, troubleshoot, or roll back this application using its existing workflows? |
 
-Start coarse. Split an architecture file only when the split reduces file-choice ambiguity or cognitive load.
+Document a module separately only when its public boundary, data ownership, invariants, or non-obvious behavior warrants it. Link to a few useful entrypoints, not every function. Include critical failure paths and security boundaries; hiding a button is not backend authorization.
 
-One target file is valid when it has one ownership sentence, one primary reader question, and one source scope that can be explained without switching domains. A scope may include many files, but they must serve the same module or architecture concern.
+Reference the existing canonical contract, such as OpenAPI, GraphQL, or shared schemas. Do not manually duplicate endpoint/type inventories or introduce a different contract technology. Explain semantics and usage that the schema does not capture. If a contract is missing or inconsistent, report the gap rather than changing application code.
 
-Good splits have different reader questions or different source ownership:
+Use diagrams only to answer a concrete question: system context, major runtime units, or a significant cross-stack sequence. Do not diagram every class or assume a C4 container means Docker. Deployment descriptions must distinguish checked-in configuration from verified live infrastructure.
 
-- `frontend.md`: UI layers, routing, state, API access, and frontend boundaries for a modest frontend.
-- `routing-and-navigation.md`: only when routing is large enough to own its own source scope.
-- `state-and-api.md`: only when state management and API boundaries are substantial and recurring.
-- `backend.md`: request flow, services, jobs, and backend boundaries for a modest backend.
-- `data.md`: persistence, schema ownership, migrations, and data lifecycle.
+## Writing Rules
 
-Avoid tiny architecture files whose titles overlap. If two topics must be understood together, keep them together.
+- Write for the repository's audience in its established language and terminology. Prefer short paragraphs, descriptive headings, active voice, and concrete examples. Put the answer before background; avoid filler, promotional language, and generic framework tutorials.
+- Separate learning walkthroughs, task-oriented how-to guides, exact reference, and explanations. This distinction guides content, not a requirement to create four directories. Link to background instead of burying a procedure in it.
+- For procedures, state prerequisites, working directory, exact supported steps, and how to recognize success. Explain destructive effects, permissions, and recovery where relevant. Never execute migrations, deployments, or destructive instructions merely to validate prose.
+- Give each fact one canonical home. Link to contracts, scripts, source entrypoints, or existing pages rather than maintaining competing copies. Use stable relative links where possible and a short sources section for substantive explanations.
+- Explain non-obvious rules and evidenced reasons, not syntax. Omit irrelevant sections and speculative risk lists. Never expose secrets; use placeholders and document variable purpose, not real credentials. Distinguish source-checked commands from commands actually executed.
 
-## Subagent Contract
+## Architecture Decision Records
 
-Use one writing subagent per source-backed target documentation file. The orchestrator plans the docs tree, creates directories, checks subagent reports, then writes `onboarding.md` and folder `index.md` files from accepted outputs.
+Keep current architecture separate from decision history. Follow the repository's ADR location and format; otherwise use `docs/adr/NNNN-short-title.md`, with unique increasing numbers that are not reused.
 
-Do not assign one subagent several module docs, several architecture docs, or a mixed module-plus-architecture bundle.
+An ADR records one consequential decision about boundaries, data ownership, interfaces, security, operational qualities, or significant technology choices. Routine refactors and easily reversible local details do not need one. A documentation command records decisions; it does not make architectural choices or approve proposals.
 
-Allowed subagent scopes:
+Use this small structure when no template exists:
 
-- One module: one coherent business, product, or domain area, written to one `docs/modules/<module>.md` file.
-- One architecture concern: one cross-cutting technical concern, written to one `docs/architecture/<concern>.md` file.
+```markdown
+# ADR-NNNN: <Decision>
 
-If a proposed module or architecture concern fails the one-file test, split the target documents first, then spawn one subagent for each resulting file. If two proposed scopes cannot be separated without duplicating the same source explanation, keep them in one document and use one subagent.
+Status: <proposed | accepted | rejected | deprecated | superseded by ADR-NNNN>
+Date: <verified decision date, or explicitly labelled retrospective recording date>
 
-Before delegating, keep an assignment table with these columns: target path, writer, scope, audience, reason, and acceptance status. Use this table for report checking and final coverage reporting.
+## Context
+<Problem, constraints, and decision drivers supported by evidence.>
 
-For each `docu-writer` task, provide:
+## Decision
+<One explicit choice and its scope.>
 
-```
-Code scope: <paths, symbols, routes, packages, or graph communities>
-Audience: <new maintainer | feature maintainer | architecture reader>
-Target path: docs/<...>.md
-Section requirements: <optional deviations from docu-writer default>
-Do not decide the global docs tree. Write only this target file. Return only a concise report.
-```
+## Alternatives
+<Actually considered options and evidenced reasons for rejecting them.>
 
-Delegate source-backed module and architecture documentation to `docu-writer`. Do not plan or create a root `docs/README.md`. Do not assign folder indexes or onboarding guides to `docu-writer`, because its contract is code documentation only. Write navigation files in this skill after source-backed docs are accepted.
+## Consequences
+<Benefits, costs, risks, and obligations.>
 
-Keep docs-tree planning, directory creation, subagent assignment, report checking, navigation-file writing, coverage decisions, and final user reporting in this orchestrator.
-
-## Report Check
-
-Accept a subagent report only when it confirms:
-
-- The target path was created or updated.
-- The inspected sources match the assigned scope.
-- The report names unresolved uncertainty or says there is none.
-- The subagent did not claim ownership of the global docs tree.
-- The assigned file type matches the assigned scope.
-- The file documents actual application, library, or domain source code and none of the excluded tooling, dependency, generated, or repository-metadata subjects.
-
-If a report is missing any of these, ask the same subagent to correct the target file or report before accepting it.
-
-## Navigation Files
-
-Write repository-wide `docs/onboarding.md`, component `docs/<component>/onboarding.md`, and folder `index.md` files after report checking, not before delegation. Create only the navigation files required by the planned tree. These files are navigation, not new source documentation.
-
-Navigation files must:
-
-- Link only to accepted documentation files that exist.
-- Explain when to read each linked file.
-- State skipped or uncertain areas without inventing behavior.
-- Avoid duplicating module or architecture explanations from source-backed docs.
-
-Do not create `docs/README.md`.
-
-## File-Choice Rule
-
-Make file choice obvious inside each delegated assignment. When ambiguity is likely, require an ownership note near the top of the target file:
-```
-Use this file for <scope>. Use `<other-file>` for <different scope>.
+## Links
+<Decision evidence and related architecture or implementation.>
 ```
 
-## Grounding Rules
+Do not infer acceptance, decision dates, rejected alternatives, or rationale from installed packages or code alone. For retrospective ADRs, identify the evidence and recording date; if approval or material rationale is missing, ask the user or report a candidate gap instead of fabricating a record. Never manufacture ADRs just to fill the directory.
 
-- Treat `docs/` as documentation of the actual application, library, and domain source code only. Build tooling, dependencies, generated output, vendored code, and repository metadata are outside documentation scope.
-- Never document `node_modules/`, dependency contents, generated or distribution directories, package-manager files, or tool configuration such as Vite, Webpack, TypeScript, ESLint, Prettier, Babel, test-runner, CI, container, editor, and deployment configuration. These files may help locate the real source tree, but they must not become documentation subjects, sections, claims, target files, or navigation entries.
-- Document only behavior, structure, and workflows implemented by application, library, or domain source code.
-- State uncertainty when source evidence is incomplete.
-- Do not invent product requirements, roadmap, production topology, commands, services, or environment variables.
-- Prefer repository terminology over generic architecture language.
-- Preserve existing docs unless they are clearly stale, duplicated, or contradicted by code; report uncertainty instead of overwriting ambiguous human-written intent.
+Preserve accepted and rejected decision history. A changed decision requires a new evidenced ADR; update the old status and replacement link only when supersession is confirmed. Keep reciprocal links and update current architecture separately. Do not rewrite historical reasoning to match today's code.
+
+## Completion
+
+Review actual written content, not only subagent reports. Verify consequential claims and references against named sources; report uncertain areas without claiming full coverage. Remove duplication introduced by this run and ensure navigation reaches new pages. Existing docs lint/build/link checks validate formatting and references, not factual correctness.
+
+Finish with at most five concise bullets: branch/location, changed documentation, coverage, validation, and material gaps. Do not claim setup, tests, or production workflows were executed when they were only inspected. Remind the user that documentation should change in the same PR as future related code changes, not wait for another full-codebase pass.

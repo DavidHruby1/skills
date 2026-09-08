@@ -1,6 +1,5 @@
 ---
-description: Propose, audit, obtain approval for, then write and publish a source-backed PLAN.md for a medium-to-large implementation.
-argument-hint: "[task-NNN]"
+description: Turn architecture and technical design into an implementation plan split into coherent PRs, audit it, and reconcile its issue tracking.
 agent: build
 ---
 
@@ -8,164 +7,75 @@ agent: build
 
 Invocation arguments: `$ARGUMENTS`.
 
-Turn the active task's authoritative `BRIEF.md` and optional `RESEARCH.md` into an audited implementation proposal. Write `PLAN.md` and publish its PR stages as issues only after explicit user approval. This workflow is for medium-to-large implementations; do not invoke it autonomously for a small local change.
+Create the active task's `.opencode/task-xxx/PLAN.md` in the project from its accepted `ARCHITECTURE.md` and `TECHNICAL-DESIGN.md`. Cover the whole feature or refactor with concrete implementation steps grouped into reviewable PRs. Produce the plan document, invoke its consistency audit, and, only after an audit `PASS`, invoke issue reconciliation. Do not implement code, change other task artifacts, create branches, publish or write PRs/MRs, commit, merge, or start the implementation workflow. Human approval of the plan belongs before implementation, not before writing this document.
 
-## Authority
+Tests are prepared before `/implement`; this is not a claim that their execution has passed. Planning artifacts retain behavioral acceptance and invariants, but must not contain test source or paths, test commands, fixtures, assertions, test-change instructions, or a test implementation plan.
 
-User product decisions in task artifacts and planning clarifications are binding. Repository and external evidence govern factual claims. When evidence challenges a factual assumption in authoritative context, present the exact contradiction and ask the user to reconcile it; do not silently override either source.
+## Establish Context
 
-## 1. Establish Context
+1. Read the project's governing instructions and relevant documentation. Read `docs/onboarding.md` when broader project context is needed and it exists.
+2. Resolve the task directory from explicit arguments, the conversation, and project task conventions. Arguments may identify the task, an input document, or a planning focus. If these do not identify one task unambiguously, ask rather than selecting the newest directory or inventing a task identifier. Write in the project's `.opencode/task-xxx/PLAN.md`, not the global OpenCode configuration directory. A focus does not silently exclude the rest of the feature.
+3. Read `ARCHITECTURE.md` and `TECHNICAL-DESIGN.md` in full, their authoritative requirements and supplied Definition of Done, and any existing plan. If an input is missing or its acceptance is unclear, ask for the intended input or confirmation. Do not substitute historical brief/research artifacts, invent missing design decisions, or require approval markers or status files.
+4. Reuse the inputs' decisions and applicable evidence. Inspect source and relevant callers only to ground implementation steps, dependencies, safe intermediate states, or potentially stale claims. Do not repeat broad architecture research or redesign accepted contracts. Use only the current conversation and available artifacts, not assumed memory of prior phases.
+5. Resolve factual gaps from source. Ask a focused batch of questions only for missing decisions that affect scope, behavior, safety, contracts, or the PR sequence. When relevant evidence or input documents contradict each other, present both claims, their sources, the impact, and the decision needed; wait for the user rather than silently selecting a side or recommending a resolution first. Record settled planning clarifications without modifying the input documents.
 
-1. Resolve the active task using `AGENTS.md`. Require and read `BRIEF.md`; read `RESEARCH.md` when present, plus governing documentation and ADRs.
-2. When `RESEARCH.md` is absent, trace each requested behavior through its likely implementation boundary, callers, dependencies, state changes, failure paths, side effects, compatibility boundaries, and existing validation. Read materially likely affected files in full and verify claims in source. When `RESEARCH.md` exists, use its accepted findings, code map, citations, conflicts, and unknowns as the technical baseline instead of repeating broad mapping or deep investigation. Read source only to resolve a recorded conflict or unknown, locate implementation details missing from research, verify potentially stale evidence, test a new claim introduced by the proposal, or confirm an ownership or safety fact whose support is insufficient for planning.
-3. Identify the likely implementation boundary for each change. Record an established behavior home only when evidence shows that the same rule, contract, ownership, and reason to change already live there. Preserve boundary-specific logic when centralizing it would couple distinct protocol, serialization, validation, or integration contracts; textual similarity alone is not evidence of one home.
-4. Use bounded path-scoped history only when it can explain a relevant design, revert, migration, compatibility constraint, or recurring regression.
-5. Resolve factual questions through evidence. Ask the user one focused batch of remaining material product, architecture, compatibility, ownership, or external-contract questions. Record answers not already present in task artifacts under `Planning Clarifications`.
+Context is sufficient when the whole outcome can be assigned to concrete implementation work, the PR dependencies and safe intermediate states are understood, and no blocking product or design decision remains. Keep harmless local implementation choices open.
 
-This step is complete when likely implementation boundaries, any evidence-backed established behavior homes, safety-relevant boundaries, safe PR order, optional parallel groups, existing static and non-test validation, and all material decisions are known. Source evidence is required where behavior ownership or safety matters; exhaustive symbol or class inventories are not.
+## Divide The Work
 
-## 2. Complete The Proposal
+Use the fewest small, coherent PRs that remain understandable and safe. A local change may need only one PR. Apply these rules directly:
 
-Compose the complete proposed `PLAN.md` in memory using the embedded `PLAN.md Format` below. Do not create or modify `PLAN.md` yet. Use English except for `Human Review`, whose prose must be Czech while preserving code identifiers and established technical terms. Select `<!-- plan-auditor: not-run -->` and set the adjacent findings record to `pending` in the proposal.
+- Prefer vertical slices: one concrete behavior with the necessary layers. Do not default to all models, then all services, then all endpoints. A separate prerequisite is justified only by an actual dependency and an independently reviewable, safe result.
+- Each PR must be assessable from its own incremental diff, description, and predecessors. Its correctness must not depend on a future PR. Include required authorization and invariant enforcement with the behavior they protect, not in a later hardening stage.
+- Size is guidance, not a line-count limit. Do not split a cohesive change, compress code, or invent abstractions just to shrink a diff. Explain a larger slice only when its boundary needs justification.
+- Identify actual dependencies. Independent branches use the exact start and target values recorded for that PR; use a stack only when changes depend on one another. If project instructions or repository evidence require a different integration branch, resolve that conflict before finalizing the branch graph rather than silently substituting it.
+- In a stack, record each dependent branch's exact predecessor start point, exact initial target, exact final integration target, and target-transition condition. Do not claim an unmerged dependency is present on the final integration target.
+- When a PR needs work from multiple independent branches, explain how those prerequisites become available on its base, for example after they merge into `stage`. Do not invent a branch with multiple bases or hide an integration dependency. Include the implementation that connects independently developed slices and preserves their combined behavioral contracts.
+- Plan branch creation as part of implementing each PR, not as slicing up one completed feature diff afterward. Independent work may run in parallel only when dependencies, overlapping edits, and shared resources permit it. Do not force parallelism.
+- Implementation of a dependent PR may proceed on its predecessor without waiting for human review. Human review and merging proceed from the bottom of a stack. A target move is allowed only when the PR's recorded transition condition is met, and moves only from its exact initial target to its exact final integration target; do not merge a child into an unmerged parent as a substitute.
+- Corrections belong to the PR that introduced the defect, with affected descendants updated and required behavioral contracts preserved. Do not assume ordinary linked PRs automatically rebase or retarget; leave stack-tool selection and commands to the execution workflow.
+- State behavioral completion for each PR and the integrated feature, including interactions between independent branches. A later `stage -> main` release is separate, includes all staged changes, and is not a fresh feature-wide review or a release operation owned by this command.
 
-Use the fewest coherent PRs that remain safe, reviewable, and independently mergeable directly into the stage branch. Every PR must be implementable from stage without another unmerged task branch. Record `stage` or `dh-stage` when exactly one is evidenced; otherwise record `Resolve during /implement`. Identify parallel groups only when PRs have no implementation dependency, assigned-path or implementation-boundary overlap, or shared exclusive validation resource; sequential execution is valid and must not be split or weakened to create parallelism. Use the production-logic size target as planning guidance, not a reason to split a coherent outcome. Assign each brief acceptance criterion to exactly one Owning PR. Preserve explicit execution dependencies, safe intermediate states, plan-wide constraints, existing validation, assigned paths, and out-of-scope boundaries.
+Keep scope, required invariants, and technical contracts binding. Reference the relevant architecture/design sections rather than copying signature catalogs or snippets. Implementation steps may settle routine mechanics left open by the design, but may not weaken or replace its chosen contracts.
 
-For each PR, make the implementation contract binding and its implementation direction advisory. Later implementation may deviate from the direction when concrete source evidence supports a better route, but must preserve the contract. Recommend an implementation boundary from evidence, and distinguish reuse of an established behavior home from boundary-specific logic or a new location without prescribing detailed symbol-by-symbol steps.
+## Compose The Plan
 
-The proposal is complete only when every format check passes and every contract can be implemented without inventing a material product or external-contract decision.
+Use Markdown and scale the detail to the work. Make the following information easy to find, combining related sections where useful instead of filling an oversized template:
 
-## 3. Audit Exactly Once
+- **Basis and scope:** Links to both input documents and authoritative requirements, the intended outcome, material planning clarifications, and applicable cross-PR constraints or exclusions. Do not restate the entire design.
+- **Tracking identity and PR overview:** State the stable task ID and one exact tracking provider repository as `host/namespace/project`. For every PR, give a stable, never-reused `pr-id`; outcome; exact repository-qualified `source`, `start`, `initial-target`, and `final-integration-target`; explicit dependency `pr-id` values; and an explicit target-transition rule. Write every branch reference as `host/namespace/project:branch`. `source` identifies the source repository and branch; `start` names the exact repository and branch it starts from; both targets include their repository and branch. Use `none` for no dependencies or no transition. Do not rely on a default repository, branch, or implicit later retarget. Order prerequisites before consumers and explain the split and useful parallel groups; proposed branch names are not existing branches.
+- **Per-PR implementation:** State what changes and why, cite the design contracts it implements, and identify affected paths or symbols. Give ordered, actionable steps covering the required production changes and applicable documentation or migrations. Each step should name the intended change and result rather than merely say "implement the design". Do not include full code, duplicate the low-level specification, or break routine edits into line-by-line instructions.
+- **Per-PR behavioral completion:** Define the observable result, safe intermediate state, relevant behavioral acceptance criteria, and invariants. State the result required after a planned target transition without prescribing test work or commands.
+- **Feature completion:** Account for every required behavior, invariant, and supplied Definition of Done item across the PRs. Identify which PRs deliver a cross-cutting outcome and the required combined behavior at stack tips or after independent branches integrate, rather than forcing it into one artificial owner.
+- **Residual risks:** Include only concrete non-blocking risks or deferred local details that affect execution. Do not defer missing contracts, unsafe intermediate states, or unresolved dependencies to implementation.
 
-Consult the marker in the in-memory proposal. Change it from `not-run` to `invoked` immediately before invoking `plan-auditor` exactly once for this proposal with the task artifacts, planning clarifications, full proposal, and relevant repository evidence. Immediately after it returns, place its unresolved findings verbatim in the adjacent findings record before doing other work. Never invoke it a second time for this proposal, including after clarification or corrections.
+The plan must be usable by an implementation agent with these artifacts and the repository, without this conversation. Keep steps specific enough to execute while leaving routine local choices to the implementer. Do not add work, infrastructure, compatibility mechanisms, or cleanup absent from the accepted scope or its direct prerequisites. Do not add test material of any kind; behavioral acceptance and invariants are the required planning evidence.
 
-Resolve every finding in the proposal and remove it from the findings record as its resolution is reflected. Use evidence for factual or planning findings and ask the user only when a finding exposes a missing binding decision or an evidence-backed contradiction. Set the record to `None` and the marker to `resolved` only when every finding is resolved and the complete proposal remains internally consistent.
+## Write And Check
 
-## 4. Obtain Approval Before Writing
+Once blocking questions are resolved, write `PLAN.md` directly without a separate approval round. Follow the project's documentation language convention, or the user's language when none exists. If the file already exists, reconcile the request with its current content and preserve unrelated user decisions; ask if they conflict.
 
-Present the complete `Human Review` from the audited proposal in normal assistant text. Then use the question tool with exactly this question:
+Read back the written plan and check:
 
-`Schvaluješ předložený plán, vytvoření PLAN.md a publikaci ticketů?`
+- It covers the whole accepted scope and supplied Definition of Done without adding or changing product behavior.
+- Each PR has a coherent outcome, concrete steps, affected locations, behavioral acceptance and invariant criteria.
+- Every `pr-id` is stable and unique; its source, start, initial target, final integration target, dependencies, and any target-transition condition are exact and mutually consistent. Dependencies are acyclic and intermediate states are safe.
+- Required authorization and invariant enforcement accompany their behavior, and no PR relies on a future PR for correctness.
+- The proposed work follows binding architecture and technical-design contracts and preserves the inputs' distinction between requirements and illustrative examples.
+- Paths, symbols, input references, provider repository identity, and PR map are grounded; proposed names are labeled and no blocking placeholders remain.
 
-Offer exactly these choices:
+These checks, including completeness and PR quality, belong to you, not the narrow consistency auditor. For this documentation-only command, verify content and references only. Testing is complete before `/implement` and is not planned or executed here.
 
-- `Schvaluji a publikuj`
-- `Neschvaluji`
+## Audit The Written Plan
 
-On `Neschvaluji`, do not create or modify `PLAN.md`, publish nothing externally, and stop.
+After the written plan passes your checks, invoke `plan-auditor` with the project location and exact paths to the complete `PLAN.md`, `ARCHITECTURE.md`, and `TECHNICAL-DESIGN.md`. Its only assignment is to identify contradictions between the plan and those two inputs, not to judge the PR split, redesign the feature, or edit files.
 
-On `Schvaluji a publikuj`, mechanically verify the in-memory proposal's `resolved` audit marker, `None` findings record, required sections, unresolved placeholders, PR numbering, one Owning PR per acceptance criterion, dependencies, constraints, validation, out-of-scope boundaries, and cross-section consistency. Write that exact verified proposal to the active task's `PLAN.md`, reread it, and verify byte-equivalent material content before continuing. If verification fails, publish nothing and report the blocker; do not re-audit. Do not invoke or select `ticket-master` before the user gives this approval and the written file passes verification.
+Verify each returned finding against the cited passages. Correct demonstrated plan deviations without changing the inputs. If a finding exposes conflicting inputs or a missing user-owned decision, explain the conflict and wait for clarification. Do not rewrite architecture or technical design just to make the audit pass.
 
-## 5. Publish Issues
+After substantive corrections, recheck the changed plan and resume the auditor to verify the corrected document against both inputs. Do not rerun an unchanged successful audit or add rounds to meet a quota. If findings cannot be resolved or the audit cannot run, retain the plan as incomplete and report the blocker; never claim an audit passed, silently substitute another agent, or advance to implementation.
 
-Only after Step 4 has recorded `Schvaluji a publikuj` and successfully written and verified `PLAN.md`, preflight the instructed provider, authentication, repository, and task label. Compute each complete finalized PR section's SHA-256 digest and invoke `ticket-master` with the ordered sections and digests. Reread `PLAN.md` and verify its publication metadata against every resulting issue.
+Only after a verified `plan-auditor` `PASS`, invoke `ticket-master` with `Action: reconcile`, the project root, the exact written `PLAN.md` path, the plan's task ID, verified tracking provider repository and complete PR map. `ticket-master` owns all provider issue discovery and writes. Do not create issues yourself, create or update PRs/MRs, or use a local issue manifest.
 
-Finish only when every current PR has one verified issue and removed open stages were verified as superseded and closed. Do not implement code.
+If reconciliation passes, report its result with the audit result. If reconciliation is partial, blocked, conflicted, unavailable, or uncertain, the audit-passed plan remains valid but tracking is a partial failure: report the ticket-master evidence and stop. Do not start implementation, publication, or PR/MR work as a fallback.
 
-## PLAN.md Format
-
-Design the smallest safe PR execution graph before filling the format. Divide work at coherent implementation boundaries. Every PR is based on and targets the stage branch; dependencies constrain execution, not Git ancestry, and fan-in from task branches is invalid. An **Owning PR** implements a behavior or acceptance criterion; an **implementation boundary** is the likely production location for the change; an **established behavior home** is recorded only when evidence identifies an authoritative location for the same rule. **Assigned paths** define edit scope.
-
-### Size Rules
-
-- Target at most 500 changed production-logic lines per PR. Larger coherent PRs are allowed when splitting would increase risk, obscure ownership, or create unsafe intermediate states.
-- Count additions plus deletions in handwritten production source, scripts, migrations, runtime configuration, and generated-source definitions. Moves and rewrites count.
-- Tests, documentation, comments, generated output, vendored code, lockfiles, and snapshots do not count toward this limit. The implementation report must measure and report test scope separately.
-- When a PR materially exceeds the target, briefly explain why the chosen boundary remains the smallest safe coherent outcome. The implementation reports actual size but does not delete, compress, or repartition correct code solely to satisfy the estimate.
-
-Use exactly this section order. Omit only content explicitly marked optional, and replace every placeholder before approval.
-
-```markdown
-# Plan: <Outcome>
-<!-- plan-auditor: not-run | invoked | resolved -->
-<!-- plan-audit-findings: pending | None | <verbatim unresolved findings> -->
-
-## Human Review
-
-### PR 1
-
-<Česky popište výsledek PR, mechanismus změny a důvod tohoto řešení. Nepoužívejte inventář symbolů ani detailní kroky implementace.>
-
-<!-- Zopakujte jednou pro každý PR v pořadí plánu. Zachovejte přesné identifikátory a technické termíny. -->
-
-## Inputs
-
-- Brief: `.opencode/artifacts/task-NNN/BRIEF.md`
-- Research: `.opencode/artifacts/task-NNN/RESEARCH.md` <!-- Omit when absent. -->
-- Relevant documentation: `<paths or None>`
-- Relevant ADRs: `<paths or None>`
-
-## Planning Clarifications
-
-- <Material user decision not already recorded in the inputs> <!-- Use `None` when absent. -->
-
-## Plan-Wide Constraints
-
-- <Invariant, compatibility property, ordering rule, or cross-PR constraint>
-
-## Pull Requests
-
-### PR 1: <Reviewable Outcome>
-
-**Outcome:** <Observable result that is safe and mergeable after its dependencies>
-
-**Implementation contract:**
-
-- Behavior: <Binding behavior this Owning PR must implement>
-- Invariants: <Binding invariants and safety properties it must preserve>
-- Failure, side effects, and compatibility: <Binding failure behavior, side-effect boundaries, and compatibility requirements>
-
-**Implementation direction:**
-
-- `<likely path:symbol>`: <Evidence-backed advisory implementation boundary and why it fits>
-- Ownership status: `<established behavior home | boundary-specific logic | no established home>`
-- Assigned paths: `<edit scope>`
-- Later implementation may deviate from this direction on concrete source evidence while preserving the implementation contract.
-
-**Execution:**
-
-- Merge target: `<stage | dh-stage | Resolve during /implement>`
-- Depends on completion of: <Earlier PRs or `None`>
-- Parallel group: <Identifier or `None`>
-- Shared-resource constraints: <Ports, databases, containers, generated state, or `None`>
-
-**Validation:**
-
-- Existing static validation: `<existing command/check or None>`
-- Existing non-test validation: `<existing command/check or None>`
-- [ ] <Brief acceptance criterion owned by this PR>
-
-**Out of scope:** <Explicit exclusion or `None`>
-
-**Size:** <Estimated additions plus deletions of production logic; target compliance; rejected split and reason when 501-750 lines; substantial excluded diffs>
-
-<!-- Repeat the PR section as needed. -->
-
-## Residual Risks
-
-- <Known non-blocking risk, impact, mitigation, and owner; or `None`>
-
-## Published Issues
-
-- Provider: <GitHub or GitLab>
-- Repository: `<owner/repository or group/project>`
-- Task label: `task-NNN`
-
-- [ ] PR 1: `<pending>`
-- [ ] PR 2: `<pending>`; execution depends on PR 1
-```
-
-### Plan Format Completion Checks
-
-- The file starts exactly with the title and single selected plan-auditor and findings records shown.
-- Human Review has `### PR N` for every PR and Czech prose explaining outcome, mechanism, and reason without symbol inventories or detailed implementation steps.
-- The plan matches binding user product decisions. Factual assumptions are evidence-backed or reconciled with the user.
-- Every brief acceptance criterion appears once under the Validation section of exactly one Owning PR.
-- Every implementation contract binds behavior, invariants, failure behavior, side effects, and compatibility. Direction is advisory and evidence-backed.
-- Every recommendation identifies a likely `path:symbol` implementation boundary, states its ownership status, and explains why it fits. An established behavior home is claimed only from evidence; boundary-specific logic is not centralized merely because code looks similar.
-- Execution dependencies point only backward, intermediate states are safe, and every PR is independently implementable from and mergeable directly into the same stage target without another task branch.
-- Parallel groups are optional and contain only PRs with disjoint assigned paths, implementation boundaries, and exclusive validation resources; uncertainty or no safe concurrency results in sequential execution.
-- Plan-wide constraints and source evidence capture ownership or safety facts that matter across PRs without duplicating PR contracts.
-- Existing static and non-test validation is recorded when available. Existing tests need not prove new behavior.
-- Size estimates count production logic only. Tests are excluded and their scope is reported separately by implementation.
-- Published Issues has one pending or verified item per current PR in plan order.
-- Writing requires user approval, `<!-- plan-auditor: resolved -->`, and `<!-- plan-audit-findings: None -->`. No unresolved placeholder remains, no blocking decision is delegated to implementation, and no duplicate execution sections appear.
+Finish with the written path, a brief explanation of the PR split, exact PR map, and dependencies; the actual audit outcome; the tracking outcome; and any material residual risks. Stop with the plan ready for human review, not with implementation or publication started. An audit finding no contradictions is not proof that the feature has been implemented or runtime-validated.

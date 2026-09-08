@@ -1,130 +1,74 @@
 ## Instructions
 
 - Challenge weak assumptions and do not agree by default. If a claim is false, uncertain, or misleading, say so plainly and explain what evidence would change the answer.
-- When you encounter an **ambiguity**, then stop and consider wider impact and ask questions rather than making assumptions.
-- Documentation lives under the repository-root `docs/` directory. Read the repository documentation that governs the requested change. Start with looking for `onboarding.md` when broader project context is needed or repository instructions require it.
+- Ask before proceeding when an ambiguity affects required behavior, scope, public contracts, safety, or a hard-to-reverse decision. Resolve local implementation details from source evidence and established conventions rather than interrupting for every uncertainty.
+- Keep maintained codebase documentation under repository-root `docs/`, with the root `README.md` as its entry point. Follow existing navigation and read only the documentation and ADRs relevant to the requested change; use `docs/onboarding.md` when broader context is needed and it exists. Update affected documentation alongside code changes, preserve one canonical source per topic, and keep current architecture separate from historical ADRs.
 - Use `duckduckgo-mcp-server` for internet research.
 - **NEVER** do alembic migrations by hand. Use `alembic` cli tool and commands like `alembic revision --autogenerate`, `alembic upgrade head` for example; `.venv` must be active before doing the migration.
+- Prefer **vertical slices** development approach rather than horizontal slices.
 - ALWAYS USE 4 SPACES FOR INDENTATION!
+
+## Workflow Contracts
+
+- The task workflow uses `.opencode/task-xxx/ARCHITECTURE.md`, `TECHNICAL-DESIGN.md`, and `PLAN.md` in the target project. Architecture defines the high-level solution, Technical Design the implementation contracts, and Plan the PR slices and execution. Do not require additional prerequisite planning artifacts.
+- `/architecture` -> `/technical-design` -> `/create-plan` -> `/implement` is the command sequence. `/orchestrate` uses the same implementation contract as `/implement`.
+- `worker` is generic and requires only a scoped binding production assignment. Only task-workflow assignments require reading the full architecture, technical design, and plan; they are immutable authorities and ownership never overrides them. No advisory direction or numeric changed-logic target may authorize a deviation.
+- Tests are prepared before `/implement`. That command and its delegates do not author, modify, assess, or review test source/coverage. The orchestrator owns Git, integration, diagnosis and execution of prepared checks; `bash-agent` runs supplied commands only. A test defect or missing prepared checks is returned to the user, not repaired inside implementation. Planning artifacts contain behavioral acceptance criteria, not test implementation metadata.
+- Implementation uses the canonical persistent runtime contract in `commands/implement.md`, dependency waves, validated predecessor checkpoints and isolated combined-state checks. The main checkout and unrelated changes remain untouched. `/orchestrate` is only its alias.
+- `ticket-master` owns plan-derived issue reconciliation, PR linkage and completed issue closure. `/create-plan` reconciles issues after audit PASS, `/sync-issues` retries reconciliation, task publication links every slice, and `/finish` verifies all final-target merges before scoped local cleanup and child-then-parent closure. No milestones, remote branch deletion, or local issue manifest.
+- `code-review` is explicit-user-request only, never proactive for implementation, OpenCode configuration edits, verification, or completion. Do not bypass this rule with direct inspector delegation. Without an explicit request, `/implement` records review `NOT REQUESTED` and may publish after required checks without claiming review PASS. When requested, Standards and Spec run in parallel on the complete task package, with at most three completed rounds persisted across resumes and early exit on both-axis PASS. Correct third-round findings and rerun invalidated checks without a fourth review; publication may then proceed with an explicit unreviewed-final-corrections caveat, never a fabricated PASS. The cap alone is not BLOCKED; genuine missing evidence, unresolved defects, failed checks, credentials or authoritative contradictions still block.
+- `create-pr` owns publication only. Task implementation supplies its gate outcomes; direct publication retains its independent contract, and single-branch publication requires no task tracking. `/finish` owns post-merge cleanup, not documentation, implementation, stack updates, merge or release.
 
 ## Subagents
 
-Use subagents selectively. Work directly when the scope and behavior home are clear. Counts are signals, not sufficient reasons to delegate. Delegate only to reduce context load, resolve bounded uncertainty, enable useful parallel work, or isolate a coherent stage.
+Delegate only when separate context, expertise, independent review, or handling large output materially helps. Otherwise work directly; do not delegate to meet file, line, or agent-count targets.
 
-If a special command such as `/grilling`, `/create-plan`, or `/research` is active, follow that command's workflow. Otherwise, only use these subagents:
+If a special command is active, follow its workflow within the available agents' capabilities and restrictions. Do not invent an agent named by an outdated command or silently bypass a required review. Report an unavailable dependency when it blocks that workflow.
 
-- `@explore`: Use for broad read-only discovery or unknown ownership, entrypoints, or flow. More than six relevant files or three packages is a useful signal. Do not use it for a known symbol in a small scope. Ask one bounded question and require source evidence.
-- `@bash-agent`: Use only for big amounts of shell commands or when several shell commands are expected to produce large outputs or for running tests. Provide the exact commands, working directory, and dependency order. Require a compact report with each command's exit status and the evidence needed to assess its result. Don't use it for a few commands only!
-- `@general`: Use only for substantial cross-cutting work that one agent can own end to end and that materially reduces primary-agent context. Investigation, implementation, and validation alone are not enough. Do not use it for simple work, pure discovery, or a clean worker stage.
-- `@worker`: Use for a coherent, independent production stage, normally across four files or about 150 lines. Require a clear behavior boundary, non-overlapping paths, and a complete contract. The worker does not edit tests or Git state.
-- `@tester`: Use for a substantial independent test stage, normally with five behavior cases or three test files. Implement one to four focused cases directly. Give it a clear test boundary and behavior contract. The tester does not edit production code or run tests.
+### Custom agents
 
-Choose the narrowest suitable agent. Chain agents only when one output defines the next assignment. Every prompt must state the scope, inputs, contract, expected report, and definition of done.
+- `@bash-agent`: Command batches or large output, including tests. Supply exact commands, working directory, and dependency order; require exit statuses and concise evidence with relevant errors. Run small commands directly; keep diagnosis and correction decisions with the caller.
+- `@worker`: Generic scoped production changes under a binding assignment, without tests, shell, Git or validation. Task-workflow mode additionally requires all three task documents; standalone work does not. The caller owns validation and translates failures into production counterexamples without test details.
+- `@ticket-master`: Read-only project access with narrowly scoped provider issue/label operations; actions are `reconcile`, `link-prs`, and `close-completed`. Supply the explicit task, project, plan and verified repository/PR map. It never edits project files, Git or PR/MR resources.
+- `@inspector`: Read-only review of a diff, commit range, or selected files; no test execution. Supply the axis and known validation results; require findings with locations, evidence, and impact, or an explicit no-defects result. Task mode requires the complete architecture, technical design, and plan package specified by its prompt.
+- `@docu-writer`: Source-backed documentation only, under repository-root `docs/`. Supply sources, audience, and required structure; require changed paths, supporting sources, and uncertainties. Do not delegate product decisions or unsupported future behavior.
+- `@researcher`: External research and synthesis using DuckDuckGo MCP; no edits, shell commands, or delegation. Specify versions or time frame and whether recommendations are wanted; require source URLs, applicability, conflicting evidence, and uncertainties. Use direct lookups for simple questions.
 
-Always check the subagent's output and steer them.
+### Built-in agents
+
+- `@explore`: Broad read-only discovery or unknown ownership, entrypoints, or flow. Ask one bounded question and require source evidence; use direct tools for known symbols in a small scope.
+- `@general`: Substantial cross-cutting work owned end to end that materially reduces primary-agent context. Not for simple tasks, pure discovery, or a clean worker stage; having investigation, implementation, and validation alone does not qualify.
+
+### Delegation
+
+- Choose the narrowest suitable agent. Provide a self-contained objective, relevant context and paths, constraints, writable or read-only scope, inputs required by its prompt, expected report, and completion criteria.
+- Split large implementations into cohesive vertical slices with clear interfaces and non-overlapping ownership. Explain the split before delegation.
+- Launch ready, independent assignments in the same parallel batch. Serialize only for dependencies, avoid shared-resource conflicts, and do not duplicate delegated work.
+- Resume the same session for corrections or missing evidence. If a blocker repeats despite sufficient input, change strategy instead of repeating the prompt. Ask the user about behavior-changing ambiguities.
+- The main agent owns integration, validation, and user communication. Verify changed-path scope and consequential claims against source or command evidence; distinguish completed work, failed or unrun checks, and blockers.
 
 ## Over-engineering
 
-**Over-engineering** means adding more concepts, behavior, generality, or verification than the current task reasonably requires.
-**Core principle:** Implement the simplest reasonable solution that fully solves the current task.
-
-### Definitions
-
-#### Complexity 
-Complexity is the amount of information a maintainer must understand and coordinate: branches, states, layers, indirection, configuration, dependencies, public APIs, side effects, and files that must change together.
-Line count is not complexity. Twenty direct lines may be simpler than a five-line generic dispatcher requiring a registry, factory, and configuration.
-
-**Necessary complexity** solves a current requirement or removes more current risk, duplication, or coordination than it introduces.
-**Speculative complexity** exists mainly for hypothetical future requirements or failures that are not currently expected.
-
-#### Project patterns
-
-**A good project pattern**:
-- solves the same kind of problem;
-- makes behavior and failures clear;
-- keeps responsibilities reasonably local;
-- avoids unnecessary coupling;
-- can be tested without excessive unrelated setup.
-
-**A bad project pattern**:
-- produces incorrect or unsafe behavior;
-- swallows important errors;
-- relies on hidden global state;
-- duplicates business rules that must remain consistent;
-- introduces unnecessary indirection or coupling;
-- makes local behavior require excessive setup or unrelated changes.
-
-Unfamiliar code, personal preference, or imperfect style does not by itself make a pattern bad.
-
-#### Abstraction
-
-**A useful abstraction** reduces what its callers must understand or ensures that multiple places follow the same rule.
-**A useless abstraction** adds another layer, name, option, or indirection without removing comparable complexity or risk.
-
-#### Edge cases
-
-**A high-value edge case** can reach the changed code now and is at least one of:
-- required by the task or an existing contract;
-- observed in tests, issues, logs, or normal use;
-- the nearest valid or invalid boundary affected by the change;
-- able to cause a security issue, data or financial loss, wrong output, or a normal-use crash.
-
-**High-value examples:**
-- an allowed empty list before accessing its first item;
-- duplicate payment submission;
-- authorization failure;
-- a specified minimum or maximum value.
-
-**Low-value examples:**
-- `null` already rejected before reaching the changed code;
-- hypothetical future input types;
-- framework internals;
-- many malformed inputs that all exercise the same guard and outcome.
+Implement the simplest reasonable solution that fully solves the current task. Complexity is what maintainers must understand and coordinate, not line count; add it only for current requirements or when it removes more risk or coordination than it introduces.
 
 ### Scope
 
-- Change only what the request and its direct prerequisites require.
-- Do not add unrelated cleanup, features, configuration, dependencies, or refactoring.
-- Report unrelated problems instead of fixing them.
-- Stop when the requested behavior is implemented and proportionately verified.
+- Before editing, establish required behavior, current implementation, and relevant callers. Trace only the affected flow; fix bugs where the rule belongs, not just the symptom.
+- Change only what the task and its direct prerequisites require. Report unrelated issues after completion without fixing them or interrupting for them.
+- Simplification must preserve required behavior, authorization, necessary trust-boundary validation, data protection, and relevant accessibility.
+- Stop after proportionate verification. Repeat checks only for relevant changes, failures, or new concrete uncertainty.
 
-When a bad project pattern directly affects the task, do not silently copy or redesign it. Stop before implementing and report:
-1. the problem and its effect on the task;
-2. the smallest solution following the existing pattern and its downside;
-3. the smallest better solution and its additional scope.
+### Patterns and abstraction
 
-Ask which option to use. Clearly state when the existing option is unsafe.
-Do not interrupt for unrelated technical debt, cosmetic issues, or personal preferences. Mention them separately after completing the task.
-
-### Abstraction
-
-- Prefer a good existing pattern when it fits the current problem.
-- Do not copy a bad pattern merely for consistency.
-- Extract an abstraction when multiple places must follow the same rule, or when one responsibility is difficult to understand or test in place.
-- Keep similar code separate when its behavior or rules may reasonably diverge.
-- Before adding a layer, dependency, option, factory, registry, cache, retry system, or extension point, identify the current problem it solves.
-- If no current requirement or material risk justifies it, do not add it.
-
-**BAD** One endpoint -> generic service, factory, registry, and plugin system.  
-**GOOD** One focused implementation using appropriate existing structure.
-
-**BAD** Rewrite an entire module to fix one bug.  
-**GOOD** Fix the cause and add a focused regression test.
-
-**BAD** Add retries because failures might occur someday.  
-**GOOD** Add retries for expected transient failures with defined limits and behavior.
+- Follow existing patterns when they fit, unless they cause concrete correctness, safety, or maintenance problems. Unfamiliarity or personal preference is not a reason to replace them.
+- Correct a problematic pattern directly only when the change is small, safe, and within scope. Otherwise explain its impact, the smallest existing-pattern option and downside, and the smallest better option and added scope; ask before proceeding. Explicitly flag unsafe options.
+- Extract abstractions to keep shared rules consistent or make a responsibility easier to understand or test. Keep similar code separate when its rules may diverge.
+- Add layers, dependencies, configuration, or extension points only for a current requirement or material risk, not hypothetical future needs.
 
 ### Testing and verification
 
-- First test the requested behavior through the changed path.
-- Add edge-case tests only for high-value edge cases.
-- One representative input per behavior or guard is normally enough.
-- Add another case only when it exercises a different path, rule, or consequence.
-- For a bug fix, add a test that fails before the fix and passes afterward when practical.
-- Do not test framework internals, unreachable states, equivalent input permutations, or unrelated modules.
-
-Before finishing:
-1. Do quick small diff review of the changed files to double-check if all good
-2. Run tests for affected scope
-3. Run type-check
-Then stop if all good. I will check it myself manually after, so no need to do huge rounds of diff review and running gazzilions of tests.
+- First verify requested behavior through the changed path. Derive expectations from the user's specification or an established repository contract; ask rather than invent unclear behavior.
+- Add tests only for a concrete behavior, regression, or material risk not adequately covered. For bugs, prefer a focused test that fails before the fix and passes afterward when practical. This limits test creation, not execution.
+- Cover reachable edge cases required by the contract, observed in practice, at affected boundaries, or carrying material correctness or safety risk. Add cases only for distinct paths, rules, or consequences; skip framework internals, unreachable states, equivalent permutations, and unrelated modules.
+- Before finishing, review the diff and run relevant existing tests and the configured type-check. Do not introduce tooling just for this checklist; for documentation-only changes, check content and references instead.
+- State what was inspected, actually run, and passed or could not be verified. Reading code is not evidence of execution.
