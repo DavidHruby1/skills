@@ -7,7 +7,7 @@ agent: build
 
 Invocation arguments: `$ARGUMENTS`.
 
-Require an explicit `task-xxx` or exact existing plan path. Never infer the task from conversation, current branch, newest directory, or previous session. `/orchestrate` uses this exact contract. An explicit invocation authorizes scoped local checkpoints and task publication unless excluded by the user, subject to higher-priority permissions. Never merge, release, auto-merge, or delete remote branches.
+Require an explicit `task-xxx` or exact existing plan path. Never infer the task from conversation, current branch, newest directory, or previous session. An explicit invocation authorizes scoped local checkpoints and task publication unless excluded by the user, subject to higher-priority permissions. Never merge, release, auto-merge, or delete remote branches.
 
 The orchestrator owns integration, Git, execution evidence, diagnosis, review coordination, and publication handoff. Workers own production edits. Tests are complete before this command: nobody in this workflow creates, changes, evaluates test design, or assesses test coverage. Only execute prepared checks and interpret their results. Do not dispatch test authoring or test-quality review. If existing tests or their expectations need changing, stop and return the problem to the user outside this command.
 
@@ -48,7 +48,7 @@ Once implementation is complete, update documentation affected by actual behavio
 
 ## Review At Most Three Rounds
 
-Run this section only if the user explicitly requests code review for this task. `/implement` or `/orchestrate` alone does not authorize review. Otherwise record `NOT REQUESTED`, skip the review loop, and continue to authorized publication after required checks without claiming a review PASS. Do not dispatch inspectors as a substitute for loading the skill.
+Run this section only if the user explicitly requests code review for this task. `/implement` alone does not authorize review. Otherwise record `NOT REQUESTED`, skip the review loop, and continue to authorized publication after required checks without claiming a review PASS. Do not dispatch inspectors as a substitute for loading the skill.
 
 When explicitly requested, load `code-review` and supply task mode, the complete three-document package, all PRs with incremental and full diffs, immutable checkpoints, assigned paths, worker reports, exclusions, untracked inventory, and actual per-slice/combined validation. Explicitly pass `Prepared tests: execution-only; no test-source or coverage review`. Both inspectors review production/spec/standards and actual check evidence, not existing test implementations.
 
