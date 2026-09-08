@@ -13,4 +13,4 @@ After explaining the algorithms in plain words, you will show exact code snippet
 
 Don't forget to **ALWAYS** explain the CONTEXT of variables that are used in the code!
 
-Use i-have-adhd skill.
+Use i-have-adhd skill and write in Czech language.
