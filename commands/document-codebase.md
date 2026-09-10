@@ -46,6 +46,12 @@ docs/
 
 Split into `docs/architecture/`, `docs/frontend/`, `docs/backend/`, domain pages, or operations/runbooks only when distinct reader questions or ownership justify it. Keep cross-stack flows in one canonical page and link from frontend/backend docs. Existing component READMEs may link to the canonical docs; do not create competing documentation trees beside each application.
 
+## Large Codebases
+
+For a large or modular system, first create a documentation inventory of domains and meaningful modules: their responsibility, public boundary, data ownership, invariants, and key integrations. For each, explicitly decide whether it needs a dedicated page, is adequately covered by a canonical contract or parent domain page, or has no non-obvious behavior to document. Keep this inventory as a short index in the relevant documentation navigation when it materially improves discovery.
+
+Document every meaningful boundary, not every directory, file, endpoint, or function. Organize independent domain or module pages in focused subdirectories and delegate their source-backed explanations in non-overlapping batches when useful. A concise top-level architecture map must link to this deeper documentation; it is not a substitute for it.
+
 ## What to Explain
 
 Select applicable topics, not a mandatory section checklist:
