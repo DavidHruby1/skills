@@ -1,5 +1,7 @@
 ---
 description: "Checks the current changes and commits them. Then when all commits are done, pushes them to the remote repository."
+model: openai/gpt-5.6-luna
+variant: high
 ---
 
 I need you to commit the current changes to the repository. If there is more changes that could be separated into more groups of commits, commit them separately.
