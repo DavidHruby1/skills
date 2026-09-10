@@ -29,7 +29,7 @@ Delegate when separate context, specialization, independent review, or large out
 - `@docu-writer`: Writes source-backed documentation under repository-root `docs/`. Do not delegate product decisions.
 - `@researcher`: Performs external research with DuckDuckGo and returns source-backed findings. It does not edit files or run commands.
 - `@explore`: Finds ownership, entrypoints, and flows in unfamiliar or broad code areas. Use direct tools for known files or symbols.
-- `@general`: Handles substantial cross-cutting work that materially reduces primary-agent context. Do not use it for simple tasks or pure discovery.
+- `@general`: Last resort only. Always prefer the appropriate custom agents, splitting work between them when suitable. Use only when necessary and no custom agent or combination can handle the task.
 
 ### Delegation
 
