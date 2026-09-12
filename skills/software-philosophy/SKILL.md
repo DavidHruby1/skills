@@ -1,253 +1,227 @@
 ---
 name: software-philosophy
-description: Apply software-design principles when planning, implementing, or reviewing a concrete software change involving interfaces, information hiding, responsibility placement, or implementation clarity. Not for general programming explanations, routine mechanical edits, or unrelated planning; read-only use provides assessment criteria, not permission to implement.
+description: Use when making or reviewing concrete decisions about module responsibilities, interfaces, dependency boundaries, data guarantees, or architectural trade-offs in discussions, specs, plans, or code review, including unresolved design questions discovered during implementation. Not for executing an accepted design, general programming explanations, or local syntax, naming, formatting, and helper choices that leave those decisions unchanged.
 ---
 
 # Software Philosophy
 
-Implement the required behavior with the least necessary complexity, not the fewest lines. Apply the governing AGENTS.md rules for scope, abstraction, test selection, and verification; this skill guides implementation, not a separate workflow. An agent's assigned permissions and execution constraints still apply.
+Choose the least complex design that fully satisfies the current requirement.
+Complexity is what people must understand and coordinate, not the number of lines.
+Use this skill as a decision lens, not a coding standard or a mandatory workflow.
+Apply only the concerns relevant to the change, including meaningful decisions inside a single module.
+Governing AGENTS.md rules, assigned scope, and permissions still apply.
+A planning or review assignment does not itself authorize implementation.
 
-This skill guides design judgment, not repository coding conventions. Follow applicable repository documentation for local style, syntax, layout, and tooling; use these principles for choices those conventions do not settle.
+## Vocabulary
 
-Examples illustrate decisions under stated contracts, not universal rewrites. Python is illustrative, not a preferred implementation language. Transfer the reason to idiomatic TypeScript, Python, or the project's language while preserving its evaluation, error, and resource semantics. Do not mechanically translate the syntax.
+### Software Design
 
-## Definitions
-
-These terms follow John Ousterhout's software-design vocabulary:
-
-- **Module**: a unit of implementation with an interface, such as a function, class, or subsystem; not necessarily a file.
-- **Interface**: everything a caller must know to use a module correctly: its signature, meaning, constraints, errors, side effects, and required call order.
-- **Implementation**: the internal mechanism that fulfills the interface's contract and that callers should not need to understand.
-- **Deep module**: provides substantial functionality through a relatively simple interface, hiding more complexity than its use introduces.
-- **Shallow module**: exposes an interface whose learning and usage costs are large relative to the functionality it hides. A short function is not automatically a good module.
-- **Information hiding**: keeping a decision or piece of knowledge inside a module so other modules need not know it or change with it.
-- **Information leakage**: multiple modules must know the same internal decision, forcing coordinated changes when it changes.
+- **Module**: a unit of implementation with an interface, such as a function, class, or subsystem;
+  not necessarily a file or a service.
+- **Interface**: everything a caller must know to use a module correctly: meaning, constraints,
+  errors, side effects, and required call order, not just its signature.
+- **Implementation**: the internal mechanism that fulfills the interface's contract and that
+  callers should not need to understand.
+- **Deep module**: substantial functionality behind a relatively simple interface, hiding more
+  complexity than its use introduces.
+- **Shallow module**: an interface whose learning and usage costs are large relative to the
+  functionality it hides. A short function is not automatically a good module.
+- **Information hiding**: keeping a decision or piece of knowledge inside a module so others
+  need not know it or change with it.
+- **Information leakage**: multiple modules depend on the same internal decision, forcing
+  coordinated changes when that decision changes.
 - **Change amplification**: one requirement change requires edits in many places.
 - **Cognitive load**: how much a developer must hold in mind to perform a particular change.
 - **Unknown unknowns**: it is not apparent what must be understood or which code a change affects.
-- **Define errors out of existence**: choose a contract that eliminates an otherwise necessary error case. This does not mean swallowing failures or returning false success.
+- **Define errors out of existence**: choose a valid contract that eliminates an otherwise
+  necessary error case; never conceal failure or return false success.
 
-Depth is not size: do not invent internal complexity to hide it. A general operation can remove special cases without adding hypothetical providers, configuration, or extension points.
+### Architecture
 
-## Use What Already Works
+- **Architecture characteristic**: a quality important to the system's success that shapes its
+  design, such as availability, security, performance, or deployability.
+- **Cohesion**: how strongly a module's responsibilities belong together around a coherent purpose.
+- **Coupling**: dependencies that constrain how parts can be understood, changed, or operated.
+- **Connascence**: parts must agree on something to remain correct, such as a meaning, format,
+  call order, or timing. Stronger dependencies are more tolerable locally than across boundaries.
+- **Fitness function**: an objective check that a relevant architecture characteristic still holds;
+  it can be an existing test, dependency rule, measurement, or operational check, not a new framework.
 
-- Understand the affected contract and actual flow before choosing a smaller implementation. A small patch in the wrong place is still wrong.
-- Before writing a replacement, look for an existing implementation that satisfies the same rule and contract. Reuse it only when its purpose fits; similar names or text are not sufficient evidence.
-- Consider the standard library, native platform capabilities, and already-installed dependencies before adding custom mechanisms. Prefer less code to own, not fewer lines to display.
-- These are options, not a rigid ladder. Choose what meets the real requirements and established project constraints; do not replace a suitable project dependency merely because a native alternative exists.
-- A native date input may replace a custom picker if it meets the interaction requirements. A database constraint can guarantee integrity, but does not automatically replace authorization or useful input feedback.
-- Use the existing dependency when it already solves the problem. Add a new dependency only when it removes enough necessary implementation or risk to justify its cost; a few lines are not a safe substitute for specialized security or parsing logic.
+### Data Systems
 
-**Avoid: shorter code that implements only part of the format.** For CSV export where values can contain commas, quotes, or newlines:
-
-```python
-for row in rows:
-    output.write(",".join(str(value) for value in row) + "\n")
-```
-
-**Prefer: the existing format implementation.** Here `output` is a text stream opened with `newline=""`:
-
-```python
-import csv
-
-csv.writer(output).writerows(rows)
-```
-
-The library owns quoting and record formatting. It does not decide application policy, such as which fields the user may export or how spreadsheet formulas must be treated. Keep required policy rather than assuming the library solves the entire task.
+- **Reliability**: continuing to provide the required behavior under the faults being considered.
+- **Scalability**: the ability to handle a specified kind of load growth with appropriate resources.
+- **Maintainability**: making the system practical to operate, understand, and change over time.
+- **Invariant**: a condition that must remain true across the operations and states in its scope.
+- **System of record**: the authoritative source for a particular fact.
+- **Derived data**: a representation computed from other data, such as a cache, index, or read model.
+- **Partial failure**: some components fail or become unreachable while others continue running;
+  the caller may not know whether a remote operation took effect.
+- **Idempotence**: repeating the same logical operation has the same intended effect as applying
+  it once; this does not automatically cover every downstream side effect.
+- **Timeliness versus integrity**: how up-to-date an observation is versus whether data is correct,
+  uncorrupted, and preserved. Delayed visibility and lost or duplicated effects are different problems.
 
 ## Keep Knowledge Local
 
-- Put a rule where the relevant knowledge already lives, provided the module's purpose and name remain accurate. Keep distinct contracts separate even when their implementations look similar.
-- Hide internal formats, external-system quirks, and required sequencing behind an interface when doing so removes knowledge from callers. Convert external representations at the appropriate boundary rather than spreading their details throughout the application.
-- Prefer a simple interface that completes a useful operation over several calls whose ordering and shared state every caller must understand.
-- Keep related decisions together. Do not split a clear function solely to make functions shorter or introduce a wrapper that only renames a call without hiding a meaningful decision or constraint.
-- Judge an abstraction by what callers no longer need to know, not its pattern name, file count, or number of implementations. Do not centralize unrelated rules just to avoid similar lines.
-- Prevent avoidable invalid states with appropriate types, construction, or operations. Validate untrusted data at boundaries; do not add defensive checks for states already excluded by an enforced contract.
+Place a rule with the knowledge needed to own it. Judge boundaries by what callers no longer need
+to know and what can change independently, not by pattern names, file counts, or code size.
 
-### An Interface Should Remove Knowledge
+- Group responsibilities that share a decision or invariant; separate responsibilities with
+  different meanings or reasons to change. Similar code alone does not establish a shared rule.
+- Hide internal formats, external-system quirks, and preparation sequences at the responsible
+  boundary. Avoid decomposing modules solely by the order in which operations happen.
+- Prefer an interface that completes a useful operation over one that makes each caller coordinate
+  internal steps and shared state. Move necessary complexity into the module equipped to own it.
+- Keep the common use simple. Expose genuine caller choices, not configuration the module could
+  determine itself. Do not hide costs, constraints, or failure semantics callers actually need.
+- Let a general operation remove existing special cases. Do not confuse this with building a
+  framework, provider hierarchy, or extension point for hypothetical requirements.
+- Give each layer a distinct responsibility. A pass-through layer needs a concrete boundary or
+  policy benefit; another name for the same operation is not enough.
+- Use precise domain names and document obligations or rationale that names cannot express.
+  Describe what callers need to know, not internal machinery. A contract that is hard to explain
+  is a reason to reconsider the boundary, not to add a longer implementation narrative.
 
-**Avoid: every settings consumer knows the file format and preparation sequence.** These are illustrative call sites:
+Depth is not size. Do not invent internal complexity to hide, merge unrelated responsibilities,
+or move domain policy into infrastructure merely to make callers shorter.
 
-```python
-raw = json.loads(path.read_text())
-settings = apply_defaults(raw)
-validate_settings(settings)
-start_server(settings)
-```
+For example, a settings boundary can own decoding, defaults, and validation and return usable
+settings. A facade that still requires every caller to repair its result has not removed that knowledge.
 
-**Prefer: the settings module delivers a usable result.**
+## Prefer Adequate Solutions Over Speculative Architecture
 
-```python
-settings = load_settings(path)
-start_server(settings)
-```
+- Start from the affected behavior and existing design. Reuse a module, platform capability, or
+  dependency when its contract fits; resemblance or familiarity is not sufficient evidence.
+- Prefer less custom functionality to own, while accounting for integration and operational costs.
+  Add dependencies when the necessary work or risk they remove justifies their cost; do not replace
+  specialized correctness with incomplete custom logic.
+- Distinguish necessary complexity from accidental complexity. A real integrity, security, or
+  recovery requirement can justify more machinery; hypothetical growth or flexibility cannot.
+- Make small strategic improvements in the changed path when they reduce a present design cost.
+  The smallest diff is not always the simplest system.
+- Keep structural changes distinct from intentional behavior changes. A refactor must preserve
+  relevant contracts, errors, side effects, persistence, and ordering, not just the happy-path result.
 
-This is deeper only if `load_settings` actually owns decoding, defaults, and validation, and callers no longer need those details. Merely hiding the same sequence behind a new name while callers still validate or repair its result does not solve the leakage. Its contract must explain meaningful failures; it must not return defaults after an unreadable or corrupt file unless that behavior is explicitly required.
+## Make Architectural Trade-offs Explicit
 
-Do not build a generic loader framework for this. If the sequence occurs once and is already clear inside the responsible function, extraction may add nothing. Separate decoding from policy when current callers genuinely need those operations independently.
+Architecture choices are contextual. Compare them against the actual problem, not a preferred style.
 
-### Eliminate An Error Case, Not Error Reporting
+- Translate business outcomes into the few characteristics that drive this decision. Distinguish
+  hard constraints from preferences; do not try to maximize every desirable quality.
+- Make consequential quality requirements concrete: relevant workload, latency distribution,
+  availability expectations, recovery needs, or resource limits. Label unknowns and proposed targets;
+  do not invent numbers or treat "fast," "scalable," and "production-ready" as acceptance criteria.
+- For a consequential decision with credible alternatives, design it twice: compare the simplest
+  viable approaches by caller knowledge, coordinated changes, guarantees, and operating cost.
+  Do not manufacture alternatives or decision matrices for routine choices.
+- Examine coupling through shared data, shared models, synchronous calls, timing, and coordinated
+  releases, not only imports. A network boundary does not establish operational independence.
+- Keep cohesive modules together unless separate deployment, scaling, ownership, or fault isolation
+  serves a current requirement. Modularity does not require distribution.
+- Weigh reuse against independent evolution. Share actual common knowledge; avoid forcing unrelated
+  domains into a common model merely because both use a name such as "customer."
+- Consider the team's ability to deploy, observe, diagnose, and recover the proposed system.
+  Operational work and failure modes count as complexity even when application code becomes shorter.
+- Prefer decisions that remain easy to change when current needs are uncertain. Record a concrete
+  condition for revisiting a choice when useful; do not build the future replacement in advance.
 
-For cleanup whose contract is "ensure this temporary file is absent," absence is success:
+For important decisions, preserve the context, choice, rationale, and accepted consequences.
+Use the existing spec or an architecture decision record (ADR) where appropriate, not a mandatory
+new document for every change. Record why an alternative lost when that knowledge prevents rework.
 
-**Avoid: suppressing every filesystem failure.**
+## State Guarantees Before Choosing Data Mechanisms
 
-```python
-try:
-    path.unlink()
-except OSError:
-    pass
-```
+Use this section when the change affects persistent state, concurrency, asynchronous work, or
+remote dependencies. Address the guarantees actually affected, not every distributed-systems concern.
 
-**Prefer: expressing the permitted case precisely.**
+- Identify the authoritative owner of each fact and the direction of derived data flow. A cache
+  or index is not a second authority. Clarify how changed derived state stays correct or is rebuilt.
+- Choose data models and access paths from required queries, updates, relationships, and workload.
+  A storage technology's popularity is not a requirement; another datastore adds coordination cost.
+- State important invariants and where they are enforced. Include authorization and trust boundaries
+  where relevant; format validation and storage constraints do not replace application policy.
+- Define what success promises: accepted, committed, durably recorded, externally completed, or
+  visible to subsequent reads. Do not let an interface imply a stronger guarantee than it provides.
+- Separate transaction atomicity (all-or-nothing changes) from isolation (concurrent interactions).
+  Identify the protection an invariant requires; "we use transactions" does not prove race safety.
+- Specify which stale reads or reordered observations are acceptable. Stronger consistency has
+  costs, but eventual convergence is not a remedy for lost data or violated business invariants.
+- Treat a timeout as an uncertain outcome, not proof that nothing happened. When retries or
+  redelivery are possible, define the protected effect and the scope of idempotence or deduplication.
+- Assess guarantees end to end. Broker delivery semantics or one database transaction do not by
+  themselves guarantee exactly-once business effects across other systems.
+- Make required failure behavior explicit: reject, remain pending, recover, reconcile, or compensate.
+  Compensation is another fallible business operation, not an automatic rollback of the outside world.
+- Prefer contracts that remove unnecessary error cases without weakening requirements. Ensuring a
+  temporary resource is absent can succeed when it is already absent; permission failure is not success.
 
-```python
-path.unlink(missing_ok=True)
-```
+For example, committing a record and then enqueueing work leaves a crash gap between the operations.
+If losing that work violates the contract, plan a durable handoff using suitable existing facilities
+or a justified mechanism. Correct ordering and a comment alone do not provide reliable delivery.
 
-Missing files require no caller branch; permission and other deletion failures still propagate. Do not use this contract when a missing file indicates lost data or an incorrect operation.
+## Plan for Evolution Where the Change Requires It
 
-## Expose Important Decisions
+- Treat stored formats, APIs, and events as contracts with consumers. When old and new versions
+  coexist, identify which readers must understand which writers, including during rollback.
+- **Backward compatibility** lets newer code read older data; **forward compatibility** lets older
+  code read newer data. Evaluate semantic meaning as well as whether parsing succeeds.
+- For consequential data changes, cover migration, backfill, cutover, and recovery only as needed.
+  Reverting code does not necessarily undo changed data or external effects.
+- When adding derived state or retained data, consider rebuilding, deletion, and access restrictions
+  that the requirement needs. Replaying data must not accidentally repeat external actions.
+- Use a focused fitness function when an important architectural property would otherwise drift.
+  For example, an existing dependency check can protect a boundary, or a workload measurement can
+  verify a latency requirement. Do not introduce a general governance system to check one property.
 
-- Use precise names that explain domain meaning, units, and distinctions. Prefer explicit data flow to hidden mutation or required temporal knowledge.
-- Keep the common path direct and make meaningful alternatives, cleanup, transactions, and resource lifetime visible. Flattening control flow is useful only when it makes those obligations easier to understand.
-- Choose an expression when it communicates one coherent operation. Use explicit steps and meaningful intermediate values when they reveal distinct decisions, side effects, or failure handling that an expression would obscure.
-- Do not compress code into one-liners, expand clear expressions mechanically, or add helpers merely to satisfy a line-count preference.
+## Apply to Feature Discussions, Specs, and Plans
 
-### Concision Versus Cognitive Load
+Understand the intended outcome before choosing structure. Use relevant repository evidence to
+establish affected contracts and flows; do not demand a full repository survey before every proposal.
+Separate established facts, assumptions, and open decisions. Resolve uncertainty that can change
+correctness, scope, or the chosen design through a focused lookup, check, or question.
 
-- Use a list comprehension only when it is immediately readable on one line within the project's line-length limit. If it needs multiple lines or makes the reader mentally unpack its logic, use a regular `for` loop instead. Do not cram the expression onto one long line to evade this rule.
+A useful spec makes the intended behavior, non-goals, constraints, and observable acceptance criteria
+clear. Add ownership, interfaces, invariants, failure behavior, and trade-offs where they affect the
+change. Describe guarantees before mechanisms; avoid prescribing local syntax or helper structure.
 
-**Prefer a comprehension for a direct transformation and readable filter:**
+A useful plan turns those decisions into bounded, verifiable changes. Identify affected boundaries,
+meaningful dependencies between steps, and the evidence that establishes completion. Reference
+verified files or existing facilities when helpful; do not invent repository details.
 
-```python
-active_names = [user.name for user in users if user.is_active]
-```
+Plan verification around changed behavior and concrete risks. Prefer checks at real public boundaries;
+include concurrency, compatibility, or failure scenarios only when the change makes them significant.
+Expand verification when the affected scope warrants it, not to satisfy an exhaustive checklist.
 
-Expanding this simple one-line expression into initialization, a loop, a condition, and `append` adds ceremony without revealing a hidden decision. Fitting on one line is necessary for a list comprehension here, but not sufficient: its meaning must still be immediately clear.
+Keep design effort proportional to the decision. A local change may need a short rationale, not a
+full spec or ADR. Planning is complete when the implementer can proceed without inventing consequential
+requirements or architectural decisions; local implementation choices may remain open.
 
-**Avoid forcing traversal and several selection decisions into one expression:**
+## Apply to Architectural Code Review
 
-```python
-results = [
-    normalize(item.value)
-    for group in groups
-    if group.is_enabled
-    for item in group.items
-    if item.is_active and item.value is not None and can_process(item, user)
-]
-```
+Review the actual change against its intended behavior, accepted design, and affected callers or
+consumers. Follow relevant dependencies far enough to assess impact, not through the whole repository.
+An implementation can follow the plan and still reveal that the plan's assumptions were wrong.
 
-**Prefer explicit stages when the reader needs to distinguish those decisions:**
+- Look for concrete information leakage, misplaced responsibility, unnecessary interface burden,
+  change amplification, and unsupported behavioral or data guarantees.
+- Assess what maintainers and callers must understand, not whether the code uses a favored pattern.
+  An unfamiliar design, short helper, or repeated expression is not by itself a defect.
+- Connect each finding to a location or boundary, the triggering condition, its consequence, and
+  the smallest adequate correction. For design debt, show the specific coordination or reasoning cost.
+- Separate correctness or contract violations from justified design improvements and optional
+  preferences. Do not reopen an accepted trade-off without new evidence or a changed requirement.
+- Keep unrelated problems separate from the requested change. Do not make a broad redesign a
+  prerequisite when a local correction fully addresses the issue.
 
-```python
-results = []
-for group in groups:
-    if not group.is_enabled:
-        continue
-    for item in group.items:
-        if not item.is_active or item.value is None:
-            continue
-        if can_process(item, user):
-            results.append(normalize(item.value))
-```
+Use the requested review format and prioritize consequential findings. Do not manufacture findings
+or describe unverified concerns as proven bugs. State material uncertainty or missing evidence.
 
-This preserves traversal order and short-circuiting while separating group eligibility, usable input, and processing permission. It is useful because those decisions become visible, not because loops are inherently better. A simple lookup or flattening expression may already communicate its intent directly. Apply the same judgment to comprehensions, collection chains, and callbacks; preserve evaluation order, early termination, side effects, and failures when changing their shape.
+## Foundations
 
-## Explain Missing Context
-
-Actively check new and materially changed code for reader uncertainty. Can a maintainer understand a value's purpose, an operation's meaning, and its important constraints from its name and local context, without chasing hidden assumptions? If not, improve the name or structure; add a comment when essential context still cannot be expressed clearly in code. Do not default to either commenting everything or commenting nothing.
-
-- Explain non-obvious domain meaning, units, constants, ordering constraints, known limitations, or reasons for a choice at the point where the reader needs that information.
-- Document interface obligations that the signature does not reveal: relevant preconditions, return meaning, side effects, errors, or usage constraints. Describe what callers need, not a tour of the body.
-- Keep comments concise and concrete in the repository's normal comment or docstring form. A variable may need a comment; an obvious function may not. There is no sentence quota.
-- Do not narrate assignments, restate names, invent rationale, or hide unclear code behind a paragraph. Keep comments accurate when changing the code they explain.
-
-### Fix A Name Before Narrating It
-
-**Avoid comments that compensate for vague names or repeat assignments:**
-
-```python
-# Delay in seconds before the next retry.
-d = 5
-# Set the batch size to 100.
-batch_size = 100
-```
-
-**Prefer a meaningful name, plus a comment only for missing context.** In this example the provider contract establishes the limit:
-
-```python
-retry_delay_seconds = 5
-# The provider accepts at most 100 IDs per request.
-batch_size = 100
-```
-
-The unit belongs in the name; the external reason for the limit belongs in a comment. If the choice of retry delay also has an important, established reason, document it too. Do not fabricate a reason for an unexplained constant.
-
-### Describe The Contract, Not The Machinery
-
-Suppose the order always has a customer, both address fields use None for absence, and selecting an address must not modify either stored address.
-
-**Avoid vague purpose and implementation narration:**
-
-```python
-def select_delivery_address(order):
-    """Handles address resolution. Checks checkout_address, then returns saved_address."""
-    if order.checkout_address is not None:
-        return order.checkout_address
-    return order.customer.saved_address
-```
-
-**Prefer the non-obvious business meaning and fallback contract:**
-
-```python
-def select_delivery_address(order):
-    """Prefer the checkout-only address without changing the saved customer address.
-
-    Fall back to the saved address; return None when neither is available.
-    """
-    if order.checkout_address is not None:
-        return order.checkout_address
-    return order.customer.saved_address
-```
-
-This comment is useful because scope, mutation expectations, and absence behavior matter to callers. Do not add all of these topics to every function by template; explain only obligations that are real and not already obvious.
-
-### Explain Why Order Or A Limitation Matters
-
-Assume `commit` makes the invoice visible to the worker and the existing workflow requires committing before enqueueing.
-
-**Avoid merely restating the next call:**
-
-```python
-transaction.commit()
-# Enqueue the invoice.
-enqueue_invoice(invoice.id)
-```
-
-**Prefer the reason a maintainer must preserve the ordering:**
-
-```python
-transaction.commit()
-# The worker reads the invoice immediately, so it must be committed before enqueueing.
-enqueue_invoice(invoice.id)
-```
-
-This explains ordering, not guaranteed delivery. If crash-safe delivery is required, the implementation needs an appropriate delivery mechanism; a comment cannot make these two operations atomic. Apply the same honesty to performance ceilings and other known limitations.
-
-## Refactor Only For The Change
-
-- Make a local structural improvement when it directly helps implement the current requirement or removes a risk in the changed path. Do not clean up unrelated code.
-- A refactor preserves observable results, errors, defaults, data shapes, persistence, external calls, and relevant ordering and side effects. A syntactic rewrite of a condition or an early return can preserve behavior; establish equivalence rather than assuming it.
-- Keep intentional behavior changes distinguishable from structural changes. Do not alter assertions or expected values merely to make a claimed refactor pass.
-- When a consequential interface or placement decision has two credible alternatives, compare what callers must know and what must change together before choosing. Do not generate alternatives for routine edits or turn that comparison into a mandatory report. Resolve a risky assumption with focused source evidence, a permitted check, or clarification rather than building speculative structure around it.
-
-## When Implementing Tests
-
-Apply the AGENTS.md test-selection rules first. This section is not an instruction to add tests to every change and does not override an assigned production-only boundary.
-
-- Prove specified or established observable behavior through the public boundary real callers use. Do not mirror private implementation wiring.
-- Reuse the repository's runner, fixtures, and helpers when appropriate. Keep setup limited to what the tested behavior needs.
-- Keep tests deterministic and independently runnable. Control nondeterministic external boundaries and restore changed state; do not mock the behavior being tested.
-- Use explicit assertions and independently obvious expected values, not the production algorithm repeated in the test. Verify calls only when sending that command is itself the relevant outcome.
-- Keep real collaborators where their interaction is what the test must prove. Stop adding cases once the required behavior and concrete uncovered risks are covered.
+Adapted from John Ousterhout, *A Philosophy of Software Design*, 2nd ed.: complexity, deep modules,
+information hiding, strategic design, contracts, and design alternatives.
+Mark Richards and Neal Ford, *Fundamentals of Software Architecture*, 1st ed.: characteristics,
+coupling, contextual trade-offs, fitness functions, and decision rationale.
+Martin Kleppmann, *Designing Data-Intensive Applications*, 1st ed.: reliability, data ownership,
+end-to-end correctness, partial failure, and evolution. These sources are not required reading per task.

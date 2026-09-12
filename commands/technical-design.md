@@ -11,6 +11,8 @@ Create the active task's `.opencode/task-xxx/TECHNICAL-DESIGN.md` in the project
 
 Testing is completed before `/implement`. Preserve behavioral acceptance and invariants in the design, but do not include test source or paths, test commands, fixtures, assertions, test-change instructions, or test implementation details.
 
+Load `software-philosophy` for design judgment. This command governs the required artifact, phase boundaries, and completion criteria.
+
 ## Establish Context
 
 1. Read the project's governing instructions and relevant documentation. Read `docs/onboarding.md` when broader project context is needed and it exists.
@@ -33,34 +35,22 @@ Pause the affected decision and do not finalize the document when requirements o
 
 Context is sufficient when the affected contracts, meaningful control flow, invariant enforcement, and non-trivial implementation choices are understood. Resolve blockers before writing; defer harmless local choices rather than seeking certainty about every line of code.
 
-## Scale The Design
-
-Use the smallest specification that lets planning and implementation proceed without inventing required behavior or reopening architectural decisions. Judge depth by coupling, uncertainty, behavioral breadth, and risk, not file count or estimated lines alone.
-
-- For a local change, a short explanation, the affected signatures or types, and any meaningful gotcha may be enough.
-- For cross-module changes, specify both sides of changed contracts and how relevant callers connect to them.
-- For persistence, public APIs, authorization, concurrency, asynchronous work, or external systems, expand only the concrete rules and failure paths this change needs.
-
-Combine related sections and omit irrelevant topics rather than filling a fixed template with `N/A`. Do not impose class inventories, snippet quotas, exhaustive edge-case lists, mandatory external research, or mandatory subagent reviews.
-
 ## Specify The Implementation
 
 Always identify the architecture and requirements used, the affected implementation locations, and the concrete contracts being reused, changed, or introduced. Distinguish verified current behavior from proposed behavior and label proposed files and symbols that do not exist yet.
 
-Select additional content according to relevance:
+Select additional content according to relevance, combining sections and omitting irrelevant topics rather than filling a template with `N/A`. Do not impose class inventories, snippet quotas, exhaustive checklists, mandatory external research, or mandatory subagent reviews.
 
-- **Function and method contracts:** Give language-appropriate signatures for the operations needed to understand the change, with parameter and return types, synchronous or asynchronous behavior, relevant preconditions, results, errors, side effects, and callers. Explain responsibilities beyond what the signature already says. Do not catalog unaffected functions or prescribe every private helper.
-- **Types and data shapes:** Specify relevant fields, optionality, nullability, defaults, units, identifiers, valid states, and validation rules where they determine behavior. Reuse existing types by reference. Distinguish transport, domain, and persistence representations only where the implementation actually needs that distinction, and describe conversions at their boundaries.
-- **Classes or equivalent structures:** Include constructors, dependencies, state ownership, lifecycle, and method signatures when the design genuinely uses them. Follow the repository's language and patterns; do not introduce classes or interfaces merely to fill this section.
-- **Control and data flow:** Describe the main path through the proposed operations, important branches, transformations, state changes, and side effects. Make ownership of validation, authorization, invariant enforcement, and transaction boundaries concrete. Cover ordering, duplicate handling, cancellation, resource cleanup, and partial failure only when reachable and consequential.
+- **Function and method contracts:** Language-appropriate signatures, parameter and return types, synchronous or asynchronous behavior, preconditions, results, errors, side effects, and callers. For changed cross-module contracts, specify both sides and their connection, not unrelated functions or every private helper.
+- **Types and data shapes:** Fields, optionality, nullability, defaults, units, identifiers, valid states, validation rules, and required representation conversions. Reuse existing types by reference.
+- **Classes or equivalent structures:** Constructors, dependencies, state ownership, lifecycle, and method signatures when the design uses them.
+- **Control and data flow:** The main path, significant branches, transformations, state changes, side effects, and failure handling. Specify where validation, authorization, invariants, and transaction boundaries are enforced.
 - **Non-trivial implementation details:** Include focused code snippets or pseudocode for tricky algorithms, framework interactions, concurrency, or error handling that prose and signatures would leave ambiguous. Explain the constraint or gotcha each snippet addresses. Label illustrative pseudocode and omitted context; distinguish binding behavior from illustrative local choices. Keep signatures, types, and snippets mutually consistent and use four spaces for indentation.
-- **Persistence and integration details:** Where required, specify changed schema fields, constraints, serialization, queries, indexes, external calls, error mapping, and compatibility behavior. Ground third-party guarantees in applicable versioned evidence. Describe necessary transition constraints, but leave migration generation, execution commands, and rollout steps to implementation and planning.
+- **Persistence and integration details:** Changed schema fields, constraints, serialization, queries, indexes, external calls, error mapping, and compatibility behavior. Cite applicable versioned evidence for third-party guarantees. Describe transition constraints, but leave migration generation, execution commands, and rollout steps to implementation and planning.
 - **Behavioral acceptance and invariants:** Identify the observable outcomes, invariants, boundary conditions, and failure behavior the implementation must preserve or establish. State their owner and required result without prescribing test work, fixtures, assertions, commands, or coverage changes.
 - **Risks and deferred details:** Record concrete residual risks and non-blocking uncertainties with their impact. State which local choices remain open. Do not hide unresolved behavior, safety, or contract decisions as implementation discretion.
 
 Use Markdown code fences with the correct language for signatures and snippets. Use a diagram only when it clarifies a non-trivial interaction better than prose; do not repeat architecture diagrams without adding useful implementation detail.
-
-Prefer the simplest solution that meets the requirements and fits good existing patterns. Do not add layers, helpers, dependencies, extension points, compatibility mechanisms, or future-proofing without a current need. Do not copy an unsafe pattern for consistency; surface material scope or contract tradeoffs before proceeding.
 
 ## Keep The Phase Boundary
 
