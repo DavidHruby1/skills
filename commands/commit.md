@@ -1,7 +1,7 @@
 ---
 description: "Checks the current changes and commits them."
 model: openai/gpt-5.6-luna
-variant: high
+variant: medium
 ---
 
 I need you to commit the current changes to the repository.

@@ -27,7 +27,9 @@ If a needed skill is not discoverable, read its installed `SKILL.md` when availa
 
 Reuse accepted evidence and settled decisions. Resolve local, reversible details from source and good existing conventions rather than asking the user to choose every name or helper. Neither skill is a mandatory ceremony when the necessary context is already grounded.
 
-When a relevant contradiction appears between requirements, architecture, repository behavior, external evidence, or material assumptions, stop the investigation and workflow before recommending a resolution or writing the document. Present the conflicting claims, evidence for each, why the conflict matters, and the clarification or decision needed. Wait for the user's response. Do not silently redesign the architecture or treat a conflict as resolved because one source appears stronger. Report unrelated inconsistencies separately without expanding scope.
+When factual or technical sources disagree, first check their applicability, versions, configuration, and primary evidence. Resolve the discrepancy when the evidence supports a conclusion, explain why, and continue; a discoverable fact does not require a user decision.
+
+Pause the affected decision and do not finalize the document when requirements or accepted architectural decisions conflict, or when unresolved uncertainty could materially change required behavior, scope, a public contract, or safety. Present the conflicting claims, evidence for each, why the conflict matters, and the clarification or decision needed. Wait for the user's response before advancing that decision; independent investigation may continue. Do not silently redesign the architecture, treat authority alone as proof, or ask the user to guess unavailable facts. Report unresolved evidence honestly and unrelated inconsistencies separately without expanding scope.
 
 Context is sufficient when the affected contracts, meaningful control flow, invariant enforcement, and non-trivial implementation choices are understood. Resolve blockers before writing; defer harmless local choices rather than seeking certainty about every line of code.
 

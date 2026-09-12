@@ -1,6 +1,6 @@
 ---
 name: software-philosophy
-description: Use ONLY when writing or modifying implementation code, tests, or code comments, including bug fixes and local refactoring. Do not use for standalone planning, code review, explanations, or test-specification authoring.
+description: Apply software-design principles when planning, implementing, or reviewing a concrete software change involving interfaces, information hiding, responsibility placement, or implementation clarity. Not for general programming explanations, routine mechanical edits, or unrelated planning; read-only use provides assessment criteria, not permission to implement.
 ---
 
 # Software Philosophy

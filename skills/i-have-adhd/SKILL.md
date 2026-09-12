@@ -1,9 +1,6 @@
 ---
 name: i-have-adhd
-description: 'Use this skill only when user says the keyword `adhd`.'
-metadata:
-  tags: "ADHD, Output Style, Productivity, Formatting"
-  category: "productivity"
+description: 'Use this skill only when outputting analysis reports; when explaining something to a human; or when user says the keyword `adhd`.'
 ---
 
 # i-have-adhd

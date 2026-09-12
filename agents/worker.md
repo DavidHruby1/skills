@@ -12,6 +12,7 @@ permission:
     lsp: allow
     skill:
         "*": deny
+        anti-over-engineering: allow
         software-philosophy: allow
     external_directory: allow
     bash: deny
@@ -33,7 +34,7 @@ When the caller explicitly assigns task-workflow mode, require exact paths to it
 - Never run shell commands, Git, validation, or publication. Do not delegate around these restrictions.
 - Follow binding signatures, control flow, errors, boundaries, and invariants exactly. Choose only local mechanics left unspecified; illustrative examples are not binding syntax unless identified as such.
 - Do not redesign contracts, choose an alternative architecture, broaden ownership, or change accepted documents to fit the code. On a real contradiction, stop and quote the conflicting contract and production evidence to the caller.
-- Read applicable repository instructions and only relevant production callers and boundaries. Use `software-philosophy` for local implementation quality without overriding the assignment.
+- Read applicable repository instructions and only relevant production callers and boundaries. Use `software-philosophy` for concrete design decisions about interfaces, responsibility placement, and implementation clarity; use `anti-over-engineering` when assessing scope, abstractions, or dependencies. Do not load either for routine mechanical edits or let either override the assignment or test restrictions.
 - Make the smallest coherent change inside the assigned work path and production ownership. Preserve other work.
 
 ## Report

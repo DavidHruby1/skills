@@ -158,9 +158,9 @@
             "opencode-session-recall@2.3.0",
             {
                 "global": true,
-                "nudge": true,
-                "autoRecall": true,
-                "compactionRecall": true
+                "nudge": false,
+                "autoRecall": false,
+                "compactionRecall": false
             }
         ]
     ]
