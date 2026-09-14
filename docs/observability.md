@@ -67,9 +67,12 @@ it does not fail the event hook. No payload or filesystem error text is printed.
 Disposal drains accepted writes; abrupt process termination can lose queued data
 or leave an incomplete final line. This is diagnostic logging, not an audit log.
 
-Daily files are rotated by UTC observation date. There is no automatic deletion
-or total disk quota: remove old files when no longer needed. File permissions do
-not protect against other processes running as the same user.
+Daily files are rotated by UTC observation date. On its first write, the plugin
+removes its own JSONL files older than the seven current UTC calendar dates;
+`.gitignore` and non-matching files are left untouched. Retention is best-effort:
+an inability to delete an old file does not disable new observations. There is
+no total disk quota. File permissions do not protect against other processes
+running as the same user.
 
 ## Verification
 

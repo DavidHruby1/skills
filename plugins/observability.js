@@ -1,4 +1,4 @@
-import { appendFile, mkdir, writeFile } from "node:fs/promises";
+import { appendFile, mkdir, readdir, unlink, writeFile } from "node:fs/promises";
 import { join, parse, resolve, sep } from "node:path";
 import { homedir } from "node:os";
 import { randomUUID } from "node:crypto";
@@ -9,6 +9,7 @@ export default async ({ directory: workingDirectory, worktree }) => {
     const globalConfigDirectory = resolve(homedir(), ".config", "opencode");
     if (root === globalConfigDirectory || root.startsWith(`${globalConfigDirectory}${sep}`)) return {};
     const directory = join(root, ".opencode", "logs");
+    const logFileName = /^(\d{4}-\d{2}-\d{2})-\d+-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.jsonl$/i;
     // A process can host multiple plugin instances, so PID alone is not unique.
     const instance = `${process.pid}-${randomUUID()}`;
     const queue = [];
@@ -54,10 +55,31 @@ export default async ({ directory: workingDirectory, worktree }) => {
         return "unknown";
     }
 
+    async function prune() {
+        const oldestRetained = new Date();
+        oldestRetained.setUTCDate(oldestRetained.getUTCDate() - 6);
+        const oldestRetainedDay = oldestRetained.toISOString().slice(0, 10);
+        const entries = await readdir(directory, { withFileTypes: true });
+        await Promise.all(entries.map(async (entry) => {
+            const match = entry.isFile() && entry.name.match(logFileName);
+            if (!match || match[1] >= oldestRetainedDay) return;
+            try {
+                await unlink(join(directory, entry.name));
+            } catch (error) {
+                if (error.code !== "ENOENT") throw error;
+            }
+        }));
+    }
+
     async function drain() {
         try {
             if (!initialized) {
                 await mkdir(directory, { recursive: true, mode: 0o700 });
+                try {
+                    await prune();
+                } catch {
+                    // Retention is best-effort and must not disable new observations.
+                }
                 try {
                     await writeFile(join(directory, ".gitignore"), "*\n", { flag: "wx", mode: 0o600 });
                 } catch (error) {
