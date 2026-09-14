@@ -26,6 +26,7 @@
         "skill": "allow",
         "lsp": "allow",
         "mcp": "allow",
+        "recall*": "deny",
         "read": {
             "*": "allow",
             "**/.env": "ask",
@@ -107,6 +108,7 @@
             "color": "#f0981d"
         },
         "explore": {
+            "description": "Read-only discovery for substantial investigations across interacting code areas. Outside commands, use direct tools for small lookups; unknown ownership alone does not justify delegation.",
             "model": "openai/gpt-5.6-luna",
             "variant": "high"
         },

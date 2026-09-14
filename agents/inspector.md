@@ -1,5 +1,5 @@
 ---
-description: Read-only reviewer for Standards or Spec axes and complete task implementations against architecture, technical design, and plan
+description: Read-only Standards or Spec reviewer for medium or large review scopes. Outside commands, review small scopes directly; command review gates remain unchanged.
 mode: subagent
 temperature: 0
 permission:

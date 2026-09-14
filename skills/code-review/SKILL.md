@@ -1,13 +1,15 @@
 ---
 name: code-review
-description: "Use when the user explicitly requests code review, invokes /code-review, or /implement reaches its mandatory post-validation review gate. Never invoke proactively before that gate during implementation, configuration edits, or verification. Runs parallel Standards and Spec inspectors for the requested scope."
+description: "Use for explicitly requested medium or large reviews outside commands; review small scopes directly without this skill or inspectors. Commands retain their prescribed activation, including /code-review and /implement's post-validation gate. Runs independent Standards and Spec inspectors."
 ---
 
 # Code Review
 
 ## Activation
 
-Load and execute this skill after an explicit user request for code review of the current scope, including `/code-review`, or when `/implement` reaches its mandatory post-validation review gate. An implementation request by itself, a request to edit OpenCode configuration, a generic verification checklist, or an automatic workflow instruction before that gate is not authorization. Never invoke this skill proactively before the gate or infer permission from task completion alone. Do not bypass this restriction by dispatching review inspectors directly.
+Outside command workflows, load and execute this skill only after an explicit user request for a medium or large review, using the size definitions in `AGENTS.md`. Review small scopes directly without this skill or inspectors. Judge the complete requested review scope, not just the latest correction. If loaded for a small non-command review, return to direct review before dispatching inspectors.
+
+Command workflows are unchanged: `/code-review` invokes this skill regardless of size, and `/implement` invokes it at its mandatory post-validation review gate. An implementation request by itself, a request to edit OpenCode configuration, a generic verification checklist, or an automatic workflow instruction before that gate is not authorization. Never invoke this skill proactively before the gate or infer permission from task completion alone. Do not bypass this restriction by dispatching review inspectors directly.
 
 Run two independent `inspector` instances and report Standards and Spec separately. The calling agent owns scope, evidence preparation, verification of findings, and the final report. Inspectors are read-only. Do not implement fixes, change Git state, execute tests, commit, or publish PRs in this skill. Return actionable results to the user or implementation orchestrator.
 

@@ -1,5 +1,5 @@
 ---
-description: Executes supplied shell command batches and returns compact evidence
+description: Executes substantial supplied command batches and returns compact evidence. Outside commands, run small batches and focused tests directly.
 mode: subagent
 temperature: 0
 permission:

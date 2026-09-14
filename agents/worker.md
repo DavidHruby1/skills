@@ -1,5 +1,5 @@
 ---
-description: Implements a scoped production assignment without tests, shell, or Git access
+description: Implements substantial bounded production assignments without tests, shell, or Git access. Outside commands, keep small edits with the caller.
 mode: subagent
 temperature: 0
 permission:

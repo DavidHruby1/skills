@@ -12,11 +12,11 @@
     "opencodeProvider": "openai",
     "opencodeModel": "inherit",
     "compaction": {
-        "enabled": true,
+        "enabled": false,
         "memoryLimit": 10
     },
     "chatMessage": {
-        "enabled": true,
+        "enabled": false,
         "maxMemories": 3,
         "excludeCurrentSession": true,
         "injectOn": "first"

@@ -1,5 +1,5 @@
 ---
-description: Document writing agent that creates clear documentation for current codebase
+description: Writes substantial source-backed codebase documentation. Outside commands, keep localized documentation edits with the caller.
 mode: subagent 
 temperature: 0
 permission:

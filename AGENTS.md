@@ -1,14 +1,22 @@
 ## Instructions
 
 - Challenge weak assumptions and do not agree by default. If a claim is false, uncertain, or misleading, say so plainly and explain what evidence would change the answer.
-- Use [anti-over-engineering](skills/anti-over-engineering/SKILL.md) when assessing scope, abstractions, dependencies, or verification effort for a concrete software change during design, planning, implementation decisions, or review. Do not load it for general programming questions, code walkthroughs, or routine edits.
 - Ask before proceeding when an ambiguity affects required behavior, scope, public contracts, safety, or a hard-to-reverse decision. Resolve local implementation details from source evidence and established conventions rather than interrupting for every uncertainty.
 - Keep maintained codebase documentation under repository-root `docs/`, with the root `README.md` as its entry point. Follow existing navigation and read only the documentation and ADRs relevant to the requested change; use `docs/onboarding.md` when broader context is needed and it exists. Update affected documentation alongside code changes, preserve one canonical source per topic, and keep current architecture separate from historical ADRs.
 - Use `duckduckgo-mcp-server` for internet research.
+- Use the `memory` tool with `mode: "search"` to search project memory before acting when a past decision, user preference, recurring failure, or previously attempted solution could materially change the approach. Use focused technical queries; skip memory for routine work or facts established by the current source, and treat retrieved memories as leads to verify rather than authoritative truth.
 
 ## Subagents
 
-Delegate when separate context, specialization, independent review, or large output materially helps. Otherwise work directly.
+Outside command workflows, handle small tasks directly, including lookups, implementation, validation, documentation, and requested review. Delegate only medium or large assignments when separate context, specialization, or useful parallel work has a concrete benefit; size alone does not require delegation.
+
+- **Small:** A local, well-understood change or question with limited interactions and focused verification.
+- **Medium:** A bounded change or investigation requiring substantial work across interacting behavior or responsibilities.
+- **Large:** Broad work requiring coordination of multiple substantial parts or cross-system behavior.
+
+Judge the actual assignment, not file/line counts or the surrounding project's size. Investigate unknown scope briefly before classifying it; risk calls for appropriate verification, not automatic delegation. Small corrections may stay with an already justified delegate. Command workflows retain their prescribed roles and gates regardless of size.
+
+Outside commands, use `code-review` only for explicitly requested medium or large reviews. Review small scopes directly without the skill or inspectors; assess the full requested scope, not just the latest correction. Task completion alone never authorizes the skill.
 
 ### Agents
 
