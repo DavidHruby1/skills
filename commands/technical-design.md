@@ -45,12 +45,14 @@ Select additional content according to relevance, combining sections and omittin
 - **Types and data shapes:** Fields, optionality, nullability, defaults, units, identifiers, valid states, validation rules, and required representation conversions. Reuse existing types by reference.
 - **Classes or equivalent structures:** Constructors, dependencies, state ownership, lifecycle, and method signatures when the design uses them.
 - **Control and data flow:** The main path, significant branches, transformations, state changes, side effects, and failure handling. Specify where validation, authorization, invariants, and transaction boundaries are enforced.
-- **Non-trivial implementation details:** Include focused code snippets or pseudocode for tricky algorithms, framework interactions, concurrency, or error handling that prose and signatures would leave ambiguous. Explain the constraint or gotcha each snippet addresses. Label illustrative pseudocode and omitted context; distinguish binding behavior from illustrative local choices. Keep signatures, types, and snippets mutually consistent and use four spaces for indentation.
+- **Non-trivial implementation details:** Include focused, real code snippets in the project's language using applicable APIs, not pseudocode, for tricky algorithms, framework interactions, concurrency, or error handling that prose and signatures would leave ambiguous. Explain the constraint or gotcha each snippet addresses. Label omitted context; distinguish binding behavior from illustrative local choices. Keep signatures, types, and snippets mutually consistent and use four spaces for indentation.
 - **Persistence and integration details:** Changed schema fields, constraints, serialization, queries, indexes, external calls, error mapping, and compatibility behavior. Cite applicable versioned evidence for third-party guarantees. Describe transition constraints, but leave migration generation, execution commands, and rollout steps to implementation and planning.
 - **Behavioral acceptance and invariants:** Identify the observable outcomes, invariants, boundary conditions, and failure behavior the implementation must preserve or establish. State their owner and required result without prescribing test work, fixtures, assertions, commands, or coverage changes.
 - **Risks and deferred details:** Record concrete residual risks and non-blocking uncertainties with their impact. State which local choices remain open. Do not hide unresolved behavior, safety, or contract decisions as implementation discretion.
 
 Use Markdown code fences with the correct language for signatures and snippets. Use a diagram only when it clarifies a non-trivial interaction better than prose; do not repeat architecture diagrams without adding useful implementation detail.
+
+Optimize for fast human review: lead with the implementation approach and key contract changes, use short sections and direct language, and remove repetition or detail that does not help the reader evaluate the design.
 
 ## Keep The Phase Boundary
 

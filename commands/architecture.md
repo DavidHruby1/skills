@@ -38,6 +38,8 @@ Select additional content according to relevance, combining sections and omittin
 
 Use Markdown, adding Mermaid diagrams only when they clarify the design. Label important arrows and keep diagrams consistent with the text.
 
+Optimize for fast human review: lead with the proposed change and key decisions, use short sections and direct language, and remove repetition or detail that does not help the reader evaluate the design.
+
 ## Keep The Abstraction Boundary
 
 The architecture must let technical design proceed without inventing product behavior or reopening an unresolved architectural choice. It must also leave local implementation choices open.

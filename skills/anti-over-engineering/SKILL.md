@@ -1,6 +1,6 @@
 ---
 name: anti-over-engineering
-description: Assess whether scope, abstractions, dependencies, or verification effort are justified for a concrete software change during design, planning, implementation decisions, or code review. Not for general programming questions, code walkthroughs, routine edits, or non-software plans.
+description: Use before adding defensive guards, counters, queues, retries, fallbacks, or async coordination, and to assess whether scope, abstractions, dependencies, or verification effort are justified for a concrete software change during design, planning, implementation decisions, or code review. Not for general programming questions, code walkthroughs, routine edits, or non-software plans.
 ---
 
 ## Over-engineering
@@ -83,6 +83,44 @@ When a bad project pattern directly affects the task, do not silently copy or re
 3. the smallest better solution and its additional scope.
 
 Ask which option to use. Clearly state when the existing option is unsafe. Do not interrupt for unrelated technical debt, cosmetic issues, or personal preferences.
+
+### Require evidence for defensive code
+
+Defensive code is not free. Guards, counters, queues, retries, fallbacks,
+and coordination flags add state and maintenance obligations. Do not add
+them merely because a failure is imaginable or an operation is asynchronous.
+
+Before adding a defensive mechanism:
+
+1. Identify the concrete failure: what user-visible behavior, data guarantee,
+   or required contract would break?
+2. Trace how it can happen through current callers and lifecycle. Check
+   existing validation, ownership, framework guarantees, and interaction
+   constraints. Do not assume events can overlap merely because they are async.
+3. Check whether the failure is already prevented at the responsible boundary.
+   Do not duplicate the same protection across layers without a distinct need.
+4. Prefer removing the invalid state or unnecessary overlap through a simpler
+   flow, provided this preserves required behavior. Add coordination only
+   when the overlap itself is needed.
+5. Use the smallest protection that addresses the demonstrated failure.
+   If no concrete failure and reachable trigger can be identified, omit it.
+
+"The response might arrive late" is not sufficient justification. Identify
+which still-live state it could incorrectly change and the consequence.
+Concurrent operations do not automatically conflict.
+
+For non-obvious protection, be able to justify it briefly:
+"Without X, the supported sequence A -> B -> C causes Y."
+Ground this in current code or an explicit contract, not hypothetical future
+callers. Do not add a justification comment to every ordinary guard.
+
+Respect established internal contracts instead of repeatedly validating
+trusted values. Keep required validation at trust boundaries and protections
+for concrete security or data-integrity risks.
+
+Do not replace this rule with a blanket ban on counters or guards.
+Do not ask the user to adjudicate every hypothetical risk; resolve local
+questions from source evidence and ask only about consequential requirements.
 
 ### Patterns and abstraction
 
