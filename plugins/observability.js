@@ -42,17 +42,24 @@ export default async ({ directory: workingDirectory, worktree }) => {
         return error ? (errorTypes.has(error.name) ? error.name : "UnknownError") : undefined;
     }
 
-    function toolErrorCategory(error) {
-        if (typeof error !== "string") return "unknown";
-        if (error.startsWith("ENOENT:") || error.startsWith("NotFoundError:")) return "not_found";
-        if (error.startsWith("EACCES:") || error.startsWith("EPERM:") || error.startsWith("PermissionDeniedError:")) {
-            return "permission_denied";
-        }
-        if (error.startsWith("ETIMEDOUT:") || error.startsWith("TimeoutError:")) return "timeout";
-        if (error.startsWith("AbortError:") || error.startsWith("CancelledError:") || error.startsWith("CanceledError:")) {
-            return "cancelled";
-        }
-        return "unknown";
+    function toolErrorInfo(error) {
+        if (typeof error !== "string") return { errorType: "UnknownToolError", errorCategory: "unknown" };
+        const signatures = [
+            { pattern: /(?:^|\s)ENOENT(?::|\s)/, errorType: "ENOENT", errorCategory: "not_found" },
+            { pattern: /(?:^|\s)NotFoundError:/, errorType: "NotFoundError", errorCategory: "not_found" },
+            { pattern: /(?:^|\s)EACCES(?::|\s)/, errorType: "EACCES", errorCategory: "permission_denied" },
+            { pattern: /(?:^|\s)EPERM(?::|\s)/, errorType: "EPERM", errorCategory: "permission_denied" },
+            { pattern: /(?:^|\s)PermissionDeniedError:/, errorType: "PermissionDeniedError", errorCategory: "permission_denied" },
+            { pattern: /(?:^|\s)ETIMEDOUT(?::|\s)/, errorType: "ETIMEDOUT", errorCategory: "timeout" },
+            { pattern: /(?:^|\s)TimeoutError:/, errorType: "TimeoutError", errorCategory: "timeout" },
+            { pattern: /(?:^|\s)AbortError:/, errorType: "AbortError", errorCategory: "cancelled" },
+            { pattern: /(?:^|\s)CancelledError:/, errorType: "CancelledError", errorCategory: "cancelled" },
+            { pattern: /(?:^|\s)CanceledError:/, errorType: "CanceledError", errorCategory: "cancelled" },
+        ];
+        const match = signatures.find(({ pattern }) => pattern.test(error));
+        return match
+            ? { errorType: match.errorType, errorCategory: match.errorCategory }
+            : { errorType: "UnknownToolError", errorCategory: "unknown" };
     }
 
     async function prune() {
@@ -147,6 +154,7 @@ export default async ({ directory: workingDirectory, worktree }) => {
                         reasoningTokens: m.tokens.reasoning,
                         cacheReadTokens: m.tokens.cache.read, cacheWriteTokens: m.tokens.cache.write,
                         reportedCost: m.cost, errorType: errorType(m.error),
+                        ...(m.error ? { errorSource: "assistant_message" } : {}),
                     }, `llm:${key}`);
                 } else if (event.type === "message.part.updated" && p.part.type === "tool") {
                     const part = p.part;
@@ -166,7 +174,7 @@ export default async ({ directory: workingDirectory, worktree }) => {
                             partID: part.id, callID: part.callID, agent,
                             tool: part.tool, status: state.status,
                             durationMs: state.time.end - state.time.start,
-                            ...(state.status === "error" ? { errorCategory: toolErrorCategory(state.error) } : {}),
+                            ...(state.status === "error" ? { ...toolErrorInfo(state.error), errorSource: "tool" } : {}),
                         }, `tool:${toolKey}`);
                     }
                 } else if (event.type === "session.created") {
@@ -186,7 +194,7 @@ export default async ({ directory: workingDirectory, worktree }) => {
                 } else if (event.type === "session.error") {
                     record({
                         kind: "session", sessionID: p.sessionID ?? null,
-                        status: "error", errorType: errorType(p.error),
+                        status: "error", errorType: errorType(p.error), errorSource: "session",
                     });
                 } else if (["permission.updated", "permission.asked", "permission.v2.asked"].includes(event.type)) {
                     // SDK generations expose different envelopes; never copy patterns or metadata.
