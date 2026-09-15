@@ -1,6 +1,6 @@
 ---
 name: i-have-adhd
-description: 'Use this skill only when outputting analysis reports; when explaining something to a human; or when user says the keyword `adhd`.'
+description: 'Use this skill only when outputting analysis reports to human or when user mentions the keyword `adhd`. Otherwise dont use this skill.'
 ---
 
 # i-have-adhd
