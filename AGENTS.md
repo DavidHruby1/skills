@@ -5,7 +5,6 @@
 - Keep maintained codebase documentation under repository-root `docs/`, with the root `README.md` as its entry point. Follow existing navigation and read only the documentation and ADRs relevant to the requested change; use `docs/onboarding.md` when broader context is needed and it exists. Update affected documentation alongside code changes, preserve one canonical source per topic, and keep current architecture separate from historical ADRs.
 - Use `duckduckgo-mcp-server` for internet research.
 - Use the `memory` tool with `mode: "search"` to search project memory before acting when a past decision, user preference, recurring failure, or previously attempted solution could materially change the approach. Use focused technical queries; skip memory for routine work or facts established by the current source, and treat retrieved memories as leads to verify rather than authoritative truth.
-- Never create or update memories or the user profile unless the user explicitly asks you to remember or store something. In particular, do not call `memory` with `mode: "add"` or write through `mode: "profile"` on your own initiative.
 
 ## Subagents
 
