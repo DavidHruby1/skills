@@ -8,6 +8,8 @@ I need you to commit the current changes to the repository. If there is more cha
 
 Don't waste tokens on reading unrelated history. You are supposed to commit as quickly as possible.
 
+This command is strictly limited to creating commits and pushing them. **NEVER create, open, update, or otherwise modify a pull request or merge request. Do not run `gh`, `glab`, or any equivalent PR/MR command, even if creating a PR/MR would normally be the next step. Stop after `git push`.**
+
 ## Process
 
 Use **ONLY** these commands:
