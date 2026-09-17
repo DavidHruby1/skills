@@ -2,6 +2,14 @@
     "$schema": "https://opencode.ai/config.json",
     "autoupdate": false,
     "lsp": true,
+    "references": {
+        "isman-frontend": "~/projects/isman/isman-frontend-v3-update/",
+        "isman-backend": "~/projects/isman/isman-backend/",
+        "isman-worker": "~/projects/isman/worker-light/",
+        "mansel-frontend": "~/projects/mansel/frontend-v3/",
+        "mansel-backend": "~/projects/mansel/backend-v3/",
+        "mansel-vck": "~/projects/mansel/mansel-vck1-vue3/",
+    },
     "compaction": {
         "auto": true,
         "prune": true,

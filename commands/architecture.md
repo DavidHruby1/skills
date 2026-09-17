@@ -15,11 +15,11 @@ Load `software-philosophy` for design judgment and `anti-over-engineering` to ke
 
 1. Read the project's governing instructions and the documentation under `docs/` relevant to this task.
 2. Interpret `$ARGUMENTS` as either:
-   - a task identifier or path resolving to `.opencode/tasks/task-xxx/`, in which case require and read its `PROPOSAL.md`; or
+   - a task identifier or path resolving to `.opencode/tasks/task-xxx/`, in which case read its `PROPOSAL.md` when present; or
    - the proposal text itself.
 
    Resolve the output task directory from the explicit argument, conversation, and project conventions. If proposal text is supplied but one task directory cannot be identified unambiguously, ask instead of inventing an identifier or selecting the newest task. If `ARCHITECTURE.md` already exists, read it and always ask the user before reconciling, replacing, or overwriting it.
-3. Treat the proposal as the user's intended outcome, scope, constraints, and suggested solution, not as proof that its technical assumptions are correct. Do not silently add product behavior or discard a stated requirement. Surface conflicts with source or existing decisions and resolve them with the user.
+3. Treat any proposal (document or supplied text) as the user's intended outcome, scope, constraints, and suggested solution, not as proof that its technical assumptions are correct. When no proposal is available, derive the intended outcome from the conversation and existing task artifacts and resolve gaps with the user. Do not silently add product behavior or discard a stated requirement. Surface conflicts with source or existing decisions and resolve them with the user.
 4. Inspect enough source to understand current behavior, affected boundaries, callers, data ownership, integrations, and constraints. For broad or uncertain areas, launch independent `explore` agents for distinct flows or boundaries; use none for a small, well-located change. Ask each agent primarily for a prioritized list of relevant files and symbols, why each matters, and source locations supporting its map. After they return, personally read the consequential files and verify their claims before using them. Subagent summaries are navigation, not source context or authority.
 5. Resolve discoverable facts from source and documentation. Use `grilling` for unclear requirements, conflicting assumptions, or consequential decisions that need the user. Use `research` only for a concrete external uncertainty. Resolve every architectural blocker before writing; leave only local implementation choices to technical design.
 
@@ -53,7 +53,7 @@ Once blockers are resolved, write `ARCHITECTURE.md` directly without another app
 
 Read it back and correct concrete issues. Verify that it:
 
-- preserves the proposal's accepted outcomes, scope, and constraints without inventing behavior;
+- preserves the proposal's accepted outcomes, scope, and constraints when a proposal is available, without inventing behavior;
 - is consistent with inspected source, flows, contracts, decisions, and diagrams;
 - assigns ownership for relevant invariants, data, and side effects;
 - contains no unresolved architectural decisions or disguised blockers;

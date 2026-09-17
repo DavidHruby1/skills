@@ -21,7 +21,7 @@ Load `software-philosophy` for design judgment and `anti-over-engineering` to ke
    - an architecture path or design focus that unambiguously identifies that task.
 
    Resolve the output task directory from the explicit argument, conversation, and project conventions. If one task cannot be identified unambiguously, ask instead of inventing an identifier or selecting the newest task. If `TECHNICAL-DESIGN.md` already exists, read it and always ask the user before reconciling, replacing, or overwriting it.
-3. Require and read the task's `ARCHITECTURE.md` and `PROPOSAL.md`. Treat the accepted architecture as the primary technical authority and the proposal as secondary context for the intended outcome, scope, constraints, and any supplied Definition of Done. If either document is missing, stop and ask for it. Do not substitute conversation text or another artifact. If the inputs conflict in a way that could change the intended outcome, scope, behavior, or technical contract, present the conflict and resolve it with the user rather than silently overriding either input.
+3. Require and read the task's `ARCHITECTURE.md`; read `PROPOSAL.md` when present. Treat the accepted architecture as the primary technical authority and the proposal, when available, as secondary context for the intended outcome, scope, constraints, and any supplied Definition of Done. If `ARCHITECTURE.md` is missing, stop and ask for it. Do not substitute conversation text or another artifact. If the inputs conflict in a way that could change the intended outcome, scope, behavior, or technical contract, present the conflict and resolve it with the user rather than silently overriding either input.
 4. Treat accepted architectural decisions as constraints. Do not redesign the architecture, add product behavior, or assume memory of prior sessions. Distinguish verified current behavior from proposed behavior and verify consequential or potentially stale claims against source.
 5. Inspect enough source to understand affected implementation locations, callers, types, control flow, state ownership, integrations, and reusable patterns. For broad or uncertain areas, launch independent `explore` agents for distinct flows or boundaries; use none for a small, well-located change. Ask each agent primarily for a prioritized list of relevant files and symbols, why each matters, and supporting source locations. After they return, personally read the consequential files and verify their claims. Subagent reports are navigation, not source context or authority.
 6. Resolve discoverable facts from source and documentation. Use `grilling` for unclear requirements, conflicting assumptions, or consequential user-owned decisions. Use `research` only for a concrete external uncertainty. Resolve blockers before writing; leave harmless local choices to implementation.
@@ -30,7 +30,7 @@ Context is sufficient when the affected contracts, meaningful control flow, stat
 
 ## Specify The Implementation
 
-Lead with the implementation approach and key contract changes. Identify the architecture and proposal used, affected paths and symbols, and contracts being reused, changed, or introduced. Label proposed files and symbols that do not exist yet.
+Lead with the implementation approach and key contract changes. Identify the architecture and, when present, the proposal used, affected paths and symbols, and contracts being reused, changed, or introduced. Label proposed files and symbols that do not exist yet.
 
 Include only relevant material, combining sections where that improves readability:
 
@@ -56,7 +56,7 @@ Once blockers are resolved, write `TECHNICAL-DESIGN.md` directly without another
 
 Read it back and correct concrete issues. Verify that it:
 
-- follows the accepted architecture and preserves the proposal's intended outcome, scope, constraints, and any supplied Definition of Done;
+- follows the accepted architecture and preserves the proposal's intended outcome, scope, constraints, and any supplied Definition of Done when a proposal is available;
 - is consistent across signatures, types, state, callers, snippets, control flow, errors, and side effects;
 - assigns ownership for relevant state, invariants, validation, authorization, and external effects;
 - distinguishes existing and proposed symbols, binding contracts and examples, and verified evidence and residual risk;

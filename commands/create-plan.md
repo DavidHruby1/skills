@@ -14,8 +14,8 @@ Testing is outside this command. Preserve behavioral acceptance and invariants, 
 ## Establish Context
 
 1. Read the project's governing instructions. Interpret `$ARGUMENTS` as a task identifier or path resolving to `.opencode/tasks/task-xxx/`, or as an input-document path or planning focus that unambiguously identifies that task. Ask rather than inventing an identifier or selecting the newest task. If `PLAN.md` already exists, read it and always ask before reconciling, replacing, or overwriting it.
-2. Require and read the task's `PROPOSAL.md`, `ARCHITECTURE.md`, and `TECHNICAL-DESIGN.md` in full. Architecture and technical design are the binding design authorities. Use the proposal as secondary context for intended outcome, scope, constraints, and any supplied Definition of Done; do not revive proposal suggestions rejected by the accepted design.
-3. If an input is missing, or the documents conflict in a way that changes scope, behavior, contracts, or work sequencing, stop and resolve it with the normal question tool. Do not inspect source, delegate exploration, use `grilling` or `research`, or invent missing design decisions. The accepted documents must contain the context needed to plan their implementation.
+2. Require and read the task's `ARCHITECTURE.md` and `TECHNICAL-DESIGN.md` in full; read `PROPOSAL.md` when present. Architecture and technical design are the binding design authorities. Use the proposal, when available, as secondary context for intended outcome, scope, constraints, and any supplied Definition of Done; do not revive proposal suggestions rejected by the accepted design.
+3. If a required input is missing, or the documents conflict in a way that changes scope, behavior, contracts, or work sequencing, stop and resolve it with the normal question tool. Do not inspect source, delegate exploration, use `grilling` or `research`, or invent missing design decisions. The accepted documents must contain the context needed to plan their implementation.
 
 Context is sufficient when the complete outcome can be divided into executable PRs without inventing a product or design decision.
 
@@ -27,7 +27,7 @@ Target at most about 500 affected code lines per PR, estimated as additions plus
 
 Write a concise Markdown plan containing only applicable information:
 
-- **Basis and completion:** Identify all three input documents, the intended outcome, scope, non-goals, binding cross-PR constraints, and coverage of every supplied Definition of Done item.
+- **Basis and completion:** Identify the input documents and the proposal when present, the intended outcome, scope, non-goals, binding cross-PR constraints, and coverage of every supplied Definition of Done item.
 - **Tracking and PR map:** State the stable task ID and exact tracking repository as `host/namespace/project`. For every PR, provide its stable `pr-id`, outcome, repository-qualified `source`, `start`, `initial-target`, and `final-integration-target`, explicit dependency `pr-id` values, and exact target-transition rule. Write branch references as `host/namespace/project:branch` and use `none` where applicable.
 - **One phase per PR:** Give the estimated affected code lines and any size rationale; affected paths or symbols and production ownership; ordered implementation steps; precise references to binding architecture and technical-design sections; dependencies and safe intermediate state; observable completion, acceptance criteria, and invariants.
 - **Integrated completion and risks:** Map cross-PR behavior and Definition of Done coverage to the responsible phases. Include only concrete residual execution risks; do not defer missing contracts or decisions.
@@ -38,7 +38,7 @@ Reference the accepted documents instead of duplicating their architecture, sign
 
 Once blockers are resolved, write `PLAN.md` directly. Follow the input documents' language convention, or the user's language when none exists.
 
-Invoke `plan-auditor` with the project root and exact paths to `PLAN.md`, `PROPOSAL.md`, `ARCHITECTURE.md`, and `TECHNICAL-DESIGN.md`. Correct evidence-backed `REWORK` findings without changing the inputs, then resume the same auditor after substantive corrections. If it reports conflicting inputs or a missing user-owned decision, ask the user. Stop on an unresolved `BLOCKED`; never claim a pass or substitute another agent.
+Invoke `plan-auditor` with the project root and exact paths to `PLAN.md`, `ARCHITECTURE.md`, and `TECHNICAL-DESIGN.md`, plus `PROPOSAL.md` when present. Correct evidence-backed `REWORK` findings without changing the inputs, then resume the same auditor after substantive corrections. If it reports conflicting inputs or a missing user-owned decision, ask the user. Stop on an unresolved `BLOCKED`; never claim a pass or substitute another agent.
 
 After a verified audit `PASS`, invoke `ticket-master` with `Action: reconcile`, the project root, exact plan path, task ID, tracking repository, and complete PR map. `ticket-master` alone owns provider issue discovery and writes. Tracking failure does not invalidate the audited plan; report the exact partial or blocked outcome and stop.
 
