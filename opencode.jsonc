@@ -5,7 +5,7 @@
     "compaction": {
         "auto": true,
         "prune": true,
-        "reserved": 100000
+        "reserved": 150000
     },
     "mcp": {
         "duckduckgo": {
@@ -156,7 +156,6 @@
     },
     "plugin": [
         "./plugins/codex-identity.js",
-        "./plugins/large-read-guard.js",
         "./plugins/observability.js",
         "opencode-mem@2.26.0",
         [

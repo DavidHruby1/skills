@@ -1,5 +1,5 @@
 ---
-description: Create a source-backed high-level architecture for a feature or refactor, with depth proportional to its scope and risk.
+description: Create a concise, source-backed architecture for a feature or refactor.
 agent: build
 ---
 
@@ -7,63 +7,56 @@ agent: build
 
 Invocation arguments: `$ARGUMENTS`.
 
-Create the active task's `.opencode/task-xxx/ARCHITECTURE.md` in the project. This document defines the high-level solution and the reasons behind it. A later `/technical-design` command will develop the low-level specification; a subsequent plan will organize implementation. Produce only the architecture document. Do not invoke those commands, implement code, change other task artifacts, commit, or publish anything.
+Create `.opencode/tasks/task-xxx/ARCHITECTURE.md` for the identified task. The document defines the accepted high-level solution and the reasons behind it. A later `/technical-design` command will specify implementation details. Produce only the architecture document; do not implement code, modify other task artifacts, invoke later workflow commands, commit, or publish.
 
-Load `software-philosophy` for design judgment. This command governs the required artifact, phase boundaries, and completion criteria.
+Load `software-philosophy` for design judgment and `anti-over-engineering` to keep scope and complexity justified. They are decision lenses; this command defines the artifact, phase boundary, and completion criteria.
 
 ## Establish Context
 
-1. Read the project's governing instructions and relevant documentation. Read `docs/onboarding.md` when broader project context is needed and it exists.
-2. Resolve the task directory from explicit arguments, the conversation, and project task conventions. If these do not identify one task unambiguously, ask rather than selecting the newest directory or inventing a task identifier. The output belongs in the project's `.opencode/task-xxx/ARCHITECTURE.md`, not the global OpenCode configuration directory.
-3. Require and read the task's `.opencode/task-xxx/REQUIREMENTS.md` as the authoritative user spec. It contains the brainstorm, proposed solution, Definition of Done, constraints, and other requirements to refine through this workflow. Read relevant existing artifacts, including any existing architecture. Do not modify or silently override the requirements; if they conflict with existing decisions, explain the conflict and ask. Use the supplied Definition of Done as the description of how the completed change must behave. Do not invent additional outcomes or turn it into a generic engineering checklist. Reference authoritative requirements rather than duplicating them unnecessarily.
-4. Inspect enough source to establish the current behavior, affected boundaries, relevant callers, data ownership, infrastructure, and constraints. Reuse existing research where it is sufficient; verify consequential or potentially stale claims in source. Do not inventory the entire repository or map every function.
-5. Resolve factual questions from source and documentation. Ask a focused batch of questions only when missing information affects required behavior, scope, ownership, public contracts, safety, or an architectural tradeoff. If evidence contradicts a requirement or prior decision, explain the conflict and ask rather than silently overriding it. Use the `grilling` skill for this alignment. Use the `research` skill only when a concrete external uncertainty warrants it.
+1. Read the project's governing instructions and the documentation under `docs/` relevant to this task.
+2. Interpret `$ARGUMENTS` as either:
+   - a task identifier or path resolving to `.opencode/tasks/task-xxx/`, in which case require and read its `PROPOSAL.md`; or
+   - the proposal text itself.
 
-Context is sufficient when the intended outcome, relevant current state, affected boundaries, and material architectural decisions are understood. Low-level implementation details need not be resolved. Do not write a finalized architecture while a blocking question remains, but do not seek certainty about every implementation detail.
+   Resolve the output task directory from the explicit argument, conversation, and project conventions. If proposal text is supplied but one task directory cannot be identified unambiguously, ask instead of inventing an identifier or selecting the newest task. If `ARCHITECTURE.md` already exists, read it and always ask the user before reconciling, replacing, or overwriting it.
+3. Treat the proposal as the user's intended outcome, scope, constraints, and suggested solution, not as proof that its technical assumptions are correct. Do not silently add product behavior or discard a stated requirement. Surface conflicts with source or existing decisions and resolve them with the user.
+4. Inspect enough source to understand current behavior, affected boundaries, callers, data ownership, integrations, and constraints. For broad or uncertain areas, launch independent `explore` agents for distinct flows or boundaries; use none for a small, well-located change. Ask each agent primarily for a prioritized list of relevant files and symbols, why each matters, and source locations supporting its map. After they return, personally read the consequential files and verify their claims before using them. Subagent summaries are navigation, not source context or authority.
+5. Resolve discoverable facts from source and documentation. Use `grilling` for unclear requirements, conflicting assumptions, or consequential decisions that need the user. Use `research` only for a concrete external uncertainty. Resolve every architectural blocker before writing; leave only local implementation choices to technical design.
+
+Context is sufficient when the intended outcome, verified current state, affected boundaries, and consequential architectural decisions are understood.
 
 ## Design The Architecture
 
-Always make the problem, scope, proposed approach, affected responsibilities, and rationale clear, even when combined into a short narrative. Distinguish the existing state from the proposed change. Identify what is reused, changed, or introduced without documenting unaffected infrastructure.
+Lead with the proposed change and key decisions. Clearly distinguish verified current behavior from the proposed design and label components that do not exist yet.
 
-Select additional content according to relevance, combining sections and omitting irrelevant topics rather than filling a template with `N/A`. Do not impose length or diagram quotas, exhaustive checklists, mandatory external research, or mandatory subagent reviews.
+Include only relevant material, combining sections where that improves readability:
 
-- **Scope and constraints:** Explicit exclusions and binding product, technical, operational, and quality requirements.
-- **Structure and responsibilities:** Module or system boundaries, dependency direction, responsibility for business rules, data ownership, and sources of truth. Use repository paths to anchor existing components where useful. Clearly label proposed components that do not exist yet.
-- **Runtime and data flow:** The main scenario, state changes, side effects, synchronous or asynchronous boundaries, and architecturally significant failure paths.
-- **Invariants:** Required properties, their scope and enforcing boundaries, and observable contracts preserved by a refactor.
-- **API and data contracts:** Architecturally significant operations, data meanings, relationships, compatibility requirements, trust boundaries, and transaction boundaries. Describe schema shape only where it determines the design; leave complete field catalogs and implementation schemas to technical design.
-- **Decisions and tradeoffs:** The choice, rationale, accepted costs, and relevant alternatives. Link existing ADRs rather than creating separate decision documents as part of this command.
-- **Transition and operation:** Coexistence, migration, rollout, rollback constraints, and observability at an architectural level; leave execution steps to the plan.
-- **Risks and remaining questions:** Record concrete residual risks and non-blocking uncertainties with their impact. Separate questions safely deferred to technical design from decisions that must be resolved before writing this document.
+- **Problem and scope:** Intended outcomes, non-goals, binding constraints, and observable success.
+- **Current state:** Only the existing behavior and boundaries needed to evaluate the change.
+- **Structure and responsibilities:** Ownership, module or system boundaries, dependency direction, reused and proposed components, data ownership, and sources of truth.
+- **Runtime and data flow:** Main scenarios, state changes, side effects, sync or async boundaries, and architecturally significant failures.
+- **Invariants and contracts:** Required guarantees, enforcing boundaries, trust boundaries, and compatibility or transaction semantics where relevant.
+- **Decisions and trade-offs:** Consequential choices, rationale, accepted costs, and credible rejected alternatives. Link applicable ADRs rather than creating new ones.
+- **Transition and operation:** Migration, coexistence, rollout, rollback, and observability only when they affect the architecture.
+- **Relevant files:** Repository-relative files that are important for understanding or implementing the feature, with a short reason for each. Mark proposed paths when the architecture requires a new file. Keep the list focused on architectural ownership and boundaries.
+- **Risks:** Concrete residual risks, their impact, and mitigation or verification direction. Do not include remaining questions; resolve them before finalizing the document.
 
-Use Markdown, adding Mermaid diagrams only when they clarify the design. Label important arrows and keep diagrams consistent with the text.
+Use only ASCII diagrams, and only when they make a boundary or flow clearer than prose. Keep them small, label important arrows, and make the surrounding text authoritative.
 
-Optimize for fast human review: lead with the proposed change and key decisions, use short sections and direct language, and remove repetition or detail that does not help the reader evaluate the design.
+Keep the document at architecture level: define responsibilities, boundaries, flows, guarantees, and decisions without function signatures, class inventories, implementation snippets, detailed algorithms, test cases, task breakdowns, PR stages, or ordered implementation steps. It must be self-contained enough for technical design without repeating source excerpts or prescribing harmless local choices.
 
-## Keep The Abstraction Boundary
-
-The architecture must let technical design proceed without inventing product behavior or reopening an unresolved architectural choice. It must also leave local implementation choices open.
-
-- Describe responsibilities and contracts, not function signatures, class inventories, method bodies, implementation snippets, or detailed algorithms.
-- Cite existing symbols only when they help locate evidence or identify an important boundary; do not prescribe a symbol-by-symbol change list.
-- Include only architectural failure modes and gotchas. Leave local coding pitfalls and detailed test cases to technical design.
-- Do not produce task breakdowns, PR stages, estimates, or ordered implementation instructions. A necessary migration ordering constraint is architectural; the steps to execute it belong in the plan.
-- Make binding requirements and chosen architectural decisions distinguishable from illustrative examples and deferred implementation choices.
-- Keep the artifact self-contained enough for another agent to use without this conversation. Link the task inputs and relevant source or documentation supporting consequential claims; do not copy large source excerpts.
+Optimize for fast human review. Use short sections and direct language, omit irrelevant topics instead of writing `N/A`, remove repetition, and stop at the shortest document that fully communicates the architecture. If the design cannot remain reviewable, narrow or split the task rather than producing an exhaustive repository narrative.
 
 ## Write And Verify
 
-Once the necessary context is available and blocking questions are resolved, write `ARCHITECTURE.md` directly without a separate approval round. Follow the project's documentation language convention, or the user's language when none exists. If the file already exists, reconcile the new request with its current content and preserve unrelated user decisions; ask if they conflict.
+Once blockers are resolved, write `ARCHITECTURE.md` directly without another approval round. Follow the project's documentation language, or the user's language when none exists.
 
-Review the written document for:
+Read it back and correct concrete issues. Verify that it:
 
-- Alignment with the supplied requirements and Definition of Done, without new product behavior.
-- Consistency between the current-state evidence, proposed responsibilities, flows, contracts, diagrams, and decisions.
-- Explicit ownership of relevant invariants and meaningful side effects.
-- No unresolved architectural blockers disguised as implementation details.
-- No unnecessary sections, duplicated requirements, speculative infrastructure, or low-level specification.
-- Correct output location and valid references to the task inputs and inspected source.
+- preserves the proposal's accepted outcomes, scope, and constraints without inventing behavior;
+- is consistent with inspected source, flows, contracts, decisions, and diagrams;
+- assigns ownership for relevant invariants, data, and side effects;
+- contains no unresolved architectural decisions or disguised blockers;
+- stays concise, high-level, self-contained, and grounded in valid references.
 
-For this documentation-only command, verify content and references; do not run application tests or builds unless a specific architectural uncertainty requires execution. Correct concrete issues and stop when the document is sufficient for technical design.
-
-Finish with the written path, a brief explanation of the chosen depth, and any material residual risks or non-blocking questions. Do not claim the architecture was implemented or runtime-validated.
+Do not run application tests or builds unless execution is necessary to resolve a specific architectural fact. Finish with the written path, a brief note on the chosen depth, and material risks. Do not claim implementation or runtime validation.

@@ -7,73 +7,60 @@ agent: build
 
 Invocation arguments: `$ARGUMENTS`.
 
-Create the active task's `.opencode/task-xxx/TECHNICAL-DESIGN.md` in the project. This document develops `ARCHITECTURE.md` into a low-level specification that a later plan can organize into implementation work. Produce only the design document. Do not invoke subsequent commands, implement code, change other task artifacts, commit, or publish anything.
+Create `.opencode/tasks/task-xxx/TECHNICAL-DESIGN.md` for the identified task. The document develops its accepted `ARCHITECTURE.md` into a low-level specification that a later plan can organize into implementation work. Produce only the technical design; do not implement code, modify other task artifacts, invoke later workflow commands, commit, or publish.
 
-Testing is completed before `/implement`. Preserve behavioral acceptance and invariants in the design, but do not include test source or paths, test commands, fixtures, assertions, test-change instructions, or test implementation details.
+Testing is not a concern of this command. Do not include or perform test work.
 
-Load `software-philosophy` for design judgment. This command governs the required artifact, phase boundaries, and completion criteria.
+Load `software-philosophy` for design judgment and `anti-over-engineering` to keep scope, abstractions, state, and complexity justified. They are decision lenses; this command defines the artifact, phase boundary, and completion criteria.
 
 ## Establish Context
 
-1. Read the project's governing instructions and relevant documentation. Read `docs/onboarding.md` when broader project context is needed and it exists.
-2. Resolve the task directory from explicit arguments, the conversation, and project task conventions. Arguments may identify the task, its architecture document, or a focus within it. If these do not identify one task unambiguously, ask rather than selecting the newest directory or inventing a task identifier. The output belongs in the project's `.opencode/task-xxx/TECHNICAL-DESIGN.md`, not the global OpenCode configuration directory.
-3. Require and read the task's `.opencode/task-xxx/REQUIREMENTS.md` as the authoritative user spec, together with `ARCHITECTURE.md`, its supplied Definition of Done, and relevant existing artifacts, including any existing design. If the requirements file or architecture is missing, or its acceptance is unclear, ask for the intended input or confirmation before designing against it. Do not modify or silently override the requirements, create an architecture as a substitute, or require a new approval marker or status file.
-4. Treat accepted scope, behavior, and architectural decisions as constraints. Use only the current conversation and available artifacts; do not assume memory of the architecture session. Reference requirements rather than duplicating them, and do not turn the Definition of Done into a generic engineering checklist.
-5. Inspect the affected source, relevant callers, existing types, and dependency versions needed to establish implementation contracts and reusable patterns. Verify consequential or potentially stale claims against source. Do not inventory every function or inspect unrelated modules for completeness.
+1. Read the project's governing instructions and the documentation and ADRs under `docs/` relevant to this task.
+2. Interpret `$ARGUMENTS` as either:
+   - a task identifier or path resolving to `.opencode/tasks/task-xxx/`; or
+   - an architecture path or design focus that unambiguously identifies that task.
 
-## Resolve Missing Context
+   Resolve the output task directory from the explicit argument, conversation, and project conventions. If one task cannot be identified unambiguously, ask instead of inventing an identifier or selecting the newest task. If `TECHNICAL-DESIGN.md` already exists, read it and always ask the user before reconciling, replacing, or overwriting it.
+3. Require and read the task's `ARCHITECTURE.md` and `PROPOSAL.md`. Treat the accepted architecture as the primary technical authority and the proposal as secondary context for the intended outcome, scope, constraints, and any supplied Definition of Done. If either document is missing, stop and ask for it. Do not substitute conversation text or another artifact. If the inputs conflict in a way that could change the intended outcome, scope, behavior, or technical contract, present the conflict and resolve it with the user rather than silently overriding either input.
+4. Treat accepted architectural decisions as constraints. Do not redesign the architecture, add product behavior, or assume memory of prior sessions. Distinguish verified current behavior from proposed behavior and verify consequential or potentially stale claims against source.
+5. Inspect enough source to understand affected implementation locations, callers, types, control flow, state ownership, integrations, and reusable patterns. For broad or uncertain areas, launch independent `explore` agents for distinct flows or boundaries; use none for a small, well-located change. Ask each agent primarily for a prioritized list of relevant files and symbols, why each matters, and supporting source locations. After they return, personally read the consequential files and verify their claims. Subagent reports are navigation, not source context or authority.
+6. Resolve discoverable facts from source and documentation. Use `grilling` for unclear requirements, conflicting assumptions, or consequential user-owned decisions. Use `research` only for a concrete external uncertainty. Resolve blockers before writing; leave harmless local choices to implementation.
 
-Use the `grilling` skill when unclear requirements, conflicting assumptions, or consequential user-owned decisions need clarification. Use the `research` skill when a material implementation question needs repository or external evidence. Load the applicable skill and follow its instructions rather than duplicating its protocol.
-
-If a needed skill is not discoverable, read its installed `SKILL.md` when available; if it is unavailable, report the limitation rather than claiming it ran. Skills and subagents supply context only. Synthesize the final document yourself, incorporating settled decisions and consequential evidence without creating separate research or grilling artifacts.
-
-Reuse accepted evidence and settled decisions. Resolve local, reversible details from source and good existing conventions rather than asking the user to choose every name or helper. Neither skill is a mandatory ceremony when the necessary context is already grounded.
-
-When factual or technical sources disagree, first check their applicability, versions, configuration, and primary evidence. Resolve the discrepancy when the evidence supports a conclusion, explain why, and continue; a discoverable fact does not require a user decision.
-
-Pause the affected decision and do not finalize the document when requirements or accepted architectural decisions conflict, or when unresolved uncertainty could materially change required behavior, scope, a public contract, or safety. Present the conflicting claims, evidence for each, why the conflict matters, and the clarification or decision needed. Wait for the user's response before advancing that decision; independent investigation may continue. Do not silently redesign the architecture, treat authority alone as proof, or ask the user to guess unavailable facts. Report unresolved evidence honestly and unrelated inconsistencies separately without expanding scope.
-
-Context is sufficient when the affected contracts, meaningful control flow, invariant enforcement, and non-trivial implementation choices are understood. Resolve blockers before writing; defer harmless local choices rather than seeking certainty about every line of code.
+Context is sufficient when the affected contracts, meaningful control flow, state ownership, invariant enforcement, and consequential implementation choices are understood.
 
 ## Specify The Implementation
 
-Always identify the architecture and requirements used, the affected implementation locations, and the concrete contracts being reused, changed, or introduced. Distinguish verified current behavior from proposed behavior and label proposed files and symbols that do not exist yet.
+Lead with the implementation approach and key contract changes. Identify the architecture and proposal used, affected paths and symbols, and contracts being reused, changed, or introduced. Label proposed files and symbols that do not exist yet.
 
-Select additional content according to relevance, combining sections and omitting irrelevant topics rather than filling a template with `N/A`. Do not impose class inventories, snippet quotas, exhaustive checklists, mandatory external research, or mandatory subagent reviews.
+Include only relevant material, combining sections where that improves readability:
 
-- **Function and method contracts:** Language-appropriate signatures, parameter and return types, synchronous or asynchronous behavior, preconditions, results, errors, side effects, and callers. For changed cross-module contracts, specify both sides and their connection, not unrelated functions or every private helper.
-- **Types and data shapes:** Fields, optionality, nullability, defaults, units, identifiers, valid states, validation rules, and required representation conversions. Reuse existing types by reference.
-- **Classes or equivalent structures:** Constructors, dependencies, state ownership, lifecycle, and method signatures when the design uses them.
-- **Control and data flow:** The main path, significant branches, transformations, state changes, side effects, and failure handling. Specify where validation, authorization, invariants, and transaction boundaries are enforced.
-- **Non-trivial implementation details:** Include focused, real code snippets in the project's language using applicable APIs, not pseudocode, for tricky algorithms, framework interactions, concurrency, or error handling that prose and signatures would leave ambiguous. Explain the constraint or gotcha each snippet addresses. Label omitted context; distinguish binding behavior from illustrative local choices. Keep signatures, types, and snippets mutually consistent and use four spaces for indentation.
-- **Persistence and integration details:** Changed schema fields, constraints, serialization, queries, indexes, external calls, error mapping, and compatibility behavior. Cite applicable versioned evidence for third-party guarantees. Describe transition constraints, but leave migration generation, execution commands, and rollout steps to implementation and planning.
-- **Behavioral acceptance and invariants:** Identify the observable outcomes, invariants, boundary conditions, and failure behavior the implementation must preserve or establish. State their owner and required result without prescribing test work, fixtures, assertions, commands, or coverage changes.
-- **Risks and deferred details:** Record concrete residual risks and non-blocking uncertainties with their impact. State which local choices remain open. Do not hide unresolved behavior, safety, or contract decisions as implementation discretion.
+- **Functions and methods:** Use language-appropriate signatures and specify parameters, results, sync or async behavior, preconditions, errors, side effects, and callers as relevant. Add one or two short purpose or rationale points only when a function's responsibility or constraint is not evident from its signature. Do not describe self-explanatory functions or inventory unrelated private helpers.
+- **Types and data shapes:** Specify relevant fields, optionality, nullability, defaults, units, identifiers, valid states, validation, and representation conversions. Reuse existing types by reference.
+- **Structures and dependencies:** Specify constructors, injected dependencies, ownership, lifecycle, and method contracts for classes or equivalent structures when relevant.
+- **State variables:** List state introduced or materially changed by the design. For each variable, give its language-appropriate declaration or type, owner, initial value when meaningful, lifecycle or transitions, relevant invariants, and why the state is necessary. Do not inventory unchanged state or routine local variables.
+- **Control and data flow:** Describe the main path, meaningful branches, transformations, state changes, side effects, and failure handling. State where validation, authorization, invariants, and transaction boundaries are enforced.
+- **Non-trivial implementation details:** Include focused code in the project's language only when a tricky algorithm, framework interaction, concurrency rule, or error path would remain consequentially ambiguous in prose and signatures. Explain the constraint each snippet resolves, label omitted context, distinguish binding behavior from illustrative choices, and follow project and language formatting.
+- **Persistence and integrations:** Specify only changed schema fields, constraints, serialization, queries, indexes, external calls, error mapping, compatibility behavior, and transition constraints. Cite applicable versioned evidence for consequential third-party guarantees.
+- **Behavioral acceptance and invariants:** State observable outcomes, boundary conditions, failure behavior, invariants, and their owners without adding product behavior.
+- **Risks:** Record only concrete residual risks or material non-blocking implementation discretion and their impact. Do not disguise unresolved behavior, safety, or contract decisions as local choice.
 
-Use Markdown code fences with the correct language for signatures and snippets. Use a diagram only when it clarifies a non-trivial interaction better than prose; do not repeat architecture diagrams without adding useful implementation detail.
+Use Markdown code fences with the correct language. Use only small ASCII diagrams, and only when they clarify a non-trivial interaction better than prose. Make the surrounding text authoritative.
 
-Optimize for fast human review: lead with the implementation approach and key contract changes, use short sections and direct language, and remove repetition or detail that does not help the reader evaluate the design.
+Elaborate the accepted architecture without replacing or duplicating it. Specify consequential contracts and behavior, not routine method bodies, task breakdowns, PR stages, estimates, or implementation order. Keep the document usable without this conversation while leaving harmless local choices to implementation and work sequencing to the later plan.
 
-## Keep The Phase Boundary
-
-- Elaborate the accepted architecture rather than replacing it. Explain how proposed implementation contracts satisfy its responsibilities and invariants without restating the whole architecture.
-- Specify enough detail to remove consequential ambiguity, not a complete implementation embedded in Markdown. Leave routine method bodies and harmless local naming choices to implementation.
-- Do not produce task breakdowns, PR stages, estimates, or ordered implementation instructions. Necessary runtime or transition ordering belongs in the design; the work sequence belongs in the later plan.
-- Keep the document usable without this conversation. Link task inputs and relevant repository paths, symbols, and external sources next to consequential claims. Do not copy large source excerpts or concatenate subagent reports.
+Optimize for fast human review. Use short sections and direct language, omit irrelevant topics instead of writing `N/A`, remove repetition, and stop at the shortest document that fully specifies the implementation.
 
 ## Write And Verify
 
-Once the necessary context is available and blocking questions are resolved, write `TECHNICAL-DESIGN.md` directly without a separate approval round. Follow the project's documentation language convention, or the user's language when none exists. If the file already exists, reconcile the request with its current content and preserve unrelated user decisions; ask if they conflict.
+Once blockers are resolved, write `TECHNICAL-DESIGN.md` directly without another approval round. Follow the project's documentation language, or the user's language when none exists.
 
-Review the written document for:
+Read it back and correct concrete issues. Verify that it:
 
-- Alignment with the accepted architecture, authoritative requirements, supplied Definition of Done, behavioral acceptance, and invariants, without new product behavior.
-- Consistency among signatures, types, callers, snippets, control flow, and error behavior.
-- Concrete ownership of relevant invariants, validation, authorization, state changes, and side effects.
-- Clear distinctions between existing and proposed symbols, binding contracts and examples, and verified evidence and unresolved uncertainty.
-- No blocking implementation decisions, speculative abstractions, unnecessary catalogs, duplicated architecture, or implementation plan.
-- Correct output location and valid references to task inputs, inspected source, and applicable external evidence.
+- follows the accepted architecture and preserves the proposal's intended outcome, scope, constraints, and any supplied Definition of Done;
+- is consistent across signatures, types, state, callers, snippets, control flow, errors, and side effects;
+- assigns ownership for relevant state, invariants, validation, authorization, and external effects;
+- distinguishes existing and proposed symbols, binding contracts and examples, and verified evidence and residual risk;
+- contains no blocking decisions, speculative abstractions, unnecessary catalogs, duplicated architecture, or implementation plan;
+- remains concise, self-contained, and grounded in valid task, source, and external references.
 
-For this documentation-only command, verify content and references only. Testing is complete before `/implement` and is not described or executed here. Do not claim proposed snippets were compiled or otherwise executed. Correct concrete issues and stop when the document is sufficient for planning and implementation.
-
-Finish with the written path, a brief explanation of the chosen depth, and any material residual risks or non-blocking questions. Do not claim the design was implemented or runtime-validated.
+Verify content and references only. Do not claim proposed code was compiled, executed, implemented, or runtime-validated. Finish with the written path, a brief note on the chosen depth, and material residual risks.
