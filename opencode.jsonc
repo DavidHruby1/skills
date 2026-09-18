@@ -13,7 +13,7 @@
     "compaction": {
         "auto": true,
         "prune": true,
-        "reserved": 150000
+        "reserved": 100000
     },
     "mcp": {
         "duckduckgo": {
@@ -100,6 +100,18 @@
                             "reasoningEffort": "max"
                         }
                     }
+                }
+            }
+        },
+        "ollama": {
+            "npm": "@ai-sdk/openai-compatible",
+            "name": "Ollama (local)",
+            "options": {
+                "baseURL": "http://172.20.208.1:11434/v1"
+            },
+            "models": {
+                "qwen3.6:35b-a3b-q4_K_M": {
+                    "name": "Qwen 3.6 35B A3B Q4_K_M"
                 }
             }
         }

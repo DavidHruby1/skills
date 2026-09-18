@@ -42,6 +42,8 @@ For each question:
 
 Ask every question in normal assistant chat. Never use `question`, `ask`, or another interactive prompt tool. Use this format, in the user's language:
 
+When credible alternatives exist, put each labeled option on its own line so the user can answer compactly, for example `3b`.
+
 ```markdown
 ❓ **Q1** - **<question title>**: <question body and why it matters; include choices when useful>
 
@@ -52,6 +54,16 @@ Ask every question in normal assistant chat. Never use `question`, `ask`, or ano
 ❓ **Q2** - **<question title>**: <question body and optional choices>
 
 ➡️ <recommended answer, its basis, and main trade-off; or why a recommendation is not yet justified>
+
+---
+
+❓ **Q3** - **<question title>**: <question body and why it matters>
+
+a) **<option>**: <behavior, benefit, cost, and when it fits>
+b) **<option>**: <behavior, benefit, cost, and when it fits>
+c) **<option>**: <behavior, benefit, cost, and when it fits>
+
+➡️ <recommended answer, its basis, and main trade-off>
 ```
 
 Tell the user once that compact answers such as `1a, 2c` are welcome and that they can provide their own answer instead. Wait for their answers before advancing dependent decisions. After each response, update only unresolved material branches; reopen answered questions only when new evidence changes their implications.
