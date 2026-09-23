@@ -71,13 +71,13 @@ p, li { color: #d6deea; }
   cursor: pointer;
 }
 
-#function-graph {
+.function-graph {
   width: 100%;
   height: min(72vh, 820px);
   min-height: 520px;
 }
 
-#function-details {
+.function-details {
   min-height: 7rem;
   padding: 1rem;
   border-top: 1px solid var(--line);
@@ -96,6 +96,6 @@ code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
 
 @media (max-width: 600px) {
   main { padding-block: 1.5rem; }
-  #function-graph { min-height: 430px; }
+  .function-graph { min-height: 430px; }
   .page-nav { flex-wrap: wrap; }
 }
