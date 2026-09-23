@@ -145,6 +145,10 @@
                 }
             }
         },
+        "spec-auditor": {
+            "model": "openai/gpt-5.6-terra",
+            "variant": "high"
+        },
         "docu-writer": {
             "model": "openai/gpt-6-luna",
             "variant": "high"

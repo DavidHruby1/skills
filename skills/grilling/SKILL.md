@@ -1,19 +1,17 @@
 ---
 name: grilling
-description: Use proactively during Architecture or Technical Design when unclear requirements, conflicting assumptions, or consequential open decisions need user input. Gather grounded context through focused batches of questions; also use when the user explicitly requests grilling or a decision stress-test.
+description: Use when unclear requirements, conflicting assumptions, or consequential open decisions need an evidence-backed interactive discussion. Also use when the user explicitly requests grilling or a decision stress-test.
 ---
 
 # Grilling
 
-Build shared understanding through a focused, evidence-backed conversation. Supply context to the calling agent, not a separate deliverable.
+Build shared understanding through a focused, evidence-backed conversation.
 
-## Scope
+## Boundaries
 
-- Architecture and Technical Design are separate, isolated commands. Use only the current conversation and available source documents; never assume access to a previous phase's conversation.
-- Establish the current goal, phase, relevant inputs, and settled decisions from that context. If the subject is unclear, ask opening questions before exploring the codebase.
-- Stay within the current phase: Architecture resolves system boundaries, responsibilities, flows, and consequential trade-offs; Technical Design resolves implementation contracts and non-trivial details needed to implement the approved architecture.
-- Do not reopen settled decisions without new evidence, a concrete contradiction, or an explicit user request. Ask before expanding scope.
-- Do not create or modify files, produce a standalone brief or report, manage task folders, implement code, or select or start another workflow. The calling command owns its documentation and continuation.
+- Infer the active goal and decision scope from the current assignment and context. Stay within that scope. Ask only when an ambiguity could materially change it.
+- Do not reopen settled decisions without new evidence, a concrete contradiction, or an explicit user request.
+- Do not expand the task, create or modify files, produce a separate deliverable, implement code, or start another workflow.
 
 ## Grounding
 
@@ -21,13 +19,20 @@ Build shared understanding through a focused, evidence-backed conversation. Supp
 - Use `explore` subagents for broad codebase discovery, uncertain ownership, or cross-file flow investigation. Give each a bounded question and require source locations and unresolved uncertainty. Read a known file or look up a specific symbol directly; do not delegate every lookup or duplicate delegated work.
 - If broader research is necessary, use the available Research skill when applicable. Do not assume a skill or agent exists. A missing tool is not evidence that an unknown is resolved.
 - Distinguish verified facts, evidence-based inferences, and unverified assumptions. Cite concrete sources for claims that determine the choice; verify consequential subagent claims against their cited evidence as needed.
-- Treat user-owned goals and priorities as binding, but test factual and technical claims, including those in approved documents. Show contradictions and ask about their product or design implications rather than silently rewriting decisions.
+- Treat user-owned goals and priorities as binding. Evaluate factual and technical claims neutrally by looking for supporting, conflicting, and missing evidence. Challenge a claim only when concrete evidence or a concrete failure scenario materially contradicts it; a trade-off or hypothetical edge case is not automatically a defect. Ask about the implications rather than silently rewriting decisions.
 - Find discoverable facts yourself. Ask the user for unavailable context or priorities, not information already accessible in the repository. Admit missing or conflicting evidence; never fabricate certainty to unblock a decision.
 - Stop investigating when the material choices are sufficiently grounded. Do not explore adjacent improvements or hypothetical variants for completeness.
 
 ## Question Rounds
 
-Track unresolved material decisions and their dependencies internally. A question is material when its answer could change required behavior, scope, a contract, implementation boundaries, validation, or safety. Ask about consequential trade-offs that depend on user priorities; resolve low-risk, reversible local details from evidence and established conventions.
+Track unresolved material decisions and their dependencies internally. A question is material when its answer could change required behavior, scope, a contract, implementation boundaries, validation, or safety.
+
+Classify each unresolved decision before asking about it:
+
+- **Critical:** The answer could materially change behavior, scope, contracts, ownership, invariants, safety, or another consequential decision. Ask an open question without options or a recommendation.
+- **Non-critical:** The decision is local, low-risk, and reversible. Resolve it from evidence and established conventions when possible. When user input is useful, options and a recommendation are allowed.
+
+When the current task defines required decision areas or a coverage checklist, use them to guide the conversation. Cover every applicable area, but follow decision dependencies rather than a rigid section order. Do not repeat areas already resolved by source or previous answers.
 
 The frontier contains questions whose prerequisites are settled. Ask the currently answerable questions in coherent batches, not one interactive prompt at a time. Do not impose a fixed question count or unnecessarily split a coherent batch. Questions that depend on unanswered questions belong to a later round.
 
@@ -35,41 +40,33 @@ If an independent investigation is running, ask the ready questions while its de
 
 For each question:
 
-- Explain what needs deciding and why it matters. Challenge vague terms and conflicting assumptions; use a concrete scenario when helpful.
-- Offer choices only when useful, labeled `a)`, `b)`, and so on. Include only credible alternatives that a reasonable user could prefer under a concrete condition. Describe them neutrally, with comparable detail about behavior, benefit, cost, and when they fit.
-- Do not invent alternatives to reach a count. If evidence establishes one technically dominant choice or a safe local default, explain the conclusion instead of asking a performative question. Do not use a default to conceal a consequential user-owned decision.
-- Put the recommendation after the question and options. State its evidence or reasoning and main trade-off. Make it conditional when priorities are unknown; if no recommendation is justified, say what is missing instead of guessing.
+- State the concrete current situation, the exact decision needed from the user, the observable consequence of that decision, and the expected shape of the answer. Explain unfamiliar symbols and terminology in context. Challenge vague terms and conflicting assumptions with concrete evidence or a concrete scenario.
+- For a critical decision, ask the user to supply the decision. Do not anchor the answer with options, a proposed design, or a recommendation.
+- For a non-critical decision, first identify the right number of genuinely distinct and credible options for the decision and its real trade-offs. There is no fixed count. Avoid both omitting material alternatives and padding the list with weak or minor variations. Describe the options neutrally and with comparable detail, then evaluate them and put the recommendation after the options.
+- Never use a safe local default to conceal a critical decision.
 
 Ask every question in normal assistant chat. Never use `question`, `ask`, or another interactive prompt tool. Use this format, in the user's language:
 
-When credible alternatives exist, put each labeled option on its own line so the user can answer compactly, for example `3b`.
+For a critical question, use this format:
 
 ```markdown
-❓ **Q1** - **<question title>**: <question body and why it matters; include choices when useful>
+❓ **Q1** - **<question title>**: <concrete context, the decision needed, its consequence, and the expected answer>
+```
 
-➡️ <recommended answer, its basis, and main trade-off; or why a recommendation is not yet justified>
+For a non-critical question with credible alternatives, put each option on its own line so the user can answer compactly:
 
----
-
-❓ **Q2** - **<question title>**: <question body and optional choices>
-
-➡️ <recommended answer, its basis, and main trade-off; or why a recommendation is not yet justified>
-
----
-
-❓ **Q3** - **<question title>**: <question body and why it matters>
+```markdown
+❓ **Q2** - **<question title>**: <concrete context, the decision needed, and its consequence>
 
 a) **<option>**: <behavior, benefit, cost, and when it fits>
 b) **<option>**: <behavior, benefit, cost, and when it fits>
-c) **<option>**: <behavior, benefit, cost, and when it fits>
+<additional options when needed>
 
-➡️ <recommended answer, its basis, and main trade-off>
+=> <recommended answer, its basis, and main trade-off>
 ```
 
-Tell the user once that compact answers such as `1a, 2c` are welcome and that they can provide their own answer instead. Wait for their answers before advancing dependent decisions. After each response, update only unresolved material branches; reopen answered questions only when new evidence changes their implications.
+Tell the user once that compact answers such as `2b` are welcome for questions with options and that they can always provide their own answer instead. Wait for their answers before advancing dependent decisions. After each response, update only unresolved material branches; reopen answered questions only when new evidence changes their implications.
 
 ## Completion
 
-Finish when no material uncertainty blocks the current phase. Hypothetical, unreachable, low-impact, safely defaulted, and explicitly deferred details do not block completion. A missing fact that could materially change the decision still blocks that decision; do not relabel it as a harmless assumption.
-
-Briefly confirm the resolved understanding and any consequential assumptions or deferred topics in chat, and let the user confirm or correct it before the calling command continues. This is conversational confirmation, not a separate artifact or formal report. If the user's latest response already explicitly confirms that understanding, do not ask for redundant approval. Return control to the current command without writing its document or transitioning to another phase.
+Finish when all material questions and ambiguities are resolved, the resulting decisions are mutually consistent, and no material contradiction remains.

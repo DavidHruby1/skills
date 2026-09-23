@@ -48,6 +48,7 @@ Outside commands, use `code-review` only for explicitly requested medium or larg
 - `@ticket-master`: Reconciles plan-derived issues and PR links. It does not edit files, Git state, or pull requests.
 - `@inspector`: Performs read-only Standards or Spec review. Use only when explicitly requested or required by an active workflow.
 - `@docu-writer`: Writes source-backed documentation under repository-root `docs/`. Do not delegate product decisions.
+- `@spec-auditor`: Audits a task specification against its proposal and relevant source without editing or redesigning it.
 - `@researcher`: Performs external research with DuckDuckGo and returns source-backed findings. It does not edit files or run commands.
 - `@explore`: Finds ownership, entrypoints, and flows in unfamiliar or broad code areas. Use direct tools for known files or symbols.
 - `@general`: Last resort only. Always prefer the appropriate custom agents, splitting work between them when suitable. Use only when necessary and no custom agent or combination can handle the task.

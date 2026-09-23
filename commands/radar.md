@@ -15,9 +15,17 @@ Instead:
    * the relevant template or UI section
    * the event handler or main function that controls the behavior
    * the state, store, API call, or data source that drives the behavior
+   Snippets may contain separate focused sections from the same file.
+   Do not include unrelated code merely because it lies between them.
 3. Do not show snippets for helpers, utilities, types, or secondary functions unless they are essential to understanding the main behavior.
 4. After the main snippets, list the remaining relevant functions, hooks, utilities, types, and tests only with their file, line range, name, and a concise explanation.
+   Exclude code that matters only to hypothetical future behavior not requested by the feature.
 5. Describe the event and data flow between the relevant parts.
+   Ensure every important connection in this flow has a corresponding source location,
+   especially where values enter a snippet from another store, hook, prop, or module.
+
+Separate verified current behavior from feature-specific implications.
+Do not present an implementation suggestion as existing behavior.
 
 Prefer a small number of highly relevant files and snippets. If a feature touches many sections in one file, show only the sections that directly trigger or control it.
 

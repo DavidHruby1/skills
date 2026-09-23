@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: "Use for explicitly requested medium or large reviews outside commands; review small scopes directly without this skill or inspectors. Commands retain their prescribed activation, including /code-review and /implement's post-validation gate. Runs independent Standards and Spec inspectors."
+description: "Use for explicitly requested `code-review` outside commands; review small scopes directly without this skill or inspectors." 
 ---
 
 # Code Review

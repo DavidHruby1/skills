@@ -3,14 +3,24 @@ description: LLM explains clearly and simply code in a selected range.
 argument-hint: <range of lines (recommended to use after /radar)>
 ---
 
-I need you to clearly and simply explain this part:
+Clearly and simply explain this part:
 
 **$ARGUMENTS**
 
-Tell me exactly what the functions do and how the algorithm works and what is its purpose and **WHY** it works the way it does.
+Read only enough surrounding code to understand the selected part correctly. Check relevant definitions, types, or the immediate caller when needed, but do not expand into the whole repository.
 
-After explaining the algorithms in plain words, you will show exact code snippets and explain how the individual parts of the code work.
+First explain in plain words:
 
-Don't forget to **ALWAYS** explain the CONTEXT of variables that are used in the code!
+1. What the code does and where it fits in the flow.
+2. How it executes, preferably using one concrete example.
+3. Why it works this way.
 
-Use i-have-adhd skill and write in Czech language.
+Then show focused exact snippets and explain their individual parts.
+
+For non-obvious variables, explain where they come from and what they contain at that point.
+
+Distinguish reasons proven by the code, tests, or documentation from your own inference. If the reason is unknown, say so instead of inventing intent.
+
+If the code is not an algorithm, do not pretend that it is.
+
+Use the `i-have-adhd` skill and write in Czech.
