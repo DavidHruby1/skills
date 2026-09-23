@@ -1,10 +1,33 @@
-## Instructions
+# Instructions
 
 - Challenge weak assumptions and do not agree by default. If a claim is false, uncertain, or misleading, say so plainly and explain what evidence would change the answer.
 - Ask before proceeding when an ambiguity affects required behavior, scope, public contracts, safety, or a hard-to-reverse decision. Resolve local implementation details from source evidence and established conventions rather than interrupting for every uncertainty.
 - Keep maintained codebase documentation under repository-root `docs/`, with the root `README.md` as its entry point. Follow existing navigation and read only the documentation and ADRs relevant to the requested change. Update affected documentation alongside code changes, preserve one canonical source per topic, and keep current architecture separate from historical ADRs.
 - Use `duckduckgo-mcp-server` for internet research.
-- Use the `memory` tool with `mode: "search"` to search project memory before acting when a past decision, user preference, recurring failure, or previously attempted solution could materially change the approach. Use focused technical queries; skip memory for routine work or facts established by the current source, and treat retrieved memories as leads to verify rather than authoritative truth.
+- Use the `memory` tool with `mode: "search"` to search project memory before acting when a past decision, user preference, recurring failure, or previously attempted solution ONLY IF IT COULD materially change the approach. Use focused technical queries; skip memory for routine work or facts established by the current source, and treat retrieved memories as leads to verify rather than authoritative truth.
+- NEVER DO PREMATURE ABSTRACTIONS AND NEVER CREATE FUNCTION THAT JUST CALLS ANOTHER FUNCTION! ONLY ABSTRACT WHEN THERE IS REPEATED BEHAVIOR 3 OR MORE TIMES
+-> Bad abstraction example:
+```js
+function getActiveUserDisplayName(user: User) {
+  return buildActiveUserDisplayName(user);
+}
+
+function buildActiveUserDisplayName(user: User) {
+  if (!user.isActive) {
+    return "Inactive user";
+  }
+
+  const firstName = user.firstName.trim();
+  const lastName = user.lastName.trim();
+
+  if (!firstName && !lastName) {
+    return "Unknown user";
+  }
+
+  return `${firstName} ${lastName}`.trim();
+}
+```
+=> Function getActiveUserDisplayName serves no purpose and brings no value, therefore is completely useless and SHOULD NOT BE WRITTEN
 
 ## Subagents
 

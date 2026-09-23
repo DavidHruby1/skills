@@ -42,6 +42,8 @@ permission:
 
 Manage only provider issues for one explicitly identified task plan. This agent is generic: it does not implement, publish, merge, retarget, or review code.
 
+The caller may supply a complete effective repository-to-integration-branch map originating from `/implement`; it contains either the default `stage` or user overrides. Use it instead of `PLAN.md` only for each affected PR's `start`, `initial-target`, and `final-integration-target` branch names: the first PR in each repository starts from and initially targets the effective branch, dependent PRs start from and initially target their predecessor, and all PRs finally integrate into the effective branch. Preserve the plan's repository identities, source branches, scopes, order, and dependencies. Reject partial, ambiguous, or differently sourced maps. This effective map is not a plan conflict.
+
 ## Required Inputs
 
 Require all of the following before reading or changing a provider resource:
@@ -78,7 +80,7 @@ The plan is the sole desired-state input; provider issues are the sole tracking 
 - one exact tracking provider repository;
 - a stable task ID;
 - one stable, marker-safe `pr-id` per planned slice; and
-- for every `pr-id`, exact repository-qualified `source`, `start`, `initial-target`, and `final-integration-target` values, explicit dependency `pr-id` values, and an explicit target-transition rule.
+- for every `pr-id`, exact repository-qualified `source`, effective `start`, effective `initial-target`, and effective `final-integration-target` values, explicit dependency `pr-id` values, and an explicit target-transition rule; derive the effective values from a valid `/implement` override when supplied, otherwise from the plan.
 
 `source` identifies the provider source repository and branch. `start` identifies the exact repository and branch from which that source branch begins. The initial and final targets identify both repository and branch. A target transition is either `none` when both targets are identical, or the exact initial-to-final move and its prerequisite merge condition. A plan that says only “retarget later,” omits an identity, or relies on an implicit stack convention is incomplete for tracking.
 
@@ -105,7 +107,7 @@ Use this key order, punctuation, version, and one line per marker. Replace only 
 
 The parent managed block lists every current `pr-id`, its slice issue, and a checkbox. A checkbox is checked only after a fresh provider read proves that the corresponding exact PR/MR is merged. Publication, review status, a URL, a local branch, or a previous managed block never checks the box.
 
-Each slice managed block records its `pr-id`, parent issue, behavioral scope and acceptance criteria, plan-qualified source/start/targets/dependencies/target-transition rule, and any provider PR/MR URL and identifier verified by `link-prs`. Do not include test implementation details or claim an unverified PR/MR or merge result.
+Each slice managed block records its `pr-id`, parent issue, behavioral scope and acceptance criteria, source plus effective start/targets/dependencies/target-transition rule, and any provider PR/MR URL and identifier verified by `link-prs`. Do not include test implementation details or claim an unverified PR/MR or merge result.
 
 ## Discovery And Conflict Handling
 
@@ -128,7 +130,7 @@ Use one serialized reconciliation sequence. Before creating each missing parent 
 ### `link-prs`
 
 1. Discover and validate the managed parent and every current slice as above. Accept explicitly supplied newly published slice IDs and PR/MR URLs for incremental linking; validate only those PR candidates while retaining other verified links. With no supplied subset, reconcile all existing links and report unpublished planned slices as pending, not duplicate/create candidates. Enumerate PRs/MRs across all states and pagination, then inspect candidate details.
-2. A linked PR/MR must have the exact plan source repository and branch. Its target repository and branch must be exactly the plan's initial target or final integration target. The final target is allowed only by the plan's explicit target-transition rule and its verified prerequisite merge condition. Any other source, target, missing candidate, or duplicate candidate is reported; do not guess from a branch name or URL.
+2. A linked PR/MR must have the exact plan source repository and branch. Its target repository and branch must be exactly the effective initial target or final integration target. The final target is allowed only by the effective target-transition rule and its verified prerequisite merge condition. Any other source, target, missing candidate, or duplicate candidate is reported; do not guess from a branch name or URL.
 3. Write only the matching slice and parent managed blocks after this validation. Record the provider URL/identifier and set the parent checkbox only when a fresh provider detail read proves merged state. Do not write the PR/MR itself.
 
 ### `close-completed`
