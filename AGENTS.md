@@ -5,29 +5,9 @@
 - Keep maintained codebase documentation under repository-root `docs/`, with the root `README.md` as its entry point. Follow existing navigation and read only the documentation and ADRs relevant to the requested change. Update affected documentation alongside code changes, preserve one canonical source per topic, and keep current architecture separate from historical ADRs.
 - Use `duckduckgo-mcp-server` for internet research.
 - Use the `memory` tool with `mode: "search"` to search project memory before acting when a past decision, user preference, recurring failure, or previously attempted solution ONLY IF IT COULD materially change the approach. Use focused technical queries; skip memory for routine work or facts established by the current source, and treat retrieved memories as leads to verify rather than authoritative truth.
-- NEVER DO PREMATURE ABSTRACTIONS AND NEVER CREATE FUNCTION THAT JUST CALLS ANOTHER FUNCTION! ONLY ABSTRACT WHEN THERE IS REPEATED BEHAVIOR 3 OR MORE TIMES
--> Bad abstraction example:
-```js
-function getActiveUserDisplayName(user: User) {
-  return buildActiveUserDisplayName(user);
-}
-
-function buildActiveUserDisplayName(user: User) {
-  if (!user.isActive) {
-    return "Inactive user";
-  }
-
-  const firstName = user.firstName.trim();
-  const lastName = user.lastName.trim();
-
-  if (!firstName && !lastName) {
-    return "Unknown user";
-  }
-
-  return `${firstName} ${lastName}`.trim();
-}
-```
-=> Function getActiveUserDisplayName serves no purpose and brings no value, therefore is completely useless and SHOULD NOT BE WRITTEN
+- Don't create useless unit tests that copy the code, they're useless.
+- Don't be paranoid and don't verify everything. After you finish writing code, run only type-check, run tests, and then STOP.
+- Don't use `ghostchrome` automatically. Use it only when I explicitly tell you to.
 
 ## Subagents
 
@@ -59,18 +39,3 @@ Outside commands, use `code-review` only for explicitly requested medium or larg
 - Run independent assignments in parallel. Avoid overlapping ownership and do not duplicate delegated work.
 - Follow delegation rules defined by an active command or skill. Resume the same agent for corrections instead of starting over.
 - The main agent owns integration, verification, and user communication.
-
-## Testing
-
-<!-- Temporary home for test-quality guidance until dedicated testing skills exist; move these rules there rather than copying them. -->
-
-Apply these rules when test authoring is within the assignment; they do not authorize additional test work.
-
-- Reuse the repository's test runner, fixtures, and helpers when their contracts fit. Keep setup limited to what the tested behavior requires.
-- Exercise the public boundary real callers use. Assert observable behavior rather than private implementation structure.
-- Keep collaborators real when their interaction is what the test must prove. Replace only boundaries outside that scope; do not mock the behavior under test.
-- Keep tests deterministic and independently runnable. Control relevant sources of nondeterminism and restore changed state; never depend on another test's execution order.
-- Use explicit assertions and independently obvious expected values. Do not reproduce the production algorithm to calculate the expected result.
-- Do not reimplement the behavior under test in fixtures, factories, or setup helpers. Keep test data and setup understandable without reconstructing business logic.
-- Verify calls only when sending that command is itself part of the observable contract, not merely an implementation detail.
-- Use snapshots for deliberately reviewed, stable representations, not as a substitute for assertions that identify the promised behavior.
